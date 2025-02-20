@@ -44,6 +44,16 @@
                             </div>
 
                             <div class="mb-3">
+                                <label class="form-label">Base</label>
+                                <input type="text" name="base" class="form-control" value="<?php echo e($iku->base); ?>">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Stretch</label>
+                                <input type="text" name="stretch" class="form-control" value="<?php echo e($iku->stretch); ?>">
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="form-label">Satuan</label>
                                 <input type="text" name="satuan" class="form-control" value="<?php echo e($iku->satuan); ?>">
                             </div>

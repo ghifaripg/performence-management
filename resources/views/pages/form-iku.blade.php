@@ -200,8 +200,10 @@
                                 @php
                                     $ikuPointList = $iku->points ?? collect();
                                     $maxRows = max(1, $ikuPointList->count());
+                                    $ikuPointsArray = $ikuPointList->toArray();
                                 @endphp
 
+                                <!-- First Row -->
                                 <tr>
                                     @if ($index == 0)
                                         <td class="fw-bold align-middle text-center" rowspan="{{ $rowCount * $maxRows }}">{{ $sasaran['number'] }}</td>
@@ -219,7 +221,10 @@
                                         @endforeach
                                     </td>
 
-                                    @php $firstPoint = $ikuPointList->first(); @endphp
+                                    <!-- First IKU Point -->
+                                    @php
+                                        $firstPoint = $ikuPointsArray[0] ?? null;
+                                    @endphp
                                     <td class="fw-normal text-center">{{ $firstPoint->base ?? '-' }}</td>
                                     <td class="fw-normal text-center">{{ $firstPoint->stretch ?? '-' }}</td>
                                     <td class="fw-normal text-center">{{ $firstPoint->satuan ?? '-' }}</td>
@@ -245,8 +250,8 @@
                                     </td>
                                 </tr>
 
-                                <!-- IKU Points (without showing main IKU again) -->
-                                @foreach ($ikuPointList->skip(1) as $point)
+                                <!-- Additional IKU Points -->
+                                @foreach (array_slice($ikuPointsArray, 1) as $point)
                                     <tr>
                                         <td class="fw-normal text-center">{{ $point->base ?? '-' }}</td>
                                         <td class="fw-normal text-center">{{ $point->stretch ?? '-' }}</td>
@@ -261,6 +266,7 @@
                 </table>
                 <h6 id="total-bobot">Total Bobot = 0</h6>
             </div>
+
 
 </main>
 @endsection
@@ -301,15 +307,23 @@
         });
 
         function updateTotalBobot() {
-            let totalBobot = 0;
-            document.querySelectorAll(".point-bobot").forEach(input => {
-                totalBobot += parseFloat(input.value) || 0;
-            });
+        let totalBobot = 0;
 
-            let totalBobotElement = document.getElementById("total-bobot");
-            totalBobotElement.textContent = `Total Bobot = ${totalBobot.toFixed(2)}`;
-            totalBobotElement.style.color = totalBobot > 100 ? "red" : "green";
+        // Select Bobot column by a specific class instead of nth-child
+        document.querySelectorAll(".bobot-cell").forEach(cell => {
+            let bobotValue = parseFloat(cell.textContent.trim()) || 0;
+            totalBobot += bobotValue;
+        });
+
+        let totalBobotElement = document.getElementById("total-bobot");
+        totalBobotElement.textContent = `Total Bobot = ${totalBobot.toFixed(2)}`;
+
+        if (totalBobot > 100) {
+            totalBobotElement.style.color = "red";
+        } else {
+            totalBobotElement.style.color = "green";
         }
+    }
 
         document.getElementById('add-iku-point').addEventListener('click', function () {
             pointIndex++;

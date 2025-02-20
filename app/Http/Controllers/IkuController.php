@@ -196,9 +196,15 @@ class IkuController extends Controller
         'isi_iku.pj',
         'form_iku.iku_atasan',
         'form_iku.sasaran_id',
-        'form_iku.is_multi_point'
+        'form_iku.is_multi_point',
+        'form_iku.base',       // Add this
+        'form_iku.stretch',    // Add this
+        'form_iku.bobot',      // Add this
+        'form_iku.satuan',     // Add this
+        'form_iku.polaritas'   // Add this
     )
     ->get();
+
 
 // Fetch IKU Points
 $ikuPoints = DB::table('iku_point')->get()->groupBy('form_iku_id');
@@ -366,15 +372,16 @@ public function exportIku(Request $request)
 
     public function updateIku(Request $request, $id)
     {
+        try {
         $validated = $request->validate([
             'sasaran_id' => 'required|exists:sasaran_strategis,id',
             'iku_atasan' => 'nullable|string|max:500',
-            'target' => 'required|string|max:500',
+            'target' => 'nullable|string|max:500',
             'base' => 'nullable|string|max:500',
             'stretch' => 'nullable|string|max:500',
             'satuan' => 'nullable|string|max:500',
-            'polaritas' => 'required|in:maximize,minimize',
-            'bobot' => 'required|numeric|min:0|max:100',
+            'polaritas' => 'nullable|in:maximize,minimize',
+            'bobot' => 'nullable|numeric|min:0|max:100',
             'iku' => 'required|string|max:500',
             'proker' => 'required|string',
             'pj' => 'required|string|max:500',
@@ -425,6 +432,11 @@ public function exportIku(Request $request)
 
         return redirect()->route('form-iku', ['year' => $request->query('year', date('Y'))])
             ->with('success', 'IKU updated successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd('Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to add IKU: ' . $e->getMessage());
+        }
     }
 
 }

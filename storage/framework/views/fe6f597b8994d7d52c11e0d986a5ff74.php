@@ -201,8 +201,10 @@
                                 <?php
                                     $ikuPointList = $iku->points ?? collect();
                                     $maxRows = max(1, $ikuPointList->count());
+                                    $ikuPointsArray = $ikuPointList->toArray();
                                 ?>
 
+                                <!-- First Row -->
                                 <tr>
                                     <?php if($index == 0): ?>
                                         <td class="fw-bold align-middle text-center" rowspan="<?php echo e($rowCount * $maxRows); ?>"><?php echo e($sasaran['number']); ?></td>
@@ -221,7 +223,10 @@
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </td>
 
-                                    <?php $firstPoint = $ikuPointList->first(); ?>
+                                    <!-- First IKU Point -->
+                                    <?php
+                                        $firstPoint = $ikuPointsArray[0] ?? null;
+                                    ?>
                                     <td class="fw-normal text-center"><?php echo e($firstPoint->base ?? '-'); ?></td>
                                     <td class="fw-normal text-center"><?php echo e($firstPoint->stretch ?? '-'); ?></td>
                                     <td class="fw-normal text-center"><?php echo e($firstPoint->satuan ?? '-'); ?></td>
@@ -247,8 +252,8 @@
                                     </td>
                                 </tr>
 
-                                <!-- IKU Points (without showing main IKU again) -->
-                                <?php $__currentLoopData = $ikuPointList->skip(1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <!-- Additional IKU Points -->
+                                <?php $__currentLoopData = array_slice($ikuPointsArray, 1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <tr>
                                         <td class="fw-normal text-center"><?php echo e($point->base ?? '-'); ?></td>
                                         <td class="fw-normal text-center"><?php echo e($point->stretch ?? '-'); ?></td>
@@ -263,6 +268,7 @@
                 </table>
                 <h6 id="total-bobot">Total Bobot = 0</h6>
             </div>
+
 
 </main>
 <?php $__env->stopSection(); ?>
@@ -303,15 +309,23 @@
         });
 
         function updateTotalBobot() {
-            let totalBobot = 0;
-            document.querySelectorAll(".point-bobot").forEach(input => {
-                totalBobot += parseFloat(input.value) || 0;
-            });
+        let totalBobot = 0;
 
-            let totalBobotElement = document.getElementById("total-bobot");
-            totalBobotElement.textContent = `Total Bobot = ${totalBobot.toFixed(2)}`;
-            totalBobotElement.style.color = totalBobot > 100 ? "red" : "green";
+        // Select Bobot column by a specific class instead of nth-child
+        document.querySelectorAll(".bobot-cell").forEach(cell => {
+            let bobotValue = parseFloat(cell.textContent.trim()) || 0;
+            totalBobot += bobotValue;
+        });
+
+        let totalBobotElement = document.getElementById("total-bobot");
+        totalBobotElement.textContent = `Total Bobot = ${totalBobot.toFixed(2)}`;
+
+        if (totalBobot > 100) {
+            totalBobotElement.style.color = "red";
+        } else {
+            totalBobotElement.style.color = "green";
         }
+    }
 
         document.getElementById('add-iku-point').addEventListener('click', function () {
             pointIndex++;
