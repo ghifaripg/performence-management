@@ -43,6 +43,7 @@
                     <tr>
                         <th class="border-0 rounded-start">ID</th>
                         <th class="border-0">Name</th>
+                        <th class="border-0">Username</th>
                         <th class="border-0">Edit</th>
                         <th class="border-0 rounded-end">Delete</th>
                     </tr>
@@ -52,6 +53,7 @@
                         <tr>
                             <td><?php echo e($user->id); ?></td>
                             <td><?php echo e($user->nama); ?></td>
+                            <td><?php echo e($user->username); ?></td>
                             <td>
                                 <a href="<?php echo e(url('/users/edit/'.$user->id)); ?>" class="btn btn-pill btn-outline-tertiary">Edit</a>
                             </td>
