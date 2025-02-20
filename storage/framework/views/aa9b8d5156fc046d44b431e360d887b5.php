@@ -1,3 +1,14 @@
+<?php
+    $userId = Auth::user()->id;
+    $name = Auth::user()->nama;
+    $selectedYear = date('Y');
+    if (isset($_GET['year'])) {
+        $selectedYear = htmlspecialchars($_GET['year']);
+    }
+?>
+
+
+
 <?php $__env->startSection('title', 'Edit IKU'); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -14,59 +25,88 @@
 
             <div class="card border-0 shadow">
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label for="iku_name" class="form-label">IKU Name</label>
-                        <input type="text" class="form-control" id="iku_name" name="iku_name" value="<?php echo e($iku->iku_name); ?>" required>
-                    </div>
+                    <div class="row">
+                        <!-- Left Section -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">IKU Atasan</label>
+                                <input type="text" name="iku_atasan" class="form-control" value="<?php echo e($iku->iku_atasan); ?>">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="target" class="form-label">Target</label>
-                        <input type="text" class="form-control" id="target" name="target" value="<?php echo e($iku->target); ?>" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">Target</label>
+                                <input type="text" name="target" class="form-control" value="<?php echo e($iku->target); ?>">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="satuan" class="form-label">Satuan</label>
-                        <input type="text" class="form-control" id="satuan" name="satuan" value="<?php echo e($iku->satuan); ?>" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">IKU</label>
+                                <input type="text" name="iku" class="form-control" value="<?php echo e($iku->iku); ?>">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="polaritas" class="form-label">Polaritas</label>
-                        <select class="form-control" id="polaritas" name="polaritas">
-                            <option value="maximize" <?php echo e($iku->polaritas == 'maximize' ? 'selected' : ''); ?>>Maximize</option>
-                            <option value="minimize" <?php echo e($iku->polaritas == 'minimize' ? 'selected' : ''); ?>>Minimize</option>
-                        </select>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">Satuan</label>
+                                <input type="text" name="satuan" class="form-control" value="<?php echo e($iku->satuan); ?>">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="bobot" class="form-label">Bobot</label>
-                        <input type="number" class="form-control" id="bobot" name="bobot" value="<?php echo e($iku->bobot); ?>" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">Polaritas</label>
+                                <select name="polaritas" class="form-select">
+                                    <option class="form-control" value="maximize" <?php echo e($iku->polaritas == 'maximize' ? 'selected' : ''); ?>>Maximize</option>
+                                    <option class="form-control" value="minimize" <?php echo e($iku->polaritas == 'minimize' ? 'selected' : ''); ?>>Minimize</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Bobot</label>
+                                <input type="number" name="bobot" class="form-control" value="<?php echo e($iku->bobot); ?>" min="0" max="100">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="proker" class="form-label">Program Kerja</label>
-                        <input type="text" class="form-control" id="proker" name="proker" value="<?php echo e($iku->proker); ?>" required>
-                    </div>
+                            <div class="mb-3">
+                                <label for="proker">Program Kerja</label>
+                                <textarea class="form-control" id="proker" name="proker" rows="4"><?php echo e($iku->proker); ?></textarea>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="pj" class="form-label">Penanggung Jawab</label>
-                        <input type="text" class="form-control" id="pj" name="pj" value="<?php echo e($iku->pj); ?>" required>
-                    </div>
-
-                    <h4>IKU Points</h4>
-                    <?php $__currentLoopData = $ikuPoints; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <div class="mb-3">
-                            <label class="form-label">Point Name</label>
-                            <input type="text" class="form-control" name="points[<?php echo e($point->id); ?>][point_name]" value="<?php echo e($point->point_name); ?>">
+                            <div class="mb-3">
+                                <label class="form-label">Penanggung Jawab</label>
+                                <input type="text" name="pj" class="form-control" value="<?php echo e($iku->pj); ?>">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Base</label>
-                            <input type="text" class="form-control" name="points[<?php echo e($point->id); ?>][base]" value="<?php echo e($point->base); ?>">
+
+                        <!-- Right Section -->
+                        <div class="col-md-6">
+                            <!-- IKU Points Section -->
+                            <?php $__currentLoopData = $ikuPoints; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <h4>IKU Points</h4>
+                                <input type="hidden" name="points[<?php echo e($point->id); ?>][id]" class="form-control" value="<?php echo e($point->id); ?>">
+                                <div class="mb-3">
+                                    <label class="form-label">Point Name</label>
+                                    <input type="text" name="points[<?php echo e($point->id); ?>][point_name]" class="form-control" value="<?php echo e($point->point_name); ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Base</label>
+                                    <input type="text" name="points[<?php echo e($point->id); ?>][base]" class="form-control" value="<?php echo e($point->base); ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Stretch</label>
+                                    <input type="text" name="points[<?php echo e($point->id); ?>][stretch]" class="form-control" value="<?php echo e($point->stretch); ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Satuan</label>
+                                    <input type="text" name="points[<?php echo e($point->id); ?>][satuan]" class="form-control" value="<?php echo e($point->satuan); ?>">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Polaritas</label>
+                                    <select name="points[<?php echo e($point->id); ?>][polaritas]" class="form-select">
+                                        <option class="form-control" value="maximize" <?php echo e($point->polaritas == 'maximize' ? 'selected' : ''); ?>>Maximize</option>
+                                        <option class="form-control" value="minimize" <?php echo e($point->polaritas == 'minimize' ? 'selected' : ''); ?>>Minimize</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bobot</label>
+                                    <input type="number" name="points[<?php echo e($point->id); ?>][bobot]" class="form-control" value="<?php echo e($point->bobot); ?>" min="0" max="100">
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Stretch</label>
-                            <input type="text" class="form-control" name="points[<?php echo e($point->id); ?>][stretch]" value="<?php echo e($point->stretch); ?>">
-                        </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
 
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>

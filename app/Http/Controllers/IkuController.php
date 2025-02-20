@@ -187,7 +187,7 @@ class IkuController extends Controller
         ->get();
 
     // Fetch IKUs and their associated main information
-$ikus = DB::table('form_iku')
+    $ikus = DB::table('form_iku')
     ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
     ->select(
         'form_iku.*',
@@ -338,64 +338,94 @@ public function exportIku(Request $request)
         return $export->export();
     }
 
-public function editIku($id)
-{
-    // Fetch the IKU data from form_iku
-    $iku = DB::table('form_iku')->where('id', $id)->first();
+    public function editIku($id)
+    {
+        // Fetch the main IKU data from form_iku
+        $iku = DB::table('form_iku')
+            ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+            ->select(
+                'form_iku.*',
+                'isi_iku.iku',
+                'isi_iku.proker',
+                'isi_iku.pj'
+            )
+            ->where('form_iku.id', $id)
+            ->first();
 
-    if (!$iku) {
-        abort(404, 'IKU not found');
+        if (!$iku) {
+            abort(404, 'IKU not found');
+        }
+
+        // Fetch related IKU Points using form_iku_id
+        $ikuPoints = DB::table('iku_point')
+            ->where('form_iku_id', $iku->id)
+            ->get();
+
+        return view('pages.edit-iku', compact('iku', 'ikuPoints'));
     }
 
-    // Fetch related IKU Points using form_iku_id
-    $ikuPoints = DB::table('iku_point')->where('form_iku_id', $iku->id)->get();
-
-    return view('pages.edit-iku', compact('iku', 'ikuPoints'));
-}
-
-public function updateIku(Request $request, $id)
-{
-    $validated = $request->validate([
-        'sasaran_id' => 'required|exists:sasaran_strategis,sasaran_id',
-        'iku_name' => 'required|string|max:255',
-        'target' => 'required|string|max:255',
-        'satuan' => 'required|string|max:255',
-        'polaritas' => 'required|in:maximize,minimize',
-        'bobot' => 'required|numeric|min:0|max:100',
-        'proker' => 'required|string|max:255',
-        'pj' => 'required|string|max:255',
-    ]);
-
-    // Update the main IKU entry in form_iku
-    DB::table('form_iku')
-        ->where('id', $id)
-        ->update([
-            'sasaran_id' => $request->sasaran_id,
-            'iku_name' => $request->iku_name,
-            'target' => $request->target,
-            'satuan' => $request->satuan,
-            'polaritas' => $request->polaritas,
-            'bobot' => $request->bobot,
-            'proker' => $request->proker,
-            'pj' => $request->pj,
+    public function updateIku(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'sasaran_id' => 'required|exists:sasaran_strategis,id',
+            'iku_atasan' => 'nullable|string|max:500',
+            'target' => 'required|string|max:500',
+            'base' => 'nullable|string|max:500',
+            'stretch' => 'nullable|string|max:500',
+            'satuan' => 'nullable|string|max:500',
+            'polaritas' => 'required|in:maximize,minimize',
+            'bobot' => 'required|numeric|min:0|max:100',
+            'iku' => 'required|string|max:500',
+            'proker' => 'required|string',
+            'pj' => 'required|string|max:500',
         ]);
 
-    // Update IKU points (if they exist)
-    if ($request->has('points')) {
-        foreach ($request->points as $pointId => $pointData) {
-            DB::table('iku_point')
-                ->where('id', $pointId)
-                ->update([
-                    'point_name' => $pointData['point_name'],
-                    'base' => $pointData['base'],
-                    'stretch' => $pointData['stretch'],
-                ]);
-        }
-    }
+        // Update the main IKU entry in form_iku
+        DB::table('form_iku')
+            ->where('id', $id)
+            ->update([
+                'sasaran_id' => $request->sasaran_id,
+                'iku_atasan' => $request->iku_atasan,
+                'target' => $request->target,
+                'base' => $request->base,
+                'stretch' => $request->stretch,
+                'satuan' => $request->satuan,
+                'polaritas' => $request->polaritas,
+                'bobot' => $request->bobot,
+            ]);
 
-    return redirect()->route('form-iku', ['year' => $request->query('year', date('Y'))])
-        ->with('success', 'IKU updated successfully!');
-}
+        // Update IKU details in isi_iku
+        DB::table('isi_iku')
+            ->where('id', function ($query) use ($id) {
+                $query->select('isi_iku_id')
+                    ->from('form_iku')
+                    ->where('id', $id);
+            })
+            ->update([
+                'iku' => $request->iku,
+                'proker' => $request->proker,
+                'pj' => $request->pj,
+            ]);
+
+        // Update IKU points if provided
+        if ($request->has('points')) {
+            foreach ($request->points as $pointId => $pointData) {
+                DB::table('iku_point')
+                    ->where('id', $pointId)
+                    ->update([
+                        'point_name' => $pointData['point_name'],
+                        'base' => $pointData['base'],
+                        'stretch' => $pointData['stretch'],
+                        'satuan' => $pointData['satuan'],
+                        'polaritas' => $pointData['polaritas'],
+                        'bobot' => $pointData['bobot'],
+                    ]);
+            }
+        }
+
+        return redirect()->route('form-iku', ['year' => $request->query('year', date('Y'))])
+            ->with('success', 'IKU updated successfully!');
+    }
 
 }
 

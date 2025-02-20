@@ -1,3 +1,12 @@
+<?php
+    $userId = Auth::user()->id;
+    $name = Auth::user()->nama;
+    $selectedYear = date('Y');
+    if (isset($_GET['year'])) {
+        $selectedYear = htmlspecialchars($_GET['year']);
+    }
+?>
+
 @extends('layouts.app')
 
 @section('title', 'Edit IKU')
@@ -16,59 +25,88 @@
 
             <div class="card border-0 shadow">
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label for="iku_name" class="form-label">IKU Name</label>
-                        <input type="text" class="form-control" id="iku_name" name="iku_name" value="{{ $iku->iku_name }}" required>
-                    </div>
+                    <div class="row">
+                        <!-- Left Section -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">IKU Atasan</label>
+                                <input type="text" name="iku_atasan" class="form-control" value="{{ $iku->iku_atasan }}">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="target" class="form-label">Target</label>
-                        <input type="text" class="form-control" id="target" name="target" value="{{ $iku->target }}" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">Target</label>
+                                <input type="text" name="target" class="form-control" value="{{ $iku->target }}">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="satuan" class="form-label">Satuan</label>
-                        <input type="text" class="form-control" id="satuan" name="satuan" value="{{ $iku->satuan }}" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">IKU</label>
+                                <input type="text" name="iku" class="form-control" value="{{ $iku->iku }}">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="polaritas" class="form-label">Polaritas</label>
-                        <select class="form-control" id="polaritas" name="polaritas">
-                            <option value="maximize" {{ $iku->polaritas == 'maximize' ? 'selected' : '' }}>Maximize</option>
-                            <option value="minimize" {{ $iku->polaritas == 'minimize' ? 'selected' : '' }}>Minimize</option>
-                        </select>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">Satuan</label>
+                                <input type="text" name="satuan" class="form-control" value="{{ $iku->satuan }}">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="bobot" class="form-label">Bobot</label>
-                        <input type="number" class="form-control" id="bobot" name="bobot" value="{{ $iku->bobot }}" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">Polaritas</label>
+                                <select name="polaritas" class="form-select">
+                                    <option class="form-control" value="maximize" {{ $iku->polaritas == 'maximize' ? 'selected' : '' }}>Maximize</option>
+                                    <option class="form-control" value="minimize" {{ $iku->polaritas == 'minimize' ? 'selected' : '' }}>Minimize</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Bobot</label>
+                                <input type="number" name="bobot" class="form-control" value="{{ $iku->bobot }}" min="0" max="100">
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="proker" class="form-label">Program Kerja</label>
-                        <input type="text" class="form-control" id="proker" name="proker" value="{{ $iku->proker }}" required>
-                    </div>
+                            <div class="mb-3">
+                                <label for="proker">Program Kerja</label>
+                                <textarea class="form-control" id="proker" name="proker" rows="4">{{ $iku->proker }}</textarea>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="pj" class="form-label">Penanggung Jawab</label>
-                        <input type="text" class="form-control" id="pj" name="pj" value="{{ $iku->pj }}" required>
-                    </div>
-
-                    <h4>IKU Points</h4>
-                    @foreach ($ikuPoints as $index => $point)
-                        <div class="mb-3">
-                            <label class="form-label">Point Name</label>
-                            <input type="text" class="form-control" name="points[{{ $point->id }}][point_name]" value="{{ $point->point_name }}">
+                            <div class="mb-3">
+                                <label class="form-label">Penanggung Jawab</label>
+                                <input type="text" name="pj" class="form-control" value="{{ $iku->pj }}">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Base</label>
-                            <input type="text" class="form-control" name="points[{{ $point->id }}][base]" value="{{ $point->base }}">
+
+                        <!-- Right Section -->
+                        <div class="col-md-6">
+                            <!-- IKU Points Section -->
+                            @foreach ($ikuPoints as $index => $point)
+                            <h4>IKU Points</h4>
+                                <input type="hidden" name="points[{{ $point->id }}][id]" class="form-control" value="{{ $point->id }}">
+                                <div class="mb-3">
+                                    <label class="form-label">Point Name</label>
+                                    <input type="text" name="points[{{ $point->id }}][point_name]" class="form-control" value="{{ $point->point_name }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Base</label>
+                                    <input type="text" name="points[{{ $point->id }}][base]" class="form-control" value="{{ $point->base }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Stretch</label>
+                                    <input type="text" name="points[{{ $point->id }}][stretch]" class="form-control" value="{{ $point->stretch }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Satuan</label>
+                                    <input type="text" name="points[{{ $point->id }}][satuan]" class="form-control" value="{{ $point->satuan }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Polaritas</label>
+                                    <select name="points[{{ $point->id }}][polaritas]" class="form-select">
+                                        <option class="form-control" value="maximize" {{ $point->polaritas == 'maximize' ? 'selected' : '' }}>Maximize</option>
+                                        <option class="form-control" value="minimize" {{ $point->polaritas == 'minimize' ? 'selected' : '' }}>Minimize</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bobot</label>
+                                    <input type="number" name="points[{{ $point->id }}][bobot]" class="form-control" value="{{ $point->bobot }}" min="0" max="100">
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Stretch</label>
-                            <input type="text" class="form-control" name="points[{{ $point->id }}][stretch]" value="{{ $point->stretch }}">
-                        </div>
-                    @endforeach
+                    </div>
 
                     <button type="submit" class="btn btn-primary">Update</button>
                 </div>

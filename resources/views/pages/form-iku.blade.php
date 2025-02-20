@@ -261,6 +261,7 @@
                 </table>
                 <h6 id="total-bobot">Total Bobot = 0</h6>
             </div>
+
 </main>
 @endsection
 
