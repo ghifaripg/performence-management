@@ -1,99 +1,78 @@
-<?php
-    $userId = Auth::user()->id;
-    $name = Auth::user()->nama;
-    $selectedYear = date('Y');
-    if (isset($_GET['year'])) {
-        $selectedYear = htmlspecialchars($_GET['year']);
-    }
-    ?>
-
-<!-- Favicon -->
-<link rel="apple-touch-icon" sizes="120x120" href="<?php echo e(asset ('assets/img/favicon/apple-touch-icon.png')); ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('assets/img/favicon-32x32.png')); ?>">
-<link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('assets/img/favicon-16x16.png')); ?>">
-<link rel="shortcut icon" href="<?php echo e(asset('assets/img/favicon.ico')); ?>">
-
-
 <?php $__env->startSection('title', 'Edit IKU'); ?>
 
-
+<?php $__env->startSection('content'); ?>
 <main class="content">
-    <?php $__env->startSection('content'); ?>
-        <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
-  <div class="container-fluid px-0">
-    <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
-<div class="container">
-    <h2>Edit IKU</h2>
-    <div class="row">
+    <div class="container">
+        <h2>Edit IKU</h2>
+        <a href="<?php echo e(url('/form-iku?year=' . date('Y'))); ?>" class="btn btn-secondary mb-3">Back</a>
+
         <form method="POST" action="<?php echo e(route('update-iku', ['id' => $iku->id])); ?>">
             <?php echo csrf_field(); ?>
             <?php echo method_field('PUT'); ?>
-            <input type="hidden" name="sasaran_id" id="selected-sasaran-id" value="<?php echo e($iku->sasaran_id); ?>">
-            <input type="hidden" name="iku_id" id="iku_id" value="<?php echo e($iku->iku_id); ?>">
-            <div class="col-12 mb-4">
-                <div class="card border-0 shadow components-section">
-                    <div class="card-body">
-                        <a href="/form-iku?year=<?php echo $selectedYear?>">Back</a>
-                        <div class="row mb-4">
-                            <div class="col-lg-4 col-sm-6">
-                                <!-- Form -->
-                                <div class="mb-3">
-                                    <h5>Key Adress</h5>
-                                    <label for="iku_atasan">IKU Atasan</label>
-                                    <input type="text" class="form-control" name="iku_atasan" id="iku_atasan" value="<?php echo e($iku->iku_atasan); ?>">
-                                    <label for="target">Target</label>
-                                    <input type="text" class="form-control" name="target" id="target" value="<?php echo e($iku->target); ?>">
-                                </div>
-                                <!-- End of Form -->
-                                <div class="mb-3">
-                                    <label for="iku">Indikator Kerja Utama</label>
-                                    <textarea class="form-control"name="iku" id="iku" rows="4" required><?php echo e(old('iku', $iku->iku)); ?></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <h5>Target</h5>
-                                    <label for="base">Base</label>
-                                    <input type="text" class="form-control" name="base" id="base" value="<?php echo e($iku->base); ?>"required>
-                                    <label for="stretch">Stretch</label>
-                                    <input type="text" class="form-control" name="stretch" id="stretch" value="<?php echo e($iku->stretch); ?>">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="satuan">Satuan</label>
-                                    <input type="text" class="form-control" name="satuan" id="satuan" value="<?php echo e($iku->satuan); ?>"required>
-                                </div>
-                            </div>
-                            <div class="col-lg-2 col-sm-6">
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="mb-3">
-                                    <label for="polaritas">Polaritas</label>
-                                    <select name="polaritas" class="form-select" value="<?php echo e($iku->polaritas); ?>"required>
-                                        <option value="maximize">Maximize</option>
-                                        <option value="minimize">Minimize</option>
-                                     </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="bobot">Bobot</label>
-                                    <input type="number" class="form-control" name="bobot" id="bobot" value="<?php echo e($iku->bobot); ?>"required>
-                                </div>
-                                <!-- Form -->
-                                <div class="my-4">
-                                    <div class="my-4">
-                                        <label for="proker">Program Kerja</label>
-                                        <textarea class="form-control" placeholder="Tulis Program Kerja Anda...." id="proker" name="proker" rows="4" required><?php echo e(old('proker', $iku->proker)); ?></textarea>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="pj">Penanggung Jawab</label>
-                                    <input type="text" class="form-control" name="pj" id="pj" value="<?php echo e($iku->pj); ?>"required>
-                                </div>
-                        </div>
+
+            <input type="hidden" name="sasaran_id" value="<?php echo e($iku->sasaran_id); ?>">
+
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="iku_name" class="form-label">IKU Name</label>
+                        <input type="text" class="form-control" id="iku_name" name="iku_name" value="<?php echo e($iku->iku_name); ?>" required>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="target" class="form-label">Target</label>
+                        <input type="text" class="form-control" id="target" name="target" value="<?php echo e($iku->target); ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="satuan" class="form-label">Satuan</label>
+                        <input type="text" class="form-control" id="satuan" name="satuan" value="<?php echo e($iku->satuan); ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="polaritas" class="form-label">Polaritas</label>
+                        <select class="form-control" id="polaritas" name="polaritas">
+                            <option value="maximize" <?php echo e($iku->polaritas == 'maximize' ? 'selected' : ''); ?>>Maximize</option>
+                            <option value="minimize" <?php echo e($iku->polaritas == 'minimize' ? 'selected' : ''); ?>>Minimize</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bobot" class="form-label">Bobot</label>
+                        <input type="number" class="form-control" id="bobot" name="bobot" value="<?php echo e($iku->bobot); ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="proker" class="form-label">Program Kerja</label>
+                        <input type="text" class="form-control" id="proker" name="proker" value="<?php echo e($iku->proker); ?>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pj" class="form-label">Penanggung Jawab</label>
+                        <input type="text" class="form-control" id="pj" name="pj" value="<?php echo e($iku->pj); ?>" required>
+                    </div>
+
+                    <h4>IKU Points</h4>
+                    <?php $__currentLoopData = $ikuPoints; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="mb-3">
+                            <label class="form-label">Point Name</label>
+                            <input type="text" class="form-control" name="points[<?php echo e($point->id); ?>][point_name]" value="<?php echo e($point->point_name); ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Base</label>
+                            <input type="text" class="form-control" name="points[<?php echo e($point->id); ?>][base]" value="<?php echo e($point->base); ?>">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stretch</label>
+                            <input type="text" class="form-control" name="points[<?php echo e($point->id); ?>][stretch]" value="<?php echo e($point->stretch); ?>">
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
-                <button class="btn btn-tertiary" type="submit">Submit</button>
             </div>
         </form>
     </div>
-</div>
 </main>
 <?php $__env->stopSection(); ?>
 

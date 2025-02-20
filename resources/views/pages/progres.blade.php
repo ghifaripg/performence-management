@@ -14,7 +14,7 @@
     ?>
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Progres')
     <main class="content">
             @section('content')
 

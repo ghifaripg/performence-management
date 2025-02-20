@@ -14,7 +14,7 @@ body{
 </style>
 @extends('layouts.app')
 
-@section('title', 'Profile')
+@section('title', 'User Profile')
 
 @section('content')
 <main class="content">
