@@ -14,7 +14,7 @@ body{
 </style>
 
 
-<?php $__env->startSection('title', 'Profile'); ?>
+<?php $__env->startSection('title', 'User Profile'); ?>
 
 <?php $__env->startSection('content'); ?>
 <main class="content">

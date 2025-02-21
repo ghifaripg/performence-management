@@ -37,8 +37,9 @@ class IkuController extends Controller
             ->get();
 
         // Fetch IKUs and their associated main information
-    $ikus = DB::table('form_iku')
+        $ikus = DB::table('form_iku')
         ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+        ->where('form_iku.iku_id', $iku_ikuIdentifier)
         ->select(
             'form_iku.*',
             'isi_iku.iku',
@@ -46,7 +47,12 @@ class IkuController extends Controller
             'isi_iku.pj',
             'form_iku.iku_atasan',
             'form_iku.sasaran_id',
-            'form_iku.is_multi_point'
+            'form_iku.is_multi_point',
+            'form_iku.base',
+            'form_iku.stretch',
+            'form_iku.bobot',
+            'form_iku.satuan',
+            'form_iku.polaritas'
         )
         ->get();
 
@@ -111,7 +117,7 @@ class IkuController extends Controller
                 'sasaran_id' => $request->input('sasaran_id'),
                 'iku_atasan' => $request->input('iku_atasan'),
                 'isi_iku_id' => $ikuId,
-                'target' => $request->input('single_target'),
+                'target' => $request->input('target'),
                 'base' => $request->input('single_base'),
                 'stretch' => $request->input('single_stretch'),
                 'satuan' => $request->input('single_satuan'),
@@ -189,6 +195,7 @@ class IkuController extends Controller
     // Fetch IKUs and their associated main information
     $ikus = DB::table('form_iku')
     ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+    ->where('form_iku.iku_id', $iku_ikuIdentifier)
     ->select(
         'form_iku.*',
         'isi_iku.iku',
@@ -197,11 +204,11 @@ class IkuController extends Controller
         'form_iku.iku_atasan',
         'form_iku.sasaran_id',
         'form_iku.is_multi_point',
-        'form_iku.base',       // Add this
-        'form_iku.stretch',    // Add this
-        'form_iku.bobot',      // Add this
-        'form_iku.satuan',     // Add this
-        'form_iku.polaritas'   // Add this
+        'form_iku.base',
+        'form_iku.stretch',
+        'form_iku.bobot',
+        'form_iku.satuan',
+        'form_iku.polaritas'
     )
     ->get();
 

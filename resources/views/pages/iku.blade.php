@@ -55,10 +55,6 @@
         </div>
     </div>
     <div class="card card-body border-0 shadow table-wrapper table-responsive">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 12px; margin-top: 25px; margin-bottom: 25px;">
-            <h3>FORM IKU <?php echo $departmentName ?> TAHUN <?php echo $selectedYear ?></h3>
-            <img src="{{ asset('assets/img/Picture1.png')}}" class="img-kiec" alt="">
-        </div>
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -81,72 +77,89 @@
                     <th class="border-0 text-center">Stretch</th>
                 </tr>
             </thead>
-                    <tbody>
-                        @foreach($sasaranGrouped as $sasaran)
-                            @php $rowCount = count($sasaran['ikus']); @endphp
-                            @foreach ($sasaran['ikus'] as $index => $iku)
-                                @php
-                                    $ikuPointList = $iku->points ?? collect();
-                                    $maxRows = max(1, $ikuPointList->count());
-                                @endphp
+            <tbody>
+                @foreach($sasaranGrouped as $sasaran)
+                    @php $rowCount = count($sasaran['ikus']); @endphp
+                    @foreach ($sasaran['ikus'] as $index => $iku)
+                        @php
+                            $ikuPointList = $iku->points ?? collect();
+                            $maxRows = max(1, $ikuPointList->count());
+                            $ikuPointsArray = $ikuPointList->toArray();
+                        @endphp
 
-                                <tr>
-                                    @if ($index == 0)
-                                        <td class="fw-bold align-middle text-center" rowspan="{{ $rowCount * $maxRows }}">{{ $sasaran['number'] }}</td>
-                                        <td class="fw-normal align-middle text-center" rowspan="{{ $rowCount * $maxRows }}">{{ $sasaran['perspektif'] }}</td>
-                                    @endif
+                        <!-- First Row -->
+                        <tr>
+                            @if ($index == 0)
+                                <td class="fw-bold align-middle text-center" rowspan="{{ $rowCount * $maxRows }}">{{ $sasaran['number'] }}</td>
+                                <td class="fw-normal align-middle text-center" rowspan="{{ $rowCount * $maxRows }}">{{ $sasaran['perspektif'] }}</td>
+                            @endif
 
-                                    <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->iku_atasan }}</td>
-                                    <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->target }}</td>
+                            <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->iku_atasan }}</td>
+                            <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->target }}</td>
 
-                                    <!-- Main IKU (Merged for All Points) -->
-                                    <td class="fw-normal text-start" rowspan="{{ $maxRows }}">
-                                        <strong>{{ $iku->iku }}</strong>
-                                        @foreach ($ikuPointList as $point)
-                                            <br>{{ $point->point_name }}
-                                        @endforeach
-                                    </td>
-
-                                    @php $firstPoint = $ikuPointList->first(); @endphp
-                                    <td class="fw-normal text-center">{{ $firstPoint->base ?? '-' }}</td>
-                                    <td class="fw-normal text-center">{{ $firstPoint->stretch ?? '-' }}</td>
-                                    <td class="fw-normal text-center">{{ $firstPoint->satuan ?? '-' }}</td>
-                                    <td class="fw-normal text-center">{{ ucfirst($firstPoint->polaritas ?? '-') }}</td>
-                                    <td class="fw-normal bobot-cell">{{ $firstPoint->bobot ?? '-' }}</td>
-
-                                    <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{!! nl2br(e($iku->proker)) !!}</td>
-                                    <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->pj }}</td>
-                                    <td class="fw-normal text-center" rowspan="{{ $maxRows }}">
-                                        <form action="{{ route('edit-iku', $iku->id) }}" method="GET">
-                                            @csrf
-                                            <button type="submit" class="btn btn-pill btn-outline-tertiary">
-                                                <i class="fas fa-edit me-1"></i>Edit
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('delete-iku', $iku->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this IKU?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-pill btn-outline-danger">
-                                                <i class="fas fa-trash-alt me-1"></i>Delete
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-
-                                <!-- IKU Points (without showing main IKU again) -->
-                                @foreach ($ikuPointList->skip(1) as $point)
-                                    <tr>
-                                        <td class="fw-normal text-center">{{ $point->base ?? '-' }}</td>
-                                        <td class="fw-normal text-center">{{ $point->stretch ?? '-' }}</td>
-                                        <td class="fw-normal text-center">{{ $point->satuan ?? '-' }}</td>
-                                        <td class="fw-normal text-center">{{ ucfirst($point->polaritas ?? '-') }}</td>
-                                        <td class="fw-normal bobot-cell">{{ $point->bobot ?? '-' }}</td>
-                                    </tr>
+                            <!-- Main IKU (Merged for All Points) -->
+                            <td class="fw-normal text-start" rowspan="{{ $maxRows }}">
+                                <strong>{{ $iku->iku }}</strong>
+                                @foreach ($ikuPointList as $point)
+                                    <br>{{ $point->point_name }}
                                 @endforeach
-                            @endforeach
+                            </td>
+
+                            <!-- First IKU Point -->
+                            @php
+                                $firstPoint = $ikuPointsArray[0] ?? null;
+                            @endphp
+                            <td class="fw-normal text-center">
+                                {{ $firstPoint->base ?? $iku->base ?? '-' }}
+                            </td>
+                            <td class="fw-normal text-center">
+                                {{ $firstPoint->stretch ?? $iku->stretch ?? '-' }}
+                            </td>
+                            <td class="fw-normal text-center">
+                                {{ $firstPoint->satuan ?? $iku->satuan ?? '-' }}
+                            </td>
+                            <td class="fw-normal text-center">
+                                {{ ucfirst($firstPoint->polaritas ?? $iku->polaritas ?? '-') }}
+                            </td>
+                            <td class="fw-normal bobot-cell">
+                                {{ $firstPoint->bobot ?? $iku->bobot ?? '-' }}
+                            </td>
+
+
+                            <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{!! nl2br(e($iku->proker)) !!}</td>
+                            <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->pj }}</td>
+                            <td class="fw-normal text-center" rowspan="{{ $maxRows }}">
+                                <form action="{{ route('edit-iku', $iku->id) }}" method="GET">
+                                    @csrf
+                                    <button type="submit" class="btn btn-pill btn-outline-tertiary">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </button>
+                                </form>
+                                <form action="{{ route('delete-iku', $iku->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this IKU?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-pill btn-outline-danger">
+                                        <i class="fas fa-trash-alt me-1"></i>Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        <!-- Additional IKU Points -->
+                        @foreach (array_slice($ikuPointsArray, 1) as $point)
+                            <tr>
+                                <td class="fw-normal text-center">{{ $point->base ?? '-' }}</td>
+                                <td class="fw-normal text-center">{{ $point->stretch ?? '-' }}</td>
+                                <td class="fw-normal text-center">{{ $point->satuan ?? '-' }}</td>
+                                <td class="fw-normal text-center">{{ ucfirst($point->polaritas ?? '-') }}</td>
+                                <td class="fw-normal bobot-cell">{{ $point->bobot ?? '-' }}</td>
+                            </tr>
                         @endforeach
-                    </tbody>
+                    @endforeach
+                @endforeach
+            </tbody>
         </table>
+        <h6 id="total-bobot">Total Bobot = 0</h6>
     </div><br>
     <form action="{{ route('export.iku') }}" method="GET">
         <input type="hidden" name="year" value="{{ $selectedYear }}">
