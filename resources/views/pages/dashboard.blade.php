@@ -61,7 +61,7 @@
                             <div class="card-header">
                                 <div class="row align-items-center">
                                     <div class="col">
-                                        <h2 class="fs-5 fw-bold mb-0">Total IKU</h2>
+                                        <h2 class="fs-5 fw-bold mb-0">Total Skor IKU Perspektif (Perbandingan Per Tahun)</h2>
                                         <form method="GET" class="mb-3">
                                             <label for="month" class="form-label">Pilih Periode:</label>
                                             <select name="month" id="month" class="form-select w-auto d-inline">
@@ -93,7 +93,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <small class="text-tertiary mb-0">Total Skor IKU Perspektif (Perbandingan Per Tahun) = <span id="total-iku">0</span></small>
+                                <small class="text-tertiary mb-0">Total Skor = <span id="total-iku">0</span></small>
                             </div>
                         </div>
                     </div>

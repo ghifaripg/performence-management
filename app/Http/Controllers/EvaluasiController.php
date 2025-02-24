@@ -18,7 +18,36 @@ class EvaluasiController extends Controller
         ->where('department_id', $user->department_id)
         ->value('department_username');
 
+    // Get selected month and year from request (default: current month & year)
+    $monthYear = $request->query('month-year', date('Y-m')); // Example: "2025-02"
+
+    // Ensure it's properly formatted before processing
+    if (preg_match('/^\d{4}-\d{2}$/', $monthYear)) {
+        [$selectedYear, $selectedMonth] = explode('-', $monthYear);
+    } else {
+        $selectedYear = date('Y');
+        $selectedMonth = date('n'); // Get current month as integer
+    }
+
+    $months = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+    ];
+
+    $selectedMonth = (int) $selectedMonth; // Convert to integer for array indexing
+    $selectedMonthName = $months[$selectedMonth] ?? 'Unknown'; // Fallback in case of error
+
+    return view('pages.evaluasi', compact('departmentName', 'selectedYear', 'months', 'selectedMonth', 'selectedMonthName'));
+}
+
+public function index(Request $request)
+{
+    $nama = Auth::user()->nama;
+    $selectedMonth = $request->query('month', date('n'));
     $selectedYear = $request->query('year', date('Y'));
+    $kontrak_id = 'KM_' . $selectedYear;
+    $department_id = Auth::user()->department_id;
 
     $months = [
         1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -28,17 +57,6 @@ class EvaluasiController extends Controller
 
     $selectedMonth = $request->query('month', date('n'));
     $selectedMonthName = $months[$selectedMonth];
-
-    return view('pages.evaluasi', compact('departmentName', 'selectedYear', 'months', 'selectedMonth', 'selectedMonthName'));
-}
-
-public function index(Request $request)
-{
-    $nama = Auth::user()->nama;
-    $selectedYear = $request->query('year', date('Y'));
-    $selectedMonth = $request->query('month', date('m'));
-    $kontrak_id = 'KM_' . $selectedYear;
-    $department_id = Auth::user()->department_id;
 
     $department = DB::table('department')
         ->where('department_id', $department_id)
@@ -103,7 +121,7 @@ foreach ($ikus as $iku) {
     }
 }
 
-    return view('pages.form-evaluasi', compact('selectedYear', 'selectedMonth', 'sasaranGrouped', 'sasaranStrategis', 'ikus', 'ikuPoints'));
+    return view('pages.form-evaluasi', compact('selectedYear', 'selectedMonth', 'sasaranGrouped', 'sasaranStrategis', 'ikus', 'ikuPoints', 'months', 'selectedMonth', 'selectedMonthName'));
 }
 
 

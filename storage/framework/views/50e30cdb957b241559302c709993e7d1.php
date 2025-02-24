@@ -1,15 +1,9 @@
-<!-- Favicon -->
-<link rel="apple-touch-icon" sizes="120x120" href="<?php echo e(asset ('assets/img/favicon/apple-touch-icon.png')); ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('assets/img/favicon-32x32.png')); ?>">
-<link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('assets/img/favicon-16x16.png')); ?>">
-<link rel="shortcut icon" href="<?php echo e(asset('assets/img/favicon.ico')); ?>">
-
 <?php
     $userId = Auth::user()->id;
     $name = Auth::user()->nama;
     $selectedYear = date('Y');
-    if (isset($_GET['month'])) {
-        $selectedYear = htmlspecialchars($_GET['month']);
+    if (isset($_GET['year'])) {
+        $selectedYear = htmlspecialchars($_GET['year']);
     }
     ?>
 
@@ -28,13 +22,14 @@
                         <svg class="icon icon-xxs" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                     </a>
                 </li>
-                <li class="breadcrumb-item"><a href="/iku">IKU</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tahun <?php echo e($selectedYear); ?></li>
+                <li class="breadcrumb-item">Evaluasi</li>
+                <li class="breadcrumb-item"><a href="/evaluasi">Pilih Periode</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Bulan <?php echo e($selectedMonthName); ?> Tahun <?php echo e($selectedYear); ?></li>
             </ol>
         </nav>
         <div class="d-flex justify-content-between w-100 flex-wrap">
             <div class="mb-3 mb-lg-0">
-                <h4>Form Evaluasi IKU Bulan <?php echo e($selectedMonth); ?></h4>
+                <h4>Form Evaluasi IKU Bulan <?php echo e($selectedMonthName); ?></h4>
             </div>
         </div>
     </div>
@@ -82,7 +77,6 @@
 </div>
 
 
-<!-- Hidden Input for Selected IKU and Points -->
 <input type="hidden" id="selected-iku-id" name="selected_iku_id">
 <input type="hidden" id="selected-sub-points" name="selected_sub_points">
 <p>Selected IKU: <span id="selected-iku">None</span></p>
