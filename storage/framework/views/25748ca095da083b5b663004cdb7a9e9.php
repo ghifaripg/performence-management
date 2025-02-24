@@ -30,7 +30,7 @@
 
         <div class="d-flex justify-content-between w-100 flex-wrap">
             <div class="mb-3 mb-lg-0">
-                <h1>Form Evaluasi Iku <?php echo e($departmentName); ?> Bulan <?php echo e($selectedMonthName); ?></h1>
+                <h3>Form Evaluasi Iku <?php echo e($departmentName); ?> Bulan <?php echo e($selectedMonthName); ?></h3>
                 <form method="GET" class="mb-3">
                     <label for="month" class="form-label">Pilih Periode:</label>
                     <select name="month" id="month" class="form-select w-auto d-inline">

@@ -44,7 +44,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
             themeSettingsCollapse.hide();
             themeSettingsExpandEl.classList.add('show');
         }
-        
+
         themeSettingsEl.addEventListener('hidden.bs.collapse', function () {
             themeSettingsExpandEl.classList.add('show');
             window.localStorage.setItem('settings_expanded', false);
@@ -114,7 +114,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
     var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
       return new bootstrap.Popover(popoverTriggerEl)
     })
-    
+
 
     // Datepicker
     var datepickers = [].slice.call(d.querySelectorAll('[data-datepicker]'))
@@ -174,9 +174,9 @@ d.addEventListener("DOMContentLoaded", function(event) {
     if(d.querySelector('.ct-chart-sales-value')) {
         //Chart 5
           new Chartist.Line('.ct-chart-sales-value', {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
             series: [
-                [0, 10, 30, 40, 80, 60, 100]
+                [11.12, 13.53, 20.40, 30.53, 50.51, 57.05, 58, 60, 70, 80, 90, 98]
             ]
           }, {
             low: 0,
@@ -225,7 +225,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
                 offset: 0
             }
             });
-          
+
           chart.on('draw', function(data) {
             if(data.type === 'line' || data.type === 'area') {
               data.element.animate({
@@ -245,13 +245,13 @@ d.addEventListener("DOMContentLoaded", function(event) {
         var data = {
             series: [70, 20, 10]
           };
-          
+
           var sum = function(a, b) { return a + b };
-          
+
           new Chartist.Pie('.ct-chart-traffic-share', data, {
             labelInterpolationFnc: function(value) {
               return Math.round(value / data.series.reduce(sum) * 100) + '%';
-            },            
+            },
             low: 0,
             high: 8,
             donut: true,
@@ -262,7 +262,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
             plugins: [
               Chartist.plugins.tooltip()
             ],
-        });         
+        });
     }
 
     if (d.getElementById('loadOnClick')) {
@@ -270,10 +270,10 @@ d.addEventListener("DOMContentLoaded", function(event) {
             var button = this;
             var loadContent = d.getElementById('extraContent');
             var allLoaded = d.getElementById('allLoadedText');
-    
+
             button.classList.add('btn-loading');
             button.setAttribute('disabled', 'true');
-    
+
             setTimeout(function () {
                 loadContent.style.display = 'block';
                 button.style.display = 'none';
@@ -342,7 +342,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
     if(billingSwitchEl) {
         const countUpStandard = new countUp.CountUp('priceStandard', 99, { startVal: 199 });
         const countUpPremium = new countUp.CountUp('pricePremium', 199, { startVal: 299 });
-        
+
         billingSwitchEl.addEventListener('change', function() {
             if(billingSwitch.checked) {
                 countUpStandard.start();

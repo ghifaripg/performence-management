@@ -42,7 +42,7 @@
                 </nav>
                 <div class="d-flex justify-content-between w-100 flex-wrap">
                     <div class="mb-3 mb-lg-0">
-                    <h1>Tahun <?php echo $selectedYear; ?></h1>
+                    <h3>Tahun <?php echo $selectedYear; ?></h1>
                         <form method="GET" class="mb-3">
                             <label for="year" class="form-label">Pilih Tahun:</label>
                             <select name="year" id="year" class="form-select w-auto d-inline">

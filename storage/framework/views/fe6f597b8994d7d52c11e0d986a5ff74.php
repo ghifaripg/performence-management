@@ -219,7 +219,6 @@
                                 ?>
 
                                 <tr>
-                                    
                                     <?php if($index == 0): ?>
                                         <td class="fw-bold align-middle text-center" rowspan="<?php echo e($totalRows); ?>">
                                             <?php echo e($sasaran['number']); ?>
@@ -231,7 +230,6 @@
                                         </td>
                                     <?php endif; ?>
 
-                                    
                                     <?php if($ikuAtasanRowspan[$iku->iku_atasan] > 0): ?>
                                         <td class="fw-normal text-center" rowspan="<?php echo e($ikuAtasanRowspan[$iku->iku_atasan]); ?>">
                                             <?php echo e($iku->iku_atasan); ?>
@@ -242,7 +240,6 @@
                                         ?>
                                     <?php endif; ?>
 
-                                    
                                     <?php if($targetRowspan[$iku->target] > 0): ?>
                                         <td class="fw-normal text-center" rowspan="<?php echo e($targetRowspan[$iku->target]); ?>">
                                             <?php echo e($iku->target); ?>
@@ -253,7 +250,6 @@
                                         ?>
                                     <?php endif; ?>
 
-                                    
                                     <td class="fw-normal text-start" rowspan="<?php echo e($maxRows); ?>">
                                         <strong class="fw-normal text-center"><?php echo e($iku->iku); ?></strong>
                                         <?php if($ikuPointList->isNotEmpty()): ?>
@@ -265,7 +261,6 @@
                                         <?php endif; ?>
                                     </td>
 
-                                    
                                     <?php
                                         $firstPoint = $ikuPointList->first() ?? null;
                                     ?>
@@ -290,7 +285,6 @@
 
                                     </td>
 
-                                    
                                     <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo nl2br(e($iku->proker)); ?></td>
                                     <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo e($iku->pj); ?></td>
                                     <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>">
@@ -309,7 +303,6 @@
                                     </td>
                                 </tr>
 
-                                
                                 <?php if($ikuPointList->count() > 1): ?>
                                     <?php $__currentLoopData = $ikuPointList->slice(1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>

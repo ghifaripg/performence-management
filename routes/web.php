@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EvaluasiController;
+use App\Http\Controllers\DashboardController;
 
 
 //Login and Logout Router
@@ -23,9 +24,8 @@ Route::get('/register-department', [RegisterController::class, 'showRegis'])->na
 Route::post('/register-department', [RegisterController::class, 'registerDepartment'])->name('department.submit');
 
 //Dashboard Router
-Route::get('dashboard', function () {
-    return view('pages.dashboard');
-})->middleware('auth')->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'showDashboard'])->name('show-dashboard');
+
 
 //Kontrak Page Router
 Route::get('/kontrak', [KontrakController::class, 'showKontrak'])->name('show-kontrak');

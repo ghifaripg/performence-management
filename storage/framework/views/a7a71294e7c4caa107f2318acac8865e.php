@@ -39,7 +39,7 @@
         </nav>
         <div class="d-flex justify-content-between w-100 flex-wrap">
             <div class="mb-3 mb-lg-0">
-            <h1>IKU <?php echo $departmentName ?> Tahun <?php echo $selectedYear; ?></h1>
+            <h3>IKU <?php echo $departmentName ?> Tahun <?php echo $selectedYear; ?></h3>
                 <form method="GET" class="mb-3">
                     <label for="year" class="form-label">Pilih Tahun:</label>
                     <select name="year" id="year" class="form-select w-auto d-inline">
@@ -79,36 +79,74 @@
             </thead>
             <tbody>
                 <?php $__currentLoopData = $sasaranGrouped; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sasaran): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <?php $rowCount = count($sasaran['ikus']); ?>
+                    <?php
+                        $ikuCount = count($sasaran['ikus']);
+                        $totalRows = 0;
+                        $ikuAtasanRowspan = [];
+                        $targetRowspan = [];
+
+                        // Pre-calculate row spans for merging IKU Atasan & Target
+                        foreach ($sasaran['ikus'] as $iku) {
+                            $ikuPointList = collect($iku->points ?? []);
+                            $maxRows = max(1, $ikuPointList->count());
+                            $totalRows += $maxRows;
+
+                            $ikuAtasanRowspan[$iku->iku_atasan] = ($ikuAtasanRowspan[$iku->iku_atasan] ?? 0) + $maxRows;
+                            $targetRowspan[$iku->target] = ($targetRowspan[$iku->target] ?? 0) + $maxRows;
+                        }
+                    ?>
+
                     <?php $__currentLoopData = $sasaran['ikus']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $iku): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
-                            $ikuPointList = $iku->points ?? collect();
+                            $ikuPointList = collect($iku->points ?? []);
                             $maxRows = max(1, $ikuPointList->count());
-                            $ikuPointsArray = $ikuPointList->toArray();
                         ?>
 
-                        <!-- First Row -->
                         <tr>
                             <?php if($index == 0): ?>
-                                <td class="fw-bold align-middle text-center" rowspan="<?php echo e($rowCount * $maxRows); ?>"><?php echo e($sasaran['number']); ?></td>
-                                <td class="fw-normal align-middle text-center" rowspan="<?php echo e($rowCount * $maxRows); ?>"><?php echo e($sasaran['perspektif']); ?></td>
+                                <td class="fw-bold align-middle text-center" rowspan="<?php echo e($totalRows); ?>">
+                                    <?php echo e($sasaran['number']); ?>
+
+                                </td>
+                                <td class="fw-normal align-middle text-center" rowspan="<?php echo e($totalRows); ?>">
+                                    <?php echo e($sasaran['perspektif']); ?>
+
+                                </td>
                             <?php endif; ?>
 
-                            <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo e($iku->iku_atasan); ?></td>
-                            <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo e($iku->target); ?></td>
+                            <?php if($ikuAtasanRowspan[$iku->iku_atasan] > 0): ?>
+                                <td class="fw-normal text-center" rowspan="<?php echo e($ikuAtasanRowspan[$iku->iku_atasan]); ?>">
+                                    <?php echo e($iku->iku_atasan); ?>
 
-                            <!-- Main IKU (Merged for All Points) -->
+                                </td>
+                                <?php
+                                    $ikuAtasanRowspan[$iku->iku_atasan] = 0;
+                                ?>
+                            <?php endif; ?>
+
+                            <?php if($targetRowspan[$iku->target] > 0): ?>
+                                <td class="fw-normal text-center" rowspan="<?php echo e($targetRowspan[$iku->target]); ?>">
+                                    <?php echo e($iku->target); ?>
+
+                                </td>
+                                <?php
+                                    $targetRowspan[$iku->target] = 0;
+                                ?>
+                            <?php endif; ?>
+
                             <td class="fw-normal text-start" rowspan="<?php echo e($maxRows); ?>">
-                                <strong><?php echo e($iku->iku); ?></strong>
-                                <?php $__currentLoopData = $ikuPointList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <br><?php echo e($point->point_name); ?>
-
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <strong class="fw-normal text-center"><?php echo e($iku->iku); ?></strong>
+                                <?php if($ikuPointList->isNotEmpty()): ?>
+                                    <ul class="m-0 p-0">
+                                        <?php $__currentLoopData = $ikuPointList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <li style="font-size: 0.875rem;"><?php echo e($point->point_name); ?></li>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </ul>
+                                <?php endif; ?>
                             </td>
 
-                            <!-- First IKU Point -->
                             <?php
-                                $firstPoint = $ikuPointsArray[0] ?? null;
+                                $firstPoint = $ikuPointList->first() ?? null;
                             ?>
                             <td class="fw-normal text-center">
                                 <?php echo e($firstPoint->base ?? $iku->base ?? '-'); ?>
@@ -131,41 +169,39 @@
 
                             </td>
 
-
                             <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo nl2br(e($iku->proker)); ?></td>
                             <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo e($iku->pj); ?></td>
                             <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>">
-                                <form action="<?php echo e(route('edit-iku', $iku->id)); ?>" method="GET">
-                                    <?php echo csrf_field(); ?>
-                                    <button type="submit" class="btn btn-pill btn-outline-tertiary">
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a href="<?php echo e(route('edit-iku', $iku->id)); ?>" class="btn btn-pill btn-outline-tertiary">
                                         <i class="fas fa-edit me-1"></i>Edit
-                                    </button>
-                                </form>
-                                <form action="<?php echo e(route('delete-iku', $iku->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this IKU?');">
-                                    <?php echo csrf_field(); ?>
-                                    <?php echo method_field('DELETE'); ?>
-                                    <button type="submit" class="btn btn-pill btn-outline-danger">
-                                        <i class="fas fa-trash-alt me-1"></i>Delete
-                                    </button>
-                                </form>
+                                    </a>
+                                    <form action="<?php echo e(route('delete-iku', $iku->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this IKU?');">
+                                        <?php echo csrf_field(); ?>
+                                        <?php echo method_field('DELETE'); ?>
+                                        <button type="submit" class="btn btn-pill btn-outline-danger">
+                                            <i class="fas fa-trash-alt me-1"></i>Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
 
-                        <!-- Additional IKU Points -->
-                        <?php $__currentLoopData = array_slice($ikuPointsArray, 1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <tr>
-                                <td class="fw-normal text-center"><?php echo e($point->base ?? '-'); ?></td>
-                                <td class="fw-normal text-center"><?php echo e($point->stretch ?? '-'); ?></td>
-                                <td class="fw-normal text-center"><?php echo e($point->satuan ?? '-'); ?></td>
-                                <td class="fw-normal text-center"><?php echo e(ucfirst($point->polaritas ?? '-')); ?></td>
-                                <td class="fw-normal bobot-cell"><?php echo e($point->bobot ?? '-'); ?></td>
-                            </tr>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php if($ikuPointList->count() > 1): ?>
+                            <?php $__currentLoopData = $ikuPointList->slice(1); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <tr>
+                                    <td class="fw-normal text-center"><?php echo e($point->base ?? '-'); ?></td>
+                                    <td class="fw-normal text-center"><?php echo e($point->stretch ?? '-'); ?></td>
+                                    <td class="fw-normal text-center"><?php echo e($point->satuan ?? '-'); ?></td>
+                                    <td class="fw-normal text-center"><?php echo e(ucfirst($point->polaritas ?? '-')); ?></td>
+                                    <td class="fw-normal bobot-cell"><?php echo e($point->bobot ?? '-'); ?></td>
+                                </tr>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endif; ?>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
         </table>
-        <h6 id="total-bobot">Total Bobot = 0</h6>
     </div><br>
     <form action="<?php echo e(route('export.iku')); ?>" method="GET">
         <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">

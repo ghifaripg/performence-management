@@ -974,7 +974,7 @@
     display: block;
     position: absolute;
     top: 0;
-    left: 0;
+    right: 12;
 }
 
 :root {
@@ -25452,7 +25452,7 @@ label {
 }
 
 .ct-series-g .ct-label.ct-horizontal.ct-end {
-    margin-left: -9px;
+    margin-left: -12px;
     margin-top: 10px;
     color: #1F2937;
 }

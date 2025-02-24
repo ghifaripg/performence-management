@@ -186,18 +186,14 @@
         ikuSelector.addEventListener('change', function () {
             const selectedOption = this.options[this.selectedIndex];
 
-            // Update the hidden input and display the selected IKU
             selectedIkuInput.value = selectedOption.value;
             selectedIkuText.textContent = selectedOption.textContent.trim();
 
-            // Hide all sub-points by default
             subPointsGroups.forEach(group => group.style.display = 'none');
 
-            // Check if the selected IKU has multiple points
             if (selectedOption.getAttribute('data-is-multiple') === '1') {
                 ikuSubPointsContainer.style.display = 'block';
 
-                // Show only the relevant sub-points
                 const selectedIkuId = selectedOption.value;
                 const matchingGroup = document.querySelector(`.sub-points-group[data-iku-id="${selectedIkuId}"]`);
                 if (matchingGroup) {
@@ -214,7 +210,6 @@
         const bobot = parseFloat(document.querySelector('input[name="bobot"]').value) || 0;
         const polaritas = document.querySelector('input[name="polaritas"]').value.trim().toLowerCase(); // Normalize text input
 
-        // Calculate Percent Target based on Polaritas
         let percentTarget;
         if (polaritas === "maximize") {
             percentTarget = nilai3 !== 0 ? (nilai5 / nilai3 * 100).toFixed(0) + "%" : "0%";
@@ -222,16 +217,12 @@
             percentTarget = nilai5 !== 0 ? (nilai3 / nilai5 * 100).toFixed(0) + "%" : "0%";
         }
 
-        // Calculate Percent Year
         const percentYear = nilai1 !== 0 ? (nilai5 / nilai1 * 100).toFixed(0) + "%" : "N/A";
 
-        // Convert percentYear to a number for calculations
         const N = nilai1 !== 0 ? (nilai5 / nilai1 * 100) : 0;
 
-        // Calculate O = N * E
         const O = (N * bobot).toFixed(2);
 
-        // Calculate Q = IF(N > 120%, 120%, IF(N < 0%, 0%, N))
         let Q = N;
         if (N > 120) {
             Q = 120;
@@ -239,24 +230,19 @@
             Q = 0;
         }
 
-        // Calculate Adj. = Q * E
         const adjRaw = (Q * bobot).toFixed(2);
 
-        // Calculate Ttl = IF(O < 0, 0, O)
         const ttlRaw = O < 0 ? "0.00" : O;
 
-        // Convert Adj. and Ttl to correct format (divide by 100)
         const adj = (parseFloat(adjRaw) / 100).toFixed(2);
         const ttl = (parseFloat(ttlRaw) / 100).toFixed(2);
 
-        // Set values to input fields
         document.querySelector('input[name="percent_target"]').value = percentTarget;
         document.querySelector('input[name="percent_year"]').value = percentYear;
         document.querySelector('input[name="ttl"]').value = ttl;
         document.querySelector('input[name="adj"]').value = adj;
     }
 
-    // Attach event listeners to relevant input fields
     document.querySelectorAll('input[name="realisasi_sdbulan_ini"], input[name="target_sdbulan_ini"], input[name="base"], input[name="bobot"], input[name="polaritas"]').forEach(input => {
         input.addEventListener('input', calculateResults);
     });
