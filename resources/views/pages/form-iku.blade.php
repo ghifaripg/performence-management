@@ -197,15 +197,19 @@
                             @php
                                 $ikuCount = count($sasaran['ikus']);
                                 $totalRows = 0;
-                            @endphp
+                                $ikuAtasanRowspan = [];
+                                $targetRowspan = [];
 
-                            @foreach ($sasaran['ikus'] as $index => $iku)
-                                @php
+                                // Pre-calculate row spans for merging IKU Atasan & Target
+                                foreach ($sasaran['ikus'] as $iku) {
                                     $ikuPointList = collect($iku->points ?? []);
                                     $maxRows = max(1, $ikuPointList->count());
                                     $totalRows += $maxRows;
-                                @endphp
-                            @endforeach
+
+                                    $ikuAtasanRowspan[$iku->iku_atasan] = ($ikuAtasanRowspan[$iku->iku_atasan] ?? 0) + $maxRows;
+                                    $targetRowspan[$iku->target] = ($targetRowspan[$iku->target] ?? 0) + $maxRows;
+                                }
+                            @endphp
 
                             @foreach ($sasaran['ikus'] as $index => $iku)
                                 @php
@@ -214,6 +218,7 @@
                                 @endphp
 
                                 <tr>
+                                    {{-- Merge Perspektif & Number columns --}}
                                     @if ($index == 0)
                                         <td class="fw-bold align-middle text-center" rowspan="{{ $totalRows }}">
                                             {{ $sasaran['number'] }}
@@ -223,24 +228,42 @@
                                         </td>
                                     @endif
 
-                                    <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->iku_atasan }}</td>
-                                    <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->target }}</td>
+                                    {{-- Merge IKU Atasan column --}}
+                                    @if ($ikuAtasanRowspan[$iku->iku_atasan] > 0)
+                                        <td class="fw-normal text-center" rowspan="{{ $ikuAtasanRowspan[$iku->iku_atasan] }}">
+                                            {{ $iku->iku_atasan }}
+                                        </td>
+                                        @php
+                                            $ikuAtasanRowspan[$iku->iku_atasan] = 0;
+                                        @endphp
+                                    @endif
 
+                                    {{-- Merge Target column --}}
+                                    @if ($targetRowspan[$iku->target] > 0)
+                                        <td class="fw-normal text-center" rowspan="{{ $targetRowspan[$iku->target] }}">
+                                            {{ $iku->target }}
+                                        </td>
+                                        @php
+                                            $targetRowspan[$iku->target] = 0;
+                                        @endphp
+                                    @endif
+
+                                    {{-- Indikator Kerja Utama --}}
                                     <td class="fw-normal text-start" rowspan="{{ $maxRows }}">
-                                        <strong>{{ $iku->iku }}</strong>
+                                        <strong class="fw-normal text-center">{{ $iku->iku }}</strong>
                                         @if($ikuPointList->isNotEmpty())
                                             <ul class="m-0 p-0">
                                                 @foreach ($ikuPointList as $point)
-                                                    <li>{{ $point->point_name }}</li>
+                                                    <li style="font-size: 0.875rem;">{{ $point->point_name }}</li>
                                                 @endforeach
                                             </ul>
                                         @endif
                                     </td>
 
+                                    {{-- First row of points --}}
                                     @php
                                         $firstPoint = $ikuPointList->first() ?? null;
                                     @endphp
-
                                     <td class="fw-normal text-center">
                                         {{ $firstPoint->base ?? $iku->base ?? '-' }}
                                     </td>
@@ -257,6 +280,7 @@
                                         {{ $firstPoint->bobot ?? $iku->bobot ?? '-' }}
                                     </td>
 
+                                    {{-- Merge Program Kerja & Penanggung Jawab --}}
                                     <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{!! nl2br(e($iku->proker)) !!}</td>
                                     <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->pj }}</td>
                                     <td class="fw-normal text-center" rowspan="{{ $maxRows }}">
@@ -275,6 +299,7 @@
                                     </td>
                                 </tr>
 
+                                {{-- Additional rows for multiple points --}}
                                 @if ($ikuPointList->count() > 1)
                                     @foreach ($ikuPointList->slice(1) as $point)
                                         <tr>
@@ -290,6 +315,7 @@
                         @endforeach
                     </tbody>
                 </table>
+
 
                 <h6 id="total-bobot">Total Bobot = <span id="bobot-value">0</span></h6>
             </div>
