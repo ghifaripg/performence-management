@@ -11,7 +11,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EvaluasiController;
 use App\Http\Controllers\DashboardController;
 
-
 //Login and Logout Router
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/', [LoginController::class, 'login']);
@@ -82,3 +81,4 @@ Route::get('signature', function () {
 //Evaluasi Page Router
 Route::get('/evaluasi', [EvaluasiController::class, 'showEvaluasi'])->name('show-evaluasi');
 Route::get('/form-evaluasi', [EvaluasiController::class, 'index'])->name('form-evaluasi');
+Route::post('/store-eval', [EvaluasiController::class, 'store'])->name('store-eval');

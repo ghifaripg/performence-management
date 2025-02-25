@@ -139,15 +139,18 @@ class IkuController extends Controller
                         'bobot' => $point['bobot'],
                     ];
                 }
+
                 DB::table('iku_point')->insert($ikuPoints);
+
+                DB::table('form_iku')->where('id', $formIkuId)->update([
+                    'is_multi_point' => 1,
+                ]);
             }
 
-            // Check if a progres entry already exists for this form_iku
             $existingProgres = DB::table('progres')
                 ->where('iku_id', $ikuIdentifier)
                 ->exists();
 
-            // If no progres exists for this form_iku, create one
             if (!$existingProgres) {
                 DB::table('progres')->insert([
                     'user_id' => $userId,

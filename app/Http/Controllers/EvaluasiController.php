@@ -124,5 +124,42 @@ foreach ($ikus as $iku) {
     return view('pages.form-evaluasi', compact('selectedYear', 'selectedMonth', 'sasaranGrouped', 'sasaranStrategis', 'ikus', 'ikuPoints', 'months', 'selectedMonth', 'selectedMonthName'));
 }
 
+public function store(Request $request)
+    {
+        $userId = Auth::id();
+        $ikuId = $request->input('selected_iku_id');
+        $pointId = $request->input('selected_sub_points'); // Sub-point ID (if selected)
+        $year = $request->input('year');
+        $month = $request->input('month');
+
+        $polaritas = $request->input('polaritas');
+        $bobot = $request->input('bobot');
+        $satuan = $request->input('satuan');
+        $base = $request->input('base');
+        $targetBulanIni = $request->input('target_bulan_ini');
+        $targetSdBulanIni = $request->input('target_sdbulan_ini');
+        $realisasiBulanIni = $request->input('realisasi_bulan_ini');
+        $realisasiSdBulanIni = $request->input('realisasi_sdbulan_ini');
+        $percentTarget = $request->input('percent_target');
+        $percentYear = $request->input('percent_year');
+        $ttl = $request->input('ttl');
+        $adj = $request->input('adj');
+        $penyebabTidakTercapai = $request->input('penyebab_tidak_tercapai');
+        $programKerja = $request->input('program_kerja');
+
+        DB::insert("
+            INSERT INTO iku_evaluations (
+                user_id, iku_id, point_id, year, month, polaritas, bobot, satuan, base,
+                target_bulan_ini, target_sdbulan_ini, realisasi_bulan_ini, realisasi_sdbulan_ini,
+                percent_target, percent_year, ttl, adj, penyebab_tidak_tercapai, program_kerja, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        ", [
+            $userId, $ikuId, $pointId, $year, $month, $polaritas, $bobot, $satuan, $base,
+            $targetBulanIni, $targetSdBulanIni, $realisasiBulanIni, $realisasiSdBulanIni,
+            $percentTarget, $percentYear, $ttl, $adj, $penyebabTidakTercapai, $programKerja
+        ]);
+
+        return redirect()->back()->with('success', 'Evaluation saved successfully.');
+    }
 
 }

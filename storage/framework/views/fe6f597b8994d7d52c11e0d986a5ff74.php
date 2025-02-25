@@ -316,8 +316,6 @@
 
                 <h6 id="total-bobot">Total Bobot = <span id="bobot-value">0</span></h6>
             </div>
-
-
 </main>
 <?php $__env->stopSection(); ?>
 

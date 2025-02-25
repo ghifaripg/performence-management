@@ -40,47 +40,62 @@
                 <div class="card-body">
                     <h5>Pilih Indikator Kinerja Utama</h5>
                     <div id="sasaran-checkbox-list">
-<!-- IKU Selector -->
-<div class="mb-3">
-    <label for="iku-selector"><strong>Pilih Indikator Kinerja Utama</strong></label>
-    <select id="iku-selector" class="form-select">
-        <option value="">-- Pilih IKU --</option>
-        <?php $__currentLoopData = $sasaranGrouped; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $perspektif): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php if(!empty($perspektif['ikus'])): ?>
-                <optgroup label="<?php echo e($perspektif['number']); ?>. <?php echo e($perspektif['perspektif']); ?>">
-                    <?php $__currentLoopData = $perspektif['ikus']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $iku): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($iku->iku_id); ?>" data-is-multiple="<?php echo e(isset($iku->is_multi_point) ? $iku->is_multi_point : 0); ?>">
-                            <?php echo e($iku->iku); ?> (<?php echo e($iku->iku_id); ?>)
-                        </option>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                </optgroup>
-            <?php endif; ?>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </select>
-</div>
+                        <!-- IKU Selector -->
+                        <div class="mb-3">
+                        <label for="iku-selector"><strong>Pilih Indikator Kinerja Utama</strong></label>
+                        <select id="iku-selector" class="form-select">
+                            <option value="">-- Pilih IKU --</option>
+                            <?php $__currentLoopData = $sasaranGrouped; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $perspektif): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(!empty($perspektif['ikus'])): ?>
+                                    <optgroup label="<?php echo e($perspektif['number']); ?>. <?php echo e($perspektif['perspektif']); ?>">
+                                        <?php $__currentLoopData = $perspektif['ikus']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $iku): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option
+                                            value="<?php echo e($iku->id); ?>"
+                                            data-is-multiple="<?php echo e($iku->is_multi_point); ?>"
+                                            data-polaritas="<?php echo e($iku->polaritas); ?>"
+                                            data-bobot="<?php echo e($iku->bobot); ?>"
+                                            data-satuan="<?php echo e($iku->satuan); ?>"
+                                            data-base="<?php echo e($iku->base); ?>"
+                                        >
+                                            <?php echo e($iku->iku); ?>
 
-<!-- Container for IKU Sub-Points -->
-<div id="iku-sub-points" style="display: none; padding-left: 20px;">
-    <h5>Sub-Points:</h5>
-    <ul id="sub-points-list">
-        <?php $__currentLoopData = $ikuPoints; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ikuId => $points): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <ul class="sub-points-group" data-iku-id="<?php echo e($ikuId); ?>" style="display: none;">
-                <?php $__currentLoopData = $points; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <li>
-                        <input type="radio" name="selected_iku_point" value="<?php echo e($point->id); ?>" id="point_<?php echo e($point->id); ?>">
-                        <label for="point_<?php echo e($point->id); ?>"><?php echo e($point->point_name); ?> - <?php echo e($point->base); ?> (<?php echo e($point->satuan); ?>)</label>
-                    </li>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            </ul>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </ul>
-</div>
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
+                                    </optgroup>
+                                <?php endif; ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                        </div>
 
-<input type="hidden" id="selected-iku-id" name="selected_iku_id">
-<input type="hidden" id="selected-sub-points" name="selected_sub_points">
-<p>Selected IKU: <span id="selected-iku">None</span></p>
+                        <!-- Container for IKU Sub-Points -->
+                        <div id="iku-sub-points" style="display: none;">
+                            <h6>Sub-Points:</h6>
+                            <ul id="sub-points-list">
+                                <?php $__currentLoopData = $ikuPoints; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $formIkuId => $points): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <ul class="sub-points-group" data-iku-id="<?php echo e($formIkuId); ?>" style="display: none;">
+                                        <?php $__currentLoopData = $points; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $point): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <li>
+                                            <input type="radio"
+                                                name="selected_iku_point"
+                                                value="<?php echo e($point->id); ?>"
+                                                id="point_<?php echo e($point->id); ?>"
+                                                data-polaritas="<?php echo e($point->polaritas); ?>"
+                                                data-bobot="<?php echo e($point->bobot); ?>"
+                                                data-satuan="<?php echo e($point->satuan); ?>"
+                                                data-base="<?php echo e($point->base); ?>"
+                                            >
+                                            <label for="point_<?php echo e($point->id); ?>">
+                                                <?php echo e($point->point_name); ?> - <?php echo e($point->base); ?> (<?php echo e($point->satuan); ?>)
+                                            </label>
+                                        </li>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
+                                    </ul>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </ul>
+                        </div>
+                        <p>Selected IKU: <span id="selected-iku-text">None</span></p>
                     </div>
                 </div>
             </div>
@@ -89,15 +104,16 @@
 
     <!-- Form KPI -->
     <div class="row">
-        <form method="POST" action="<?php echo e(route('store-iku')); ?>">
+        <form method="POST" action="<?php echo e(route('store-eval')); ?>">
             <?php echo csrf_field(); ?>
             <input type="hidden" id="selected-iku-id" name="selected_iku_id">
+            <input type="hidden" id="selected-sub-points" name="selected_sub_points">
             <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">
             <input type="hidden" name="month" value="<?php echo e($selectedMonth); ?>">
             <div class="col-12 mb-4">
                 <div class="card border-0 shadow components-section">
                     <div class="card-body">
-                        <h5>IKU: <span id="selected-iku"></span></h5>
+                        <h5>IKU: <span id="selected-iku-heading">None</span></h5>
                         <div class="row mb-4">
                             <div class="col-lg-4 col-sm-6">
                                 <div class="mb-3">
@@ -148,7 +164,6 @@
                                     <label for="adj">Adj.</label>
                                     <input type="text" class="form-control" name="adj" id="adj" readonly>
                                 </div>
-                                <!-- Form -->
                                 <div class="my-4">
                                     <label for="proker">Penyebab Tidak Tercapai</label>
                                     <textarea class="form-control" id="proker" name="proker" rows="4"></textarea>
@@ -160,88 +175,132 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Submit Button -->
                 <button class="btn btn-tertiary" type="submit">Submit</button>
-
                 </div>
             </div>
         </form>
     </div>
-
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ikuSelector = document.getElementById('iku-selector');
-        const selectedIkuInput = document.getElementById('selected-iku-id');
-        const selectedIkuText = document.getElementById('selected-iku');
-        const ikuSubPointsContainer = document.getElementById('iku-sub-points');
-        const subPointsGroups = document.querySelectorAll('.sub-points-group');
+    document.addEventListener("DOMContentLoaded", function () {
+    const ikuSelector = document.getElementById("iku-selector");
+    const ikuSubPointsContainer = document.getElementById("iku-sub-points");
+    const selectedIkuDisplay = document.getElementById("selected-iku-text");
+    const selectedIkuHeading = document.getElementById("selected-iku-heading");
+    const selectedIkuInput = document.getElementById("selected-iku-id");
+    const subPointsList = document.getElementById("sub-points-list");
+    const selectedSubPointsInput = document.getElementById("selected-sub-points");
 
-        ikuSelector.addEventListener('change', function () {
-            const selectedOption = this.options[this.selectedIndex];
+    const polaritasInput = document.querySelector("input[name='polaritas']");
+    const bobotInput = document.querySelector("input[name='bobot']");
+    const satuanInput = document.querySelector("input[name='satuan']");
+    const baseInput = document.querySelector("input[name='base']");
 
-            selectedIkuInput.value = selectedOption.value;
-            selectedIkuText.textContent = selectedOption.textContent.trim();
+    ikuSelector.addEventListener("change", function () {
+        let selectedOption = ikuSelector.options[ikuSelector.selectedIndex];
 
-            subPointsGroups.forEach(group => group.style.display = 'none');
+        if (!selectedOption || !selectedOption.value) return;
 
-            if (selectedOption.getAttribute('data-is-multiple') === '1') {
-                ikuSubPointsContainer.style.display = 'block';
+        let isMultiPoint = selectedOption.getAttribute("data-is-multiple") === "1";
+        let selectedIkuId = selectedOption.value.trim();
 
-                const selectedIkuId = selectedOption.value;
-                const matchingGroup = document.querySelector(`.sub-points-group[data-iku-id="${selectedIkuId}"]`);
-                if (matchingGroup) {
-                    matchingGroup.style.display = 'block';
-                }
-            } else {
-                ikuSubPointsContainer.style.display = 'none';
-            }
+        selectedIkuDisplay.textContent = selectedOption.text;
+        selectedIkuHeading.textContent = selectedOption.text;
+        selectedIkuInput.value = selectedIkuId;
+
+        polaritasInput.value = selectedOption.getAttribute("data-polaritas");
+        bobotInput.value = selectedOption.getAttribute("data-bobot");
+        satuanInput.value = selectedOption.getAttribute("data-satuan");
+        baseInput.value = selectedOption.getAttribute("data-base");
+
+        document.querySelectorAll(".sub-points-group").forEach(group => {
+            group.style.display = "none";
         });
-        function calculateResults() {
-        const nilai5 = parseFloat(document.querySelector('input[name="realisasi_sdbulan_ini"]').value) || 0;
-        const nilai3 = parseFloat(document.querySelector('input[name="target_sdbulan_ini"]').value) || 0;
-        const nilai1 = parseFloat(document.querySelector('input[name="base"]').value) || 0;
-        const bobot = parseFloat(document.querySelector('input[name="bobot"]').value) || 0;
-        const polaritas = document.querySelector('input[name="polaritas"]').value.trim().toLowerCase(); // Normalize text input
 
-        let percentTarget;
-        if (polaritas === "maximize") {
-            percentTarget = nilai3 !== 0 ? (nilai5 / nilai3 * 100).toFixed(0) + "%" : "0%";
+        if (isMultiPoint) {
+            ikuSubPointsContainer.style.display = "block";
+            let subPointGroup = document.querySelector(`.sub-points-group[data-iku-id='${selectedIkuId}']`);
+            if (subPointGroup) {
+                subPointGroup.style.display = "block";
+            }
         } else {
-            percentTarget = nilai5 !== 0 ? (nilai3 / nilai5 * 100).toFixed(0) + "%" : "0%";
+            ikuSubPointsContainer.style.display = "none";
+            selectedSubPointsInput.value = "";
         }
+    });
 
-        const percentYear = nilai1 !== 0 ? (nilai5 / nilai1 * 100).toFixed(0) + "%" : "N/A";
+    subPointsList.addEventListener("change", function (event) {
+        if (event.target.name === "selected_iku_point") {
+            let selectedSubPoint = event.target;
+            let pointName = selectedSubPoint.nextElementSibling.textContent.trim();
 
-        const N = nilai1 !== 0 ? (nilai5 / nilai1 * 100) : 0;
+            selectedIkuDisplay.textContent = pointName;
+            selectedIkuHeading.textContent = pointName;
+            selectedSubPointsInput.value = selectedSubPoint.value;
 
-        const O = (N * bobot).toFixed(2);
-
-        let Q = N;
-        if (N > 120) {
-            Q = 120;
-        } else if (N < 0) {
-            Q = 0;
+            polaritasInput.value = selectedSubPoint.getAttribute("data-polaritas");
+            bobotInput.value = selectedSubPoint.getAttribute("data-bobot");
+            satuanInput.value = selectedSubPoint.getAttribute("data-satuan");
+            baseInput.value = selectedSubPoint.getAttribute("data-base");
         }
+    });
 
-        const adjRaw = (Q * bobot).toFixed(2);
+    function calculateResults() {
+    const nilai5 = parseFloat(document.querySelector('input[name="realisasi_sdbulan_ini"]').value) || 0;
+    const nilai3 = parseFloat(document.querySelector('input[name="target_sdbulan_ini"]').value) || 0;
+    const nilai1 = parseFloat(document.querySelector('input[name="base"]').value) || 0;
+    const bobot = parseFloat(document.querySelector('input[name="bobot"]').value) || 0;
+    const polaritas = document.querySelector('input[name="polaritas"]').value.trim().toLowerCase();
 
-        const ttlRaw = O < 0 ? "0.00" : O;
-
-        const adj = (parseFloat(adjRaw) / 100).toFixed(2);
-        const ttl = (parseFloat(ttlRaw) / 100).toFixed(2);
-
-        document.querySelector('input[name="percent_target"]').value = percentTarget;
-        document.querySelector('input[name="percent_year"]').value = percentYear;
-        document.querySelector('input[name="ttl"]').value = ttl;
-        document.querySelector('input[name="adj"]').value = adj;
+    // Calculate percentTarget based on polaritas
+    let percentTarget;
+    if (polaritas === "maximize") {
+        percentTarget = nilai3 !== 0 ? (nilai5 / nilai3 * 100).toFixed(0) + "%" : "0%";
+    } else {
+        percentTarget = nilai5 !== 0 ? (nilai3 / nilai5 * 100).toFixed(0) + "%" : "0%";
     }
 
-    document.querySelectorAll('input[name="realisasi_sdbulan_ini"], input[name="target_sdbulan_ini"], input[name="base"], input[name="bobot"], input[name="polaritas"]').forEach(input => {
-        input.addEventListener('input', calculateResults);
-    });
-    });
-    </script>
+    // Calculate percentYear based on polaritas
+    let percentYear;
+    if (polaritas === "maximize") {
+        percentYear = nilai1 !== 0 ? (nilai5 / nilai1 * 100).toFixed(0) + "%" : "0%";
+    } else {
+        percentYear = nilai5 !== 0 ? (nilai1 / nilai5 * 100).toFixed(0) + "%" : "0%";
+    }
+
+    // Compute additional calculations
+    const N = nilai1 !== 0 ? (nilai5 / nilai1 * 100) : 0;
+    const O = (N * bobot).toFixed(2);
+
+    let Q = N;
+    if (N > 120) {
+        Q = 120;
+    } else if (N < 0) {
+        Q = 0;
+    }
+
+    const adjRaw = (Q * bobot).toFixed(2);
+    const ttlRaw = O < 0 ? "0.00" : O;
+
+    const adj = (parseFloat(adjRaw) / 100).toFixed(2);
+    const ttl = (parseFloat(ttlRaw) / 100).toFixed(2);
+
+    // Update input fields with calculated values
+    document.querySelector('input[name="percent_target"]').value = percentTarget;
+    document.querySelector('input[name="percent_year"]').value = percentYear;
+    document.querySelector('input[name="ttl"]').value = ttl;
+    document.querySelector('input[name="adj"]').value = adj;
+}
+
+// Attach event listener to inputs for real-time calculation
+document.querySelectorAll('input[name="realisasi_sdbulan_ini"], input[name="target_sdbulan_ini"], input[name="base"], input[name="bobot"], input[name="polaritas"]').forEach(input => {
+    input.addEventListener('input', calculateResults);
+});
+
+});
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ghifa\Documents\admin-dashboard\resources\views/pages/form-evaluasi.blade.php ENDPATH**/ ?>

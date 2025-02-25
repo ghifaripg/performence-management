@@ -31,7 +31,6 @@
                         value="{{ date('Y-m', strtotime("$selectedYear-$selectedMonth-01")) }}">
                     <button type="submit" class="btn btn-primary">Pilih</button>
                 </form>
-
             </div>
         </div>
     </div>
