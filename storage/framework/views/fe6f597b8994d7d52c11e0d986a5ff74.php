@@ -38,7 +38,7 @@
                 <div class="col-12 mb-4">
                     <div class="card border-0 shadow components-section">
                         <div class="card-body">
-                            <h5>Pilih Sasaran Strategis</h5>
+                            <h5>Pilih Perspektif</h5>
                             <div id="sasaran-checkbox-list">
                                 <?php $__currentLoopData = $sasaranStrategis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sasaran): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div class="form-check d-flex align-items-center mb-2">
@@ -68,7 +68,7 @@
                     <div class="col-12 mb-4">
                         <div class="card border-0 shadow components-section">
                             <div class="card-body">
-                                <h5>Sasaran Strategis: <span id="selected-sasaran">None</span></h5>
+                                <h5>Perspektif: <span id="selected-sasaran">None</span></h5>
 
                                 <!-- IKU Type Selection -->
                                 <div class="mb-3">

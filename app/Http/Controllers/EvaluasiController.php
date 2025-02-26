@@ -11,35 +11,74 @@ use Illuminate\Support\Facades\Log;
 class EvaluasiController extends Controller
 {
     public function showEvaluasi(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $departmentName = DB::table('department')
-        ->where('department_id', $user->department_id)
-        ->value('department_username');
+        $departmentName = DB::table('department')
+            ->where('department_id', $user->department_id)
+            ->value('department_username');
 
-    // Get selected month and year from request (default: current month & year)
-    $monthYear = $request->query('month-year', date('Y-m')); // Example: "2025-02"
+        // Get selected month and year from request (default: current month & year)
+        $monthYear = $request->query('month-year', date('Y-m')); // Example: "2025-02"
 
-    // Ensure it's properly formatted before processing
-    if (preg_match('/^\d{4}-\d{2}$/', $monthYear)) {
-        [$selectedYear, $selectedMonth] = explode('-', $monthYear);
-    } else {
-        $selectedYear = date('Y');
-        $selectedMonth = date('n'); // Get current month as integer
+        // Ensure it's properly formatted before processing
+        if (preg_match('/^\d{4}-\d{2}$/', $monthYear)) {
+            [$selectedYear, $selectedMonth] = explode('-', $monthYear);
+        } else {
+            $selectedYear = date('Y');
+            $selectedMonth = date('n'); // Get current month as integer
+        }
+
+        $months = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        $selectedMonth = (int) $selectedMonth; // Convert to integer for array indexing
+        $selectedMonthName = $months[$selectedMonth] ?? 'Unknown'; // Fallback in case of error
+
+        // Fetch IKU Evaluations for the selected month and year
+        $evaluations = DB::select("
+            SELECT
+                ie.id,
+                ie.iku_id,
+                ie.point_id,
+                ie.polaritas,
+                ie.bobot,
+                ie.satuan,
+                ie.base,
+                ie.target_bulan_ini,
+                ie.target_sdbulan_ini,
+                ie.realisasi_bulan_ini,
+                ie.realisasi_sdbulan_ini,
+                ie.percent_target,
+                ie.percent_year,
+                ie.ttl,
+                ie.adj,
+                ie.penyebab_tidak_tercapai,
+                ie.program_kerja,
+                isi.iku AS iku_name,
+                ip.point_name AS sub_point_name
+            FROM iku_evaluations ie
+            LEFT JOIN form_iku fi ON ie.iku_id = fi.id
+            LEFT JOIN isi_iku isi ON fi.isi_iku_id = isi.id
+            LEFT JOIN iku_point ip ON ie.point_id = ip.id
+            WHERE ie.year = ? AND ie.month = ?
+            ORDER BY fi.id, ie.id ASC
+        ", [$selectedYear, $selectedMonth]);
+
+        return view('pages.evaluasi', compact(
+            'departmentName',
+            'selectedYear',
+            'months',
+            'selectedMonth',
+            'selectedMonthName',
+            'evaluations'
+        ));
     }
 
-    $months = [
-        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-    ];
 
-    $selectedMonth = (int) $selectedMonth; // Convert to integer for array indexing
-    $selectedMonthName = $months[$selectedMonth] ?? 'Unknown'; // Fallback in case of error
-
-    return view('pages.evaluasi', compact('departmentName', 'selectedYear', 'months', 'selectedMonth', 'selectedMonthName'));
-}
 
 public function index(Request $request)
 {
@@ -128,7 +167,7 @@ public function store(Request $request)
     {
         $userId = Auth::id();
         $ikuId = $request->input('selected_iku_id');
-        $pointId = $request->input('selected_sub_points'); // Sub-point ID (if selected)
+        $pointId = $request->input('selected_sub_points');
         $year = $request->input('year');
         $month = $request->input('month');
 

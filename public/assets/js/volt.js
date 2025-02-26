@@ -171,35 +171,7 @@ d.addEventListener("DOMContentLoaded", function(event) {
 
     //Chartist
 
-    if(d.querySelector('.ct-chart-sales-value')) {
-        //Chart 5
-          new Chartist.Line('.ct-chart-sales-value', {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
-            series: [
-                [11.12, 13.53, 20.40, 30.53, 50.51, 57.05, 58, 60, 70, 80, 90, 98]
-            ]
-          }, {
-            low: 0,
-            showArea: true,
-            fullWidth: true,
-            plugins: [
-              Chartist.plugins.tooltip()
-            ],
-            axisX: {
-                // On the x-axis start means top and end means bottom
-                position: 'end',
-                showGrid: true
-            },
-            axisY: {
-                // On the y-axis start means left and end means right
-                showGrid: false,
-                showLabel: false,
-                labelInterpolationFnc: function(value) {
-                    return '$' + (value / 1) + 'k';
-                }
-            }
-        });
-    }
+
 
     if(d.querySelector('.ct-chart-ranking')) {
         var chart = new Chartist.Bar('.ct-chart-ranking', {

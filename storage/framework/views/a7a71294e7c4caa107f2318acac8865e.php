@@ -49,7 +49,17 @@
         </div>
     </div>
     <div class="card card-body border-0 shadow table-wrapper table-responsive">
-        <table class="table table-hover">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 12px; margin-top: 25px; margin-bottom: 25px;">
+            <img src="<?php echo e(asset('assets/img/logo-ksp.jpg')); ?>" class="img-kiecs" alt="">
+            <h6 style="text-transform: uppercase">form iku <?php echo $departmentName?> <?php echo $selectedYear?></h6>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-3" style="text-align: right; padding-right: 20px;">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+        </div>
+
+        <table class="table table-hover" id="ikuTable">
             <thead>
                 <tr>
                     <th class="border-0 text-center" rowspan="2">#</th>
@@ -62,7 +72,6 @@
                     <th class="border-0 text-center" rowspan="2">Bobot</th>
                     <th class="border-0 text-center" rowspan="2">Program Kerja</th>
                     <th class="border-0 text-center" rowspan="2">Penanggung Jawab</th>
-                    <th class="border-0 text-center" rowspan="2">Action</th>
                 </tr>
                 <tr>
                     <th class="border-0 text-center">IKU Atasan</th>
@@ -165,20 +174,6 @@
 
                             <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo nl2br(e($iku->proker)); ?></td>
                             <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo e($iku->pj); ?></td>
-                            <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>">
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a href="<?php echo e(route('edit-iku', $iku->id)); ?>" class="btn btn-pill btn-outline-tertiary">
-                                        <i class="fas fa-edit me-1"></i>Edit
-                                    </a>
-                                    <form action="<?php echo e(route('delete-iku', $iku->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this IKU?');">
-                                        <?php echo csrf_field(); ?>
-                                        <?php echo method_field('DELETE'); ?>
-                                        <button type="submit" class="btn btn-pill btn-outline-danger">
-                                            <i class="fas fa-trash-alt me-1"></i>Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
                         </tr>
 
                         <?php if($ikuPointList->count() > 1): ?>
@@ -196,7 +191,20 @@
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
         </table>
-    </div><br>
+    </div>
+
+    <script>
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+        var filter = this.value.toLowerCase();
+        var rows = document.querySelectorAll("#ikuTable tbody tr");
+
+        rows.forEach(function (row) {
+            var text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+    </script>
+    <br>
     <form action="<?php echo e(route('export.iku')); ?>" method="GET">
         <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">
         <button type="submit" class="btn btn-pill btn-outline-success">Export to Excel</button>

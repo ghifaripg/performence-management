@@ -17,9 +17,12 @@
 <!-- Volt CSS -->
 <link type="text/css" href="{{ asset('assets/css/volt.css')}}" rel="stylesheet">
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 </head>
 
 <body>
+
    @include('partials.sidebar')
 
    @include('partials.navbar')
@@ -66,6 +69,8 @@
 
 <!-- Volt JS -->
 <script src="{{ asset('assets/js/volt.js')}}"></script>
+
+
 
 </body>
 

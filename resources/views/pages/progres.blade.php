@@ -11,7 +11,6 @@
 @section('title', 'Progres')
     <main class="content">
             @section('content')
-
             <div class="py-4">
                 <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
                     <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
@@ -29,67 +28,63 @@
                     </div>
                 </div>
             </div>
-                @if (Auth::id() === 1)
-                <!-- Admin View -->
-                <div class="card card-body border-0 shadow table-wrapper table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Nama Form</th>
-                                <th>Status</th>
-                                <th>Need Discussion</th>
-                                <th>Meeting Date</th>
-                                <th>Notes</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($progresData as $index => $progres)
-                            <tr>
-                                <form method="POST" action="{{ route('progres.update', $progres->id) }}">
-                                    @csrf
-                                    @method('PUT')
-                                    <td>{{ $progresData->firstItem() + $index }}</td>
-                                    <td>{{ $progres->iku_id }}</td>
-                                    <td>
-                                        <select name="status" class="form-select">
-                                            <option value="pending" {{ $progres->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="accept" {{ $progres->status === 'accept' ? 'selected' : '' }}>Accept</option>
-                                            <option value="reject" {{ $progres->status === 'reject' ? 'selected' : '' }}>Reject</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select name="need_discussion" class="form-select">
-                                            <option value="0" {{ $progres->need_discussion == 0 ? 'selected' : '' }}>No</option>
-                                            <option value="1" {{ $progres->need_discussion == 1 ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="date" name="meeting_date" class="form-control" value="{{ old('meeting_date', $progres->meeting_date) }}">
-                                    </td>
-                                    <td>
-                                        <textarea name="notes" class="form-control">{{ $progres->notes }}</textarea>
-                                    </td>
-                                    <td>
-                                        <button type="submit" class="btn btn-primary">Save</button>
-                                        <a href="{{ route('iku.detail', $progres->iku_id) }}" class="btn btn-info">Detail</a>
-                                    </td>
-                                </form>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
-                        <div class="d-flex justify-content-center mt-3">
-                            {{ $progresData->links('pagination::bootstrap-4') }}
-                        </div>
-                    </div>
-                </div>
-            @else
-            <!-- User View -->
+            @if (Auth::id() === 1)
+            <!-- Admin View -->
             <div class="card card-body border-0 shadow table-wrapper table-responsive">
-                    <table class="table table-centered table-nowrap mb-0 rounded">
+                <!-- DataTable -->
+                <table class="table table-bordered" id="progresTable">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Nama Form</th>
+                            <th>Status</th>
+                            <th>Need Discussion</th>
+                            <th>Meeting Date</th>
+                            <th>Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($progresData as $index => $progres)
+                        <tr>
+                            <form method="POST" action="{{ route('progres.update', $progres->id) }}">
+                                @csrf
+                                @method('PUT')
+                                <td>{{ $progresData->firstItem() + $index }}</td>
+                                <td>{{ $progres->iku_id }}</td>
+                                <td>
+                                    <select name="status" class="form-select">
+                                        <option value="pending" {{ $progres->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="accept" {{ $progres->status === 'accept' ? 'selected' : '' }}>Accept</option>
+                                        <option value="reject" {{ $progres->status === 'reject' ? 'selected' : '' }}>Reject</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="need_discussion" class="form-select">
+                                        <option value="0" {{ $progres->need_discussion == 0 ? 'selected' : '' }}>No</option>
+                                        <option value="1" {{ $progres->need_discussion == 1 ? 'selected' : '' }}>Yes</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="date" name="meeting_date" class="form-control" value="{{ old('meeting_date', $progres->meeting_date) }}">
+                                </td>
+                                <td>
+                                    <textarea name="notes" class="form-control">{{ $progres->notes }}</textarea>
+                                </td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a href="{{ route('iku.detail', $progres->iku_id) }}" class="btn btn-info">Detail</a>
+                                </td>
+                            </form>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+                @else
+                <!-- User View -->
+                <div class="card card-body border-0 shadow table-wrapper table-responsive">
+                    <table id="progresTable" class="table table-centered table-nowrap mb-0 rounded display">
                         <thead>
                             <tr>
                                 <th class="border-0">No.</th>
@@ -105,7 +100,7 @@
                         <tbody>
                             @foreach ($progresData as $index => $progres)
                             <tr>
-                                <td><a href="#" class="text-primary fw-bold">{{ $index + 1 }}.</a></td>
+                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $progres->iku_id }}</td>
                                 <td>{{ ucfirst($progres->status) }}</td>
                                 <td>{{ $progres->need_discussion ? 'Yes' : 'No' }}</td>
@@ -129,7 +124,34 @@
                             @endforeach
                         </tbody>
                     </table>
-            </div>
-            @endif
+                </div>
+    @endif
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#progresTable').DataTable({
+        "paging": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "lengthMenu": [5, 10, 25, 50, 100],
+        "pageLength": 10,
+        "language": {
+            "search": "Search Data:",
+            "lengthMenu": "Show _MENU_ entries",
+            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+            "paginate": {
+                "first": "First",
+                "last": "Last",
+                "next": "Next",
+                "previous": "Previous"
+            }
+        }
+    });
+});
+</script>
+
     </main>
 @endsection

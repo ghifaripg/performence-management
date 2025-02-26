@@ -12,14 +12,19 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function showAll() {
-        $user = DB::table('users')->get();
         if (Auth::id() !== 1) {
             return redirect('/dashboard')->with('error', 'Unauthorized access.');
         }
 
-        $user = DB::table('users')->get();
-        return view('pages.user', ['user' => $user]);
+        // Fetch all users with their department names using JOIN
+        $users = DB::table('users')
+            ->leftJoin('department', 'users.department_id', '=', 'department.department_id')
+            ->select('users.id', 'users.nama', 'users.username', 'department.department_name')
+            ->get();
+
+        return view('pages.user', ['users' => $users]);
     }
+
 
     public function delete($id)
     {

@@ -6,12 +6,12 @@
         $selectedYear = htmlspecialchars($_GET['year']);
     }
     ?>
-@extends('layouts.app')
 
-@section('title', 'List of User')
+
+<?php $__env->startSection('title', 'List of User'); ?>
 
 <main class="content">
-    @section('content')
+    <?php $__env->startSection('content'); ?>
 <div class="py-4">
     <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
         <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
@@ -44,22 +44,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($users as $user)
+                    <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>{{ $user->nama }}</td>
-                            <td>{{ $user->username }}</td>
-                            <td>{{ $user->department_name ?? 'No Department' }}</td>
+                            <td><?php echo e($user->id); ?></td>
+                            <td><?php echo e($user->nama); ?></td>
+                            <td><?php echo e($user->username); ?></td>
+                            <td><?php echo e($user->department_name ?? 'No Department'); ?></td>
                             <td>
-                                <a href="{{ url('/users/edit/'.$user->id) }}" class="btn btn-pill btn-outline-tertiary">Edit</a>
+                                <a href="<?php echo e(url('/users/edit/'.$user->id)); ?>" class="btn btn-pill btn-outline-tertiary">Edit</a>
                             </td>
                             <td>
-                                <a href="{{ url('/users/delete/'.$user->id) }}"
+                                <a href="<?php echo e(url('/users/delete/'.$user->id)); ?>"
                                    onclick="return confirm('Are you sure you want to delete this user?')"
                                    class="btn btn-pill btn-outline-danger">Delete</a>
                             </td>
                         </tr>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </tbody>
             </table>
         </div>
@@ -91,4 +91,6 @@ $(document).ready(function () {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ghifa\Documents\admin-dashboard\resources\views/pages/user.blade.php ENDPATH**/ ?>

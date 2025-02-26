@@ -61,7 +61,7 @@
                                 @csrf
                                 <!-- Email Input -->
                                 <div class="form-group mb-4">
-                                    <label for="id">Your ID</label>
+                                    <label for="id">Your Username</label>
                                     <div class="input-group">
                                         <span class="input-group-text">
                                             <svg class="icon icon-xs text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

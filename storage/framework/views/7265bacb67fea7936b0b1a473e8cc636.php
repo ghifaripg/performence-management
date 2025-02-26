@@ -29,68 +29,61 @@
                     </div>
                 </div>
             </div>
-                <?php if(Auth::id() === 1): ?>
-                <!-- Admin View -->
+            <?php if(Auth::id() === 1): ?>
+            <!-- Admin View -->
+                <!-- DataTable -->
+                <table class="table table-bordered" id="progresTable">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Nama Form</th>
+                            <th>Status</th>
+                            <th>Need Discussion</th>
+                            <th>Meeting Date</th>
+                            <th>Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $__currentLoopData = $progresData; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $progres): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <tr>
+                            <form method="POST" action="<?php echo e(route('progres.update', $progres->id)); ?>">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('PUT'); ?>
+                                <td><?php echo e($progresData->firstItem() + $index); ?></td>
+                                <td><?php echo e($progres->iku_id); ?></td>
+                                <td>
+                                    <select name="status" class="form-select">
+                                        <option value="pending" <?php echo e($progres->status === 'pending' ? 'selected' : ''); ?>>Pending</option>
+                                        <option value="accept" <?php echo e($progres->status === 'accept' ? 'selected' : ''); ?>>Accept</option>
+                                        <option value="reject" <?php echo e($progres->status === 'reject' ? 'selected' : ''); ?>>Reject</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select name="need_discussion" class="form-select">
+                                        <option value="0" <?php echo e($progres->need_discussion == 0 ? 'selected' : ''); ?>>No</option>
+                                        <option value="1" <?php echo e($progres->need_discussion == 1 ? 'selected' : ''); ?>>Yes</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="date" name="meeting_date" class="form-control" value="<?php echo e(old('meeting_date', $progres->meeting_date)); ?>">
+                                </td>
+                                <td>
+                                    <textarea name="notes" class="form-control"><?php echo e($progres->notes); ?></textarea>
+                                </td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a href="<?php echo e(route('iku.detail', $progres->iku_id)); ?>" class="btn btn-info">Detail</a>
+                                </td>
+                            </form>
+                        </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </tbody>
+                </table>
+                <?php else: ?>
+                <!-- User View -->
                 <div class="card card-body border-0 shadow table-wrapper table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Nama Form</th>
-                                <th>Status</th>
-                                <th>Need Discussion</th>
-                                <th>Meeting Date</th>
-                                <th>Notes</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $__currentLoopData = $progresData; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $progres): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <tr>
-                                <form method="POST" action="<?php echo e(route('progres.update', $progres->id)); ?>">
-                                    <?php echo csrf_field(); ?>
-                                    <?php echo method_field('PUT'); ?>
-                                    <td><?php echo e($progresData->firstItem() + $index); ?></td>
-                                    <td><?php echo e($progres->iku_id); ?></td>
-                                    <td>
-                                        <select name="status" class="form-select">
-                                            <option value="pending" <?php echo e($progres->status === 'pending' ? 'selected' : ''); ?>>Pending</option>
-                                            <option value="accept" <?php echo e($progres->status === 'accept' ? 'selected' : ''); ?>>Accept</option>
-                                            <option value="reject" <?php echo e($progres->status === 'reject' ? 'selected' : ''); ?>>Reject</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select name="need_discussion" class="form-select">
-                                            <option value="0" <?php echo e($progres->need_discussion == 0 ? 'selected' : ''); ?>>No</option>
-                                            <option value="1" <?php echo e($progres->need_discussion == 1 ? 'selected' : ''); ?>>Yes</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="date" name="meeting_date" class="form-control" value="<?php echo e(old('meeting_date', $progres->meeting_date)); ?>">
-                                    </td>
-                                    <td>
-                                        <textarea name="notes" class="form-control"><?php echo e($progres->notes); ?></textarea>
-                                    </td>
-                                    <td>
-                                        <button type="submit" class="btn btn-primary">Save</button>
-                                        <a href="<?php echo e(route('iku.detail', $progres->iku_id)); ?>" class="btn btn-info">Detail</a>
-                                    </td>
-                                </form>
-                            </tr>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        </tbody>
-                    </table>
-                    <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
-                        <div class="d-flex justify-content-center mt-3">
-                            <?php echo e($progresData->links('pagination::bootstrap-4')); ?>
-
-                        </div>
-                    </div>
-                </div>
-            <?php else: ?>
-            <!-- User View -->
-            <div class="card card-body border-0 shadow table-wrapper table-responsive">
-                    <table class="table table-centered table-nowrap mb-0 rounded">
+                    <table id="progresTable" class="table table-centered table-nowrap mb-0 rounded display">
                         <thead>
                             <tr>
                                 <th class="border-0">No.</th>
@@ -106,7 +99,7 @@
                         <tbody>
                             <?php $__currentLoopData = $progresData; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $progres): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td><a href="#" class="text-primary fw-bold"><?php echo e($index + 1); ?>.</a></td>
+                                <td><?php echo e($index + 1); ?></td>
                                 <td><?php echo e($progres->iku_id); ?></td>
                                 <td><?php echo e(ucfirst($progres->status)); ?></td>
                                 <td><?php echo e($progres->need_discussion ? 'Yes' : 'No'); ?></td>
@@ -130,8 +123,35 @@
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </tbody>
                     </table>
-            </div>
-            <?php endif; ?>
+                </div>
+    <?php endif; ?>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#progresTable').DataTable({
+        "paging": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "lengthMenu": [5, 10, 25, 50, 100],
+        "pageLength": 10,
+        "language": {
+            "search": "Search Data:",
+            "lengthMenu": "Show _MENU_ entries",
+            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+            "paginate": {
+                "first": "First",
+                "last": "Last",
+                "next": "Next",
+                "previous": "Previous"
+            }
+        }
+    });
+});
+</script>
+
     </main>
 <?php $__env->stopSection(); ?>
 

@@ -45,7 +45,20 @@
                         <div class="card bg-yellow-100 border-0 shadow">
                             <div class="card-header d-sm-flex flex-row align-items-center flex-0">
                                 <div class="d-block mb-3 mb-sm-0">
-                                    <div class="fs-5 fw-normal mb-2">Performance Management - Capaian IKU (Indikator Kinerja Utama)</div>
+                                    <form method="GET" class="mb-3">
+                                        <label for="year" class="form-label">Pilih Tahun:</label>
+                                        <select name="year" id="year" class="form-select w-auto d-inline">
+                                            <?php
+                                            $currentYear = date('Y');
+                                            for ($year = 2024; $year <= 2030; $year++): ?>
+                                                <option value="<?php echo $year; ?>" <?php if ($year == $selectedYear) echo 'selected'; ?>>
+                                                    <?php echo $year; ?>
+                                                </option>
+                                            <?php endfor; ?>
+                                        </select>
+                                        <button type="submit" class="btn btn-secondary">Pilih</button>
+                                    </form>
+                                    <div class="fs-5 fw-normal mb-2">Performance Management - Capaian IKU (Indikator Kinerja Utama) <?php echo $selectedYear ?></div>
                                     <h2 class="fs-3 fw-extrabold">Unit Kerja: <?php echo $departmentName ?></h2>
                                 </div>
                             </div>
@@ -54,52 +67,52 @@
                             </div>
                         </div>
                     </div>
-            <div class="col-12 col-xl-8">
-                <div class="row">
-                    <div class="col-12 mb-4">
-                        <div class="card border-0 shadow">
-                            <div class="card-header">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h2 class="fs-5 fw-bold mb-0">Total Skor IKU Perspektif (Perbandingan Per Tahun)</h2>
-                                        <form method="GET" class="mb-3">
-                                            <label for="month" class="form-label">Pilih Periode:</label>
-                                            <select name="month" id="month" class="form-select w-auto d-inline">
-                                                <?php $__currentLoopData = $months; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $num => $monthName): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($num); ?>" <?php if($num == $selectedMonth): ?> selected <?php endif; ?>>
-                                                        <?php echo e($monthName); ?>
-
-                                                    </option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                            <button type="submit" class="btn btn-primary">Pilih</button>
-                                        </form>
+                <div class="col-12 col-xl-8">
+                    <div class="row">
+                        <div class="col-12 mb-4">
+                            <div class="card border-0 shadow">
+                                <div class="card-header">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <h2 class="fs-5 fw-bold mb-0">Total Skor IKU Perspektif (Perbandingan Per Tahun)</h2>
+                                            <form method="GET" class="mb-3">
+                                                <label for="month-year" class="form-label">Pilih Periode:</label>
+                                                <input type="month" id="month-year" name="month-year" class="form-control w-auto d-inline"
+                                                    value="<?php echo e(date('Y-m', strtotime("$selectedYear-$selectedMonth-01"))); ?>">
+                                                <button type="submit" class="btn btn-primary">Pilih</button>
+                                            </form>
+                                        </div>
                                     </div>
+
+                                    <div class="table-responsive" style="overflow-x: unset">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">No</th>
+                                                    <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">Perspektif</th>
+                                                    <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php $__currentLoopData = $totalAdjPerSasaran; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $sasaran): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <tr>
+                                                        <td class="fw-normal text-center"><?php echo e($index + 1); ?></td>
+                                                        <td class="fw-normal text-center"><?php echo e($sasaran->perspektif); ?></td>
+                                                        <td class="fw-normal text-center iku-cell"><?php echo e($sasaran->total); ?></td>
+                                                    </tr>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <small class="text-tertiary mb-0">Total Skor = <span id="total-iku">
+                                        <?php echo e(array_sum(array_column($totalAdjPerSasaran, 'total'))); ?>
+
+                                    </span></small>
                                 </div>
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th class="border-0 text-center" style="background-color: #F3F2F2; color:black" rowspan="2">No</th>
-                                                <th class="border-0 text-center" style="background-color: #F3F2F2; color:black" rowspan="2">Perspektif</th>
-                                                <th class="border-0 text-center" style="background-color: #F3F2F2; color:black" rowspan="2">Jumlah</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="fw-normal text-center" style="border-color: white">1</td>
-                                                <td class="fw-normal text-center" style="border-color: white">Nilai Ekonomi dan Sosial</td>
-                                                <td class="fw-normal text-center iku-cell" style="border-color: white">12</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <small class="text-tertiary mb-0">Total Skor = <span id="total-iku">0</span></small>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
                     <div class="col-12 col-sm-6 col-xl-4 mb-4">
                         <div class="card border-0 shadow">
                             <div class="card-header border-bottom d-flex align-items-center justify-content-between">
@@ -183,6 +196,19 @@
     </main>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            if (document.querySelector('.ct-chart-sales-value')) {
+        new Chartist.Line('.ct-chart-sales-value', {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
+            series: [ <?php echo $adjSeriesJson; ?> ] // Inject PHP array into JS
+        }, {
+            low: 0,
+            showArea: true,
+            fullWidth: true,
+            plugins: [ Chartist.plugins.tooltip() ],
+            axisX: { position: 'end', showGrid: true },
+            axisY: { showGrid: false, showLabel: false } // Hide Y-axis labels
+        });
+    }
             function updateTotalIku() {
                 let totalBobot = 0;
 

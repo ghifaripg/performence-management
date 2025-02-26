@@ -35,6 +35,73 @@
         </div>
     </div>
 
+    <div class="card card-body border-0 shadow table-wrapper table-responsive">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 12px; margin-top: 25px; margin-bottom: 25px;">
+            <img src="<?php echo e(asset('assets/img/logo-ksp.jpg')); ?>" class="img-kiecs" alt="">
+            <h5 style="text-transform: uppercase">EVALUASI PENCAPAIAN INDIKATOR KINERJA UTAMA (IKU) s/d BULAN <?php echo $selectedMonthName?></h5>
+        </div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="border-0 text-center" rowspan="2">Indikator Kinerja Utama</th>
+                    <th class="border-0 text-center" rowspan="2">Polaritas</th>
+                    <th class="border-0 text-center" rowspan="2">Bobot (A)</th>
+                    <th class="border-0 text-center" rowspan="2">Satuan</th>
+                    <th class="border-0 text-center" colspan="3">Target</th>
+                    <th class="border-0 text-center" colspan="2">Realisasi</th>
+                    <th class="border-0 text-center" colspan="2">Prosentase Pencapaian THD Target</th>
+                    <th class="border-0 text-center" colspan="2">Score</th>
+                    <th class="border-0 text-center" rowspan="3">Penyebab Tidak Tercapai</th>
+                    <th class="border-0 text-center" rowspan="3">Program Kerja/Langkah Kerja/langkah Pencapaian target IKU (jika capaian < 95%)</th>
+                </tr>
+                <tr>
+                    <th class="border-0 text-center">Tahun (1)</th>
+                    <th class="border-0 text-center"style="white-space:pre">Bulan ini
+(2)</th>
+                    <th class="border-0 text-center" style="white-space:pre">s/d Bulan ini
+(3)</th>
+                    <th class="border-0 text-center" style="white-space:pre">Bulan ini
+(4)</th>
+                    <th class="border-0 text-center" style="white-space:pre">s/d Bulan ini
+(5)</th>
+                    <th class="border-0 text-center" style="white-space:pre">6=(5):(3)
+(6)</th>
+                    <th class="border-0 text-center" style="white-space:pre">7=(5):(1)
+(7)</th>
+                    <th class="border-0 text-center">Ttl</th>
+                    <th class="border-0 text-center">Adj.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $no = 1; ?>
+                <?php $__currentLoopData = $evaluations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $eval): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <tr>
+                        <td class="fw-normal text-center"><?php echo e($eval->iku_name); ?>
+
+                            <?php if($eval->sub_point_name): ?>
+                                <br> <span style="font-size: 0.9em; color: gray;"><?php echo e($eval->sub_point_name); ?></span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="fw-normal text-center"><?php echo e($eval->polaritas); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->bobot, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e($eval->satuan); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->base, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->target_bulan_ini, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->target_sdbulan_ini, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_bulan_ini, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_sdbulan_ini, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_target, 2)); ?>%</td>
+                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_year, 2)); ?>%</td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->ttl, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->adj, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e($eval->penyebab_tidak_tercapai); ?></td>
+                        <td class="fw-normal text-center"><?php echo e($eval->program_kerja); ?></td>
+                    </tr>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </tbody>
+        </table>
+    </div>
+
     <div class="mt-5">
         <a href="/form-evaluasi?month=<?php echo e($selectedMonth); ?>&year=<?php echo e($selectedYear); ?>" class="btn btn-primary">
             Tambah/Ubah Form Evaluasi
