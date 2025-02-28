@@ -1,8 +1,8 @@
 <!-- Favicon -->
-<link rel="apple-touch-icon" sizes="120x120" href="{{ asset ('assets/img/favicon/apple-touch-icon.png') }}">
-<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/favicon-32x32.png') }}">
-<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/img/favicon-16x16.png') }}">
-<link rel="shortcut icon" href="{{ asset('assets/img/favicon.ico') }}">
+<link rel="apple-touch-icon" sizes="120x120" href="<?php echo e(asset ('assets/img/favicon/apple-touch-icon.png')); ?>">
+<link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('assets/img/favicon-32x32.png')); ?>">
+<link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('assets/img/favicon-16x16.png')); ?>">
+<link rel="shortcut icon" href="<?php echo e(asset('assets/img/favicon.ico')); ?>">
 
 <?php
     $userId = Auth::user()->id;
@@ -12,12 +12,12 @@
         $selectedYear = htmlspecialchars($_GET['year']);
     }
     ?>
-@extends('layouts.app')
 
-@section('title', 'Form Kontrak Manajemen')
+
+<?php $__env->startSection('title', 'Form Kontrak Manajemen'); ?>
 
         <main class="content">
-            @section('content')
+            <?php $__env->startSection('content'); ?>
 
             <!-- Logo Back Atas -->
             <div class="py-4">
@@ -43,9 +43,9 @@
                 <div class="col-12 mb-4">
                     <h5>Sasaran Strategis</h5>
                     <div class="card border-0 shadow components-section">
-                        <form method="POST" action="{{ route('store-sasaran') }}" class="form-sasaran" >
-                            @csrf
-                            <input type="hidden" name="year" value="{{ $selectedYear }}">
+                        <form method="POST" action="<?php echo e(route('store-sasaran')); ?>" class="form-sasaran" >
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">
                             <div class="mb-3">
                                 <input type="text" name="sasaran_name" class="form-control" placeholder="Nama Sasaran Strategis" required>
                             </div>
@@ -62,24 +62,25 @@
                         <div class="card-body">
                             <h5>Pilih Sasaran Strategis</h5>
                             <div id="sasaran-checkbox-list">
-                                @foreach($sasaranStrategis as $sasaran)
+                                <?php $__currentLoopData = $sasaranStrategis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sasaran): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div class="form-check d-flex align-items-center mb-2">
                                         <input type="radio" class="form-check-input sasaran-checkbox"
                                             name="sasaran_strategis"
-                                            value="{{ $sasaran->id }}"
-                                            id="sasaran_{{ $sasaran->id }}">
-                                        <label class="form-check-label ms-2" for="sasaran_{{ $sasaran->id }}">
-                                            {{ $sasaran->name }}
+                                            value="<?php echo e($sasaran->id); ?>"
+                                            id="sasaran_<?php echo e($sasaran->id); ?>">
+                                        <label class="form-check-label ms-2" for="sasaran_<?php echo e($sasaran->id); ?>">
+                                            <?php echo e($sasaran->name); ?>
+
                                         </label>
-                                        <form action="{{ route('delete-sasaran', $sasaran->id) }}" method="POST" onsubmit="return confirm('Hapus Sasaran Strategis Ini?');">
-                                            @csrf
-                                            @method('DELETE')
+                                        <form action="<?php echo e(route('delete-sasaran', $sasaran->id)); ?>" method="POST" onsubmit="return confirm('Hapus Sasaran Strategis Ini?');">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
                                             <button type="submit" class="btn btn-danger" style="margin-top: 0%; margin-bottom:3px; margin-left:12px; max-height:88%; max-width:90%">
                                                 <i class="fas fa-trash-alt me-1"></i>Delete
                                             </button>
                                         </form>
                                     </div>
-                                @endforeach
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
                         </div>
                     </div>
@@ -88,8 +89,8 @@
 
             <!-- Form KPI -->
             <div class="row">
-                <form method="POST" action="{{ route('store-kpi') }}">
-                    @csrf
+                <form method="POST" action="<?php echo e(route('store-kpi')); ?>">
+                    <?php echo csrf_field(); ?>
                     <input type="hidden" name="sasaran_id" id="selected-sasaran-id">
                     <div class="col-12 mb-4">
                         <div class="card border-0 shadow components-section">
@@ -186,54 +187,54 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($sasaranGrouped as $sasaran)
-                            @php
+                        <?php $__currentLoopData = $sasaranGrouped; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sasaran): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                                 $rowCount = count($sasaran['kpis']);
-                            @endphp
-                            @foreach($sasaran['kpis'] as $index => $kpi)
+                            ?>
+                            <?php $__currentLoopData = $sasaran['kpis']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $kpi): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <tr>
-                                    @if ($index == 0)
-                                        <td class="fw-bold align-middle" rowspan="{{ $rowCount }}">{{ $sasaran['letter'] }}</td>
-                                        <td class="fw-normal align-middle" rowspan="{{ $rowCount }}">{{ $sasaran['name'] }}</td>
-                                    @endif
-                                <td class="fw-normal">{{ $index + 1 }}. {{ $kpi->kpi_name }}</td>
-                                <td class="fw-normal">{{ $kpi->target }}</td>
-                                <td class="fw-normal">{{ $kpi->satuan }}</td>
-                                <td class="fw-normal">{{ $kpi->milestone ?? '-' }}</td>
-                                <td class="fw-normal">{{ $kpi->esgc }}</td>
-                                <td class="fw-normal">{{ ucfirst($kpi->polaritas) }}</td>
-                                <td class="fw-normal bobot-cell">{{ $kpi->bobot }}</td>
-                                <td class="fw-normal">{{ $kpi->du }}</td>
-                                <td class="fw-normal">{{ $kpi->dk }}</td>
-                                <td class="fw-normal">{{ $kpi->do }}</td>
+                                    <?php if($index == 0): ?>
+                                        <td class="fw-bold align-middle" rowspan="<?php echo e($rowCount); ?>"><?php echo e($sasaran['letter']); ?></td>
+                                        <td class="fw-normal align-middle" rowspan="<?php echo e($rowCount); ?>"><?php echo e($sasaran['name']); ?></td>
+                                    <?php endif; ?>
+                                <td class="fw-normal"><?php echo e($index + 1); ?>. <?php echo e($kpi->kpi_name); ?></td>
+                                <td class="fw-normal"><?php echo e($kpi->target); ?></td>
+                                <td class="fw-normal"><?php echo e($kpi->satuan); ?></td>
+                                <td class="fw-normal"><?php echo e($kpi->milestone ?? '-'); ?></td>
+                                <td class="fw-normal"><?php echo e($kpi->esgc); ?></td>
+                                <td class="fw-normal"><?php echo e(ucfirst($kpi->polaritas)); ?></td>
+                                <td class="fw-normal bobot-cell"><?php echo e($kpi->bobot); ?></td>
+                                <td class="fw-normal"><?php echo e($kpi->du); ?></td>
+                                <td class="fw-normal"><?php echo e($kpi->dk); ?></td>
+                                <td class="fw-normal"><?php echo e($kpi->do); ?></td>
                                 <td>
                                     <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-                                        <form action="{{ route('edit-kpi', $kpi->id) }}" method="GET" style="margin: 0;">
-                                            @csrf
+                                        <form action="<?php echo e(route('edit-kpi', $kpi->id)); ?>" method="GET" style="margin: 0;">
+                                            <?php echo csrf_field(); ?>
                                             <button type="submit" class="btn btn-pill btn-outline-tertiary" style="padding: 0; border: none; background: none;">
-                                                <img src="{{ asset('assets/img/edit.png') }}" alt="Edit" style="width: 30px; height: 30px; object-fit: contain;">
+                                                <img src="<?php echo e(asset('assets/img/edit.png')); ?>" alt="Edit" style="width: 30px; height: 30px; object-fit: contain;">
                                             </button>
                                         </form>
 
                                         <!-- Delete Button -->
-                                        <form action="{{ route('delete-kpi', $kpi->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this KPI?');" style="margin: 0;">
-                                            @csrf
-                                            @method('DELETE')
+                                        <form action="<?php echo e(route('delete-kpi', $kpi->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this KPI?');" style="margin: 0;">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('DELETE'); ?>
                                             <button type="submit" class="btn btn-pill btn-outline-danger" style="padding: 0; border: none; background: none;">
-                                                <img src="{{ asset('assets/img/trash.png') }}" alt="Delete" style="width: 30px; height: 30px; object-fit: contain;">
+                                                <img src="<?php echo e(asset('assets/img/trash.png')); ?>" alt="Delete" style="width: 30px; height: 30px; object-fit: contain;">
                                             </button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
-                            @endforeach
-                        @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
             <h6 id="total-bobot">Total Bobot = 0</h6>
             </div>
         </main>
-@endsection
+<?php $__env->stopSection(); ?>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     const sasaranRadios = document.querySelectorAll('.sasaran-checkbox');
@@ -272,3 +273,5 @@
     setTimeout(updateTotalBobot, 500);
 });
 </script>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ghifa\Documents\admin-dashboard\resources\views/pages/form-kontrak.blade.php ENDPATH**/ ?>

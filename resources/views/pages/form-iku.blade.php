@@ -164,7 +164,7 @@
                 </form>
             </div>
             <div class="card card-body border-0 shadow table-wrapper table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" >
                     <thead>
                         <tr>
                             <th class="border-0 text-center" rowspan="2">#</th>
@@ -272,19 +272,46 @@
                                     <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{!! nl2br(e($iku->proker)) !!}</td>
                                     <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->pj }}</td>
                                     <td class="fw-normal text-center" rowspan="{{ $maxRows }}">
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <a href="{{ route('edit-iku', $iku->id) }}" class="btn btn-pill btn-outline-tertiary">
-                                                <i class="fas fa-edit me-1"></i>Edit
+                                        <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+                                            <!-- Edit Button -->
+                                            <a href="{{ route('edit-iku', $iku->id) }}" style="display: flex; justify-content: center; align-items: center;">
+                                                <img src="{{ asset('assets/img/edit.png') }}" alt="Edit" style="width: 50px; height: 50px; object-fit: contain;">
                                             </a>
-                                            <form action="{{ route('delete-iku', $iku->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this IKU?');">
+
+                                            <!-- Delete Button with SweetAlert -->
+                                            <form id="delete-form-{{ $iku->id }}" action="{{ route('delete-iku', $iku->id) }}" method="POST" style="margin: 0;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-pill btn-outline-danger">
-                                                    <i class="fas fa-trash-alt me-1"></i>Delete
+                                                <input type="hidden" name="redirect_url" id="redirect-url-{{ $iku->id }}">
+                                                <button type="button" class="trash-button" onclick="confirmDelete({{ $iku->id }})" style="padding: 0; border: none; background: none;">
+                                                    <img src="{{ asset('assets/img/trash.png') }}" alt="Delete" style="width: 50px; height: 50px; object-fit: contain;">
                                                 </button>
                                             </form>
                                         </div>
                                     </td>
+
+                                    <script>
+                                        function confirmDelete(id) {
+                                            let currentUrl = window.location.href;
+                                            document.getElementById(`redirect-url-${id}`).value = currentUrl;
+
+                                            Swal.fire({
+                                                title: "Apakah Anda yakin?",
+                                                text: "Data ini akan dihapus secara permanen dan tidak dapat dikembalikan!",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#d33",
+                                                cancelButtonColor: "#3085d6",
+                                                confirmButtonText: "Iya, Hapus!",
+                                                cancelButtonText: "Batal"
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    document.getElementById(`delete-form-${id}`).submit();
+                                                }
+                                            });
+                                        }
+                                    </script>
+
                                 </tr>
 
                                 @if ($ikuPointList->count() > 1)
@@ -308,6 +335,8 @@
             </div>
 </main>
 @endsection
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -15,7 +15,7 @@ class User extends Authenticatable
     protected $table = 'users';
 
     // Define the fillable fields (id, name, and password)
-    protected $fillable = ['id', 'nama', 'password'];
+    protected $fillable = ['username', 'nama', 'password', 'department_id'];
 
     // If you are using custom timestamps (created_at and updated_at),
     // you can disable them by setting this to false

@@ -282,19 +282,42 @@
                                     <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo nl2br(e($iku->proker)); ?></td>
                                     <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>"><?php echo e($iku->pj); ?></td>
                                     <td class="fw-normal text-center" rowspan="<?php echo e($maxRows); ?>">
-                                        <div class="d-flex justify-content-center gap-2">
-                                            <a href="<?php echo e(route('edit-iku', $iku->id)); ?>" class="btn btn-pill btn-outline-tertiary">
-                                                <i class="fas fa-edit me-1"></i>Edit
+                                        <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+                                            <!-- Edit Button -->
+                                            <a href="<?php echo e(route('edit-iku', $iku->id)); ?>" style="display: flex; justify-content: center; align-items: center;">
+                                                <img src="<?php echo e(asset('assets/img/edit.png')); ?>" alt="Edit" style="width: 50px; height: 50px; object-fit: contain;">
                                             </a>
-                                            <form action="<?php echo e(route('delete-iku', $iku->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this IKU?');">
+
+                                            <!-- Delete Button with SweetAlert -->
+                                            <form id="delete-form-<?php echo e($iku->id); ?>" action="<?php echo e(route('delete-iku', $iku->id)); ?>" method="POST" style="margin: 0;">
                                                 <?php echo csrf_field(); ?>
                                                 <?php echo method_field('DELETE'); ?>
-                                                <button type="submit" class="btn btn-pill btn-outline-danger">
-                                                    <i class="fas fa-trash-alt me-1"></i>Delete
+                                                <button type="button" class="trash-button" onclick="confirmDelete(<?php echo e($iku->id); ?>)" style="padding: 0; border: none; background: none;">
+                                                    <img src="<?php echo e(asset('assets/img/trash.png')); ?>" alt="Delete" style="width: 50px; height: 50px; object-fit: contain;">
                                                 </button>
                                             </form>
                                         </div>
                                     </td>
+
+                                    <!-- SweetAlert2 Delete Confirmation -->
+                                    <script>
+                                        function confirmDelete(id) {
+                                            Swal.fire({
+                                                title: "Apakah Anda yakin?",
+                                                text: "Data ini akan dihapus secara permanen dan tidak dapat dikembalikan!",
+                                                icon: "warning",
+                                                showCancelButton: true,
+                                                confirmButtonColor: "#d33",
+                                                cancelButtonColor: "#3085d6",
+                                                confirmButtonText: "Iya, Hapus!"
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    document.getElementById(`delete-form-${id}`).submit();
+                                                }
+                                            });
+                                        }
+                                    </script>
+
                                 </tr>
 
                                 <?php if($ikuPointList->count() > 1): ?>
@@ -318,6 +341,8 @@
             </div>
 </main>
 <?php $__env->stopSection(); ?>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

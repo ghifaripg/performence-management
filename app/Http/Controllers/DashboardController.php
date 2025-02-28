@@ -14,11 +14,10 @@ class DashboardController extends Controller
 {
     $nama = Auth::user()->nama;
     $department_id = Auth::user()->department_id;
+    $user_id = Auth::user()->id;
 
     // Get selected year from request, fallback to current year
     $selectedYear = $request->query('year', date('Y'));
-
-    // Get selected month from request (if available), fallback to current month
     $selectedMonth = $request->query('month', date('m'));
 
     $months = [
@@ -29,19 +28,32 @@ class DashboardController extends Controller
 
     $selectedMonthName = $months[(int) $selectedMonth];
 
-    // Get department name
-    $department = DB::table('department')
-        ->where('department_id', $department_id)
-        ->select('department_username')
-        ->first();
+    // Get selected department from request (admin can select, others use their own)
+    $selectedDepartment = $request->query('department', $user_id == 1 ? null : $department_id);
 
-    if (!$department || !isset($department->department_username)) {
-        return back()->with('error', 'Department not found or missing department name');
+    // Get department name or set default for "Semua"
+    if ($selectedDepartment) {
+        $department = DB::table('department')
+            ->where('department_id', $selectedDepartment)
+            ->select('department_username')
+            ->first();
+        $departmentName = $department->department_username ?? 'Unknown';
+    } else {
+        $departmentName = 'Semua Unit Kerja';
     }
 
-    $departmentName = (string) $department->department_username;
+    // Fetch all departments (for admin dropdown)
+    $departments = DB::table('department')->select('department_id', 'department_name')->get();
 
-    // Get total ADJ per Perspektif (Sasaran Strategis)
+    // Query for total ADJ per Perspektif
+    $queryParams = [$selectedYear];
+    $whereDepartment = "";
+
+    if ($selectedDepartment) {
+        $whereDepartment = "AND u.department_id = ?";
+        $queryParams[] = $selectedDepartment;
+    }
+
     $totalAdjPerSasaran = DB::select("
         SELECT
             ss.name AS perspektif,
@@ -50,43 +62,43 @@ class DashboardController extends Controller
         LEFT JOIN sasaran_strategis ss ON fi.sasaran_id = ss.id
         LEFT JOIN iku_evaluations ie ON fi.id = ie.iku_id
         LEFT JOIN users u ON ie.user_id = u.id
-        LEFT JOIN department d ON u.department_id = d.department_id
         WHERE ie.year = ?
-        AND u.department_id = ?
+        $whereDepartment
         GROUP BY ss.id, ss.name
         ORDER BY ss.id ASC;
-    ", [$selectedYear, $department_id]);
+    ", $queryParams);
 
+    // Query for total ADJ per Month
     $totalAdjPerMonth = DB::select("
         SELECT
             ie.month AS month,
             SUM(ie.adj) AS total
         FROM form_iku fi
-        LEFT JOIN sasaran_strategis ss ON fi.sasaran_id = ss.id
         LEFT JOIN iku_evaluations ie ON fi.id = ie.iku_id
         LEFT JOIN users u ON ie.user_id = u.id
-        LEFT JOIN department d ON u.department_id = d.department_id
-        WHERE ie.year = ? AND d.department_id = ?
+        WHERE ie.year = ?
+        $whereDepartment
         GROUP BY ie.month
         ORDER BY ie.month ASC;
-    ", [$selectedYear, $department_id]);
+    ", $queryParams);
 
     // Prepare adj series for chart
     $adjSeries = array_fill(0, 12, 0); // Ensure months 1-12 exist
     foreach ($totalAdjPerMonth as $data) {
-        $adjSeries[(int)$data->month - 1] = (float)$data->total; // Adjust month index for zero-based array
+        $adjSeries[(int)$data->month - 1] = (float)$data->total;
     }
-
-    $adjSeriesJson = json_encode($adjSeries); // Convert to JSON for JavaScript
+    $adjSeriesJson = json_encode($adjSeries);
 
     return view('pages.dashboard', compact(
+        'departments',
+        'selectedDepartment',
         'departmentName',
         'selectedYear',
-        'months',
         'selectedMonth',
         'selectedMonthName',
         'totalAdjPerSasaran',
         'adjSeriesJson'
     ));
 }
+
 }

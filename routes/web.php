@@ -82,3 +82,6 @@ Route::get('signature', function () {
 Route::get('/evaluasi', [EvaluasiController::class, 'showEvaluasi'])->name('show-evaluasi');
 Route::get('/form-evaluasi', [EvaluasiController::class, 'index'])->name('form-evaluasi');
 Route::post('/store-eval', [EvaluasiController::class, 'store'])->name('store-eval');
+Route::get('/form-evaluasi/edit/{id}', [EvaluasiController::class, 'edit'])->name('evaluasi.edit');
+Route::put('/form-evaluasi/update/{id}', [EvaluasiController::class, 'update'])->name('evaluasi.update');
+Route::delete('/form-evaluasi/delete/{id}', [EvaluasiController::class, 'destroy'])->name('evaluasi.destroy');

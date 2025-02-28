@@ -3,7 +3,7 @@
     $name = Auth::user()->nama;
 ?>
 
-
+<?php echo $__env->make('partials.favicon', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php $__env->startSection('title', 'Evaluasi IKU'); ?>
 
 <main class="content">
@@ -85,7 +85,7 @@
                         <td class="fw-normal text-center"><?php echo e($eval->polaritas); ?></td>
                         <td class="fw-normal text-center"><?php echo e(number_format($eval->bobot, 2)); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->satuan); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->base, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->base, 2)); ?></td>
                         <td class="fw-normal text-center"><?php echo e(number_format($eval->target_bulan_ini, 2)); ?></td>
                         <td class="fw-normal text-center"><?php echo e(number_format($eval->target_sdbulan_ini, 2)); ?></td>
                         <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_bulan_ini, 2)); ?></td>

@@ -69,7 +69,7 @@
 
                         <!-- Container for IKU Sub-Points -->
                         <div id="iku-sub-points" style="display: none;">
-                            <h6>Sub-Points:</h6>
+                            <h6>Subpoin:</h6>
                             <ul id="sub-points-list">
                                 @foreach ($ikuPoints as $formIkuId => $points)
                                     <ul class="sub-points-group" data-iku-id="{{ $formIkuId }}" style="display: none;">
@@ -94,7 +94,7 @@
                                 @endforeach
                             </ul>
                         </div>
-                        <p>Selected IKU: <span id="selected-iku-text">None</span></p>
+                        <p>IKU Terpilih: <span id="selected-iku-text">-</span></p>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
             <div class="col-12 mb-4">
                 <div class="card border-0 shadow components-section">
                     <div class="card-body">
-                        <h5>IKU: <span id="selected-iku-heading">None</span></h5>
+                        <h5>IKU: <span id="selected-iku-heading">-</span></h5>
                         <div class="row mb-4">
                             <div class="col-lg-4 col-sm-6">
                                 <div class="mb-3">
@@ -150,18 +150,18 @@
                                 <div class="mb-3">
                                     <h5>Prosentase Pencapaian THD Target</h5>
                                     <label for="percent_target">6 = (5):(3) (6)</label>
-                                    <input type="text" class="form-control" name="percent_target" id="percent_target" readonly>
+                                    <input type="text" class="form-control" name="percent_target" id="percent_target">
 
                                     <label for="percent_year">7 = (5):(1) (7)</label>
-                                    <input type="text" class="form-control" name="percent_year" id="percent_year" readonly>
+                                    <input type="text" class="form-control" name="percent_year" id="percent_year">
 
                                 </div>
                                 <div class="mb-3">
                                     <h5>Score</h5>
                                     <label for="ttl">Ttl</label>
-                                    <input type="text" class="form-control" name="ttl" id="ttl" readonly>
+                                    <input type="text" class="form-control" name="ttl" id="ttl">
                                     <label for="adj">Adj.</label>
-                                    <input type="text" class="form-control" name="adj" id="adj" readonly>
+                                    <input type="text" class="form-control" name="adj" id="adj">
                                 </div>
                                 <div class="my-4">
                                     <label for="proker">Penyebab Tidak Tercapai</label>
@@ -179,6 +179,108 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div class="card card-body border-0 shadow table-wrapper table-responsive" style="overflow-y: hidden">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="border-0 text-center" rowspan="2">Indikator Kinerja Utama</th>
+                    <th class="border-0 text-center" rowspan="2">Polaritas</th>
+                    <th class="border-0 text-center" rowspan="2">Bobot (A)</th>
+                    <th class="border-0 text-center" rowspan="2">Satuan</th>
+                    <th class="border-0 text-center" colspan="3">Target</th>
+                    <th class="border-0 text-center" colspan="2">Realisasi</th>
+                    <th class="border-0 text-center" colspan="2">Prosentase Pencapaian THD Target</th>
+                    <th class="border-0 text-center" colspan="2">Score</th>
+                    <th class="border-0 text-center" rowspan="3">Penyebab Tidak Tercapai</th>
+                    <th class="border-0 text-center" rowspan="3">Program Kerja/Langkah Kerja/langkah Pencapaian target IKU (jika capaian < 95%)</th>
+                    <th class="border-0 text-center" rowspan="3">Action</th>
+                </tr>
+                <tr>
+                    <th class="border-0 text-center">Tahun (1)</th>
+                    <th class="border-0 text-center" style="white-space: pre">Bulan ini (2)</th>
+                    <th class="border-0 text-center" style="white-space: pre">s/d Bulan ini (3)</th>
+                    <th class="border-0 text-center" style="white-space: pre">Bulan ini (4)</th>
+                    <th class="border-0 text-center" style="white-space: pre">s/d Bulan ini (5)</th>
+                    <th class="border-0 text-center" style="white-space: pre">6=(5):(3) (6)</th>
+                    <th class="border-0 text-center" style="white-space: pre">7=(5):(1) (7)</th>
+                    <th class="border-0 text-center">Ttl</th>
+                    <th class="border-0 text-center">Adj.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($evaluations as $eval)
+                    <tr>
+                        <td class="fw-normal text-center">{{ $eval->iku_name }}
+                            @if($eval->sub_point_name)
+                                <br> <span style="font-size: 0.9em; color: gray;">{{ $eval->sub_point_name }}</span>
+                            @endif
+                        </td>
+                        <td class="fw-normal text-center">{{ $eval->polaritas }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->bobot, 2) }}</td>
+                        <td class="fw-normal text-center">{{ $eval->satuan }}</td>
+                        <td class="fw-normal text-center">{{ number_format((float) $eval->base, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->target_bulan_ini, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->target_sdbulan_ini, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->realisasi_bulan_ini, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->realisasi_sdbulan_ini, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format((float) $eval->percent_target, 2) }}%</td>
+                        <td class="fw-normal text-center">{{ number_format((float) $eval->percent_year, 2) }}%</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->ttl, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->adj, 2) }}</td>
+                        <td class="fw-normal text-center">{{ $eval->penyebab_tidak_tercapai }}</td>
+                        <td class="fw-normal text-center">{{ $eval->program_kerja }}</td>
+                        <td class="fw-normal text-center">
+                            <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+                                <!-- Edit Button -->
+                                <a href="{{ route('evaluasi.edit', $eval->id) }}" style="display: flex; justify-content: center; align-items: center;">
+                                    <img src="{{ asset('assets/img/edit.png') }}" alt="Edit" style="width: 50px; height: 50px; object-fit: contain;">
+                                </a>
+
+                                <!-- Delete Button with SweetAlert -->
+                                <form id="delete-form-{{ $eval->id }}" action="{{ route('evaluasi.destroy', $eval->id) }}" method="POST" style="margin: 0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="trash-button" onclick="confirmDelete({{ $eval->id }})" style="padding: 0; border: none; background: none;">
+                                        <img src="{{ asset('assets/img/trash.png') }}" alt="Delete" style="width: 50px; height: 50px; object-fit: contain;">
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <script>
+            function confirmDelete(id) {
+                // Get the current URL with query parameters
+                let currentUrl = window.location.href;
+
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "Data ini akan dihapus secara permanen dan tidak dapat dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Ya, hapus!",
+                    cancelButtonText: "Batal"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let form = document.getElementById(`delete-form-${id}`);
+                        let input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = "redirect_url";
+                        input.value = currentUrl;
+                        form.appendChild(input);
+                        form.submit();
+                    }
+                });
+            }
+        </script>
+
+
     </div>
 </main>
 
@@ -253,47 +355,38 @@
     const bobot = parseFloat(document.querySelector('input[name="bobot"]').value) || 0;
     const polaritas = document.querySelector('input[name="polaritas"]').value.trim().toLowerCase();
 
-    // Calculate percentTarget based on polaritas
     let percentTarget;
     if (polaritas === "maximize") {
-        percentTarget = nilai3 !== 0 ? (nilai5 / nilai3 * 100).toFixed(0) + "%" : "0%";
+        percentTarget = nilai3 !== 0 ? (nilai5 / nilai3) * 100 : 0;
     } else {
-        percentTarget = nilai5 !== 0 ? (nilai3 / nilai5 * 100).toFixed(0) + "%" : "0%";
+        percentTarget = nilai5 !== 0 ? (nilai3 / nilai5) * 100 : 0;
     }
 
-    // Calculate percentYear based on polaritas
     let percentYear;
     if (polaritas === "maximize") {
-        percentYear = nilai1 !== 0 ? (nilai5 / nilai1 * 100).toFixed(0) + "%" : "0%";
+        percentYear = nilai1 !== 0 ? (nilai5 / nilai1) * 100 : 0;
     } else {
-        percentYear = nilai5 !== 0 ? (nilai1 / nilai5 * 100).toFixed(0) + "%" : "0%";
+        percentYear = nilai5 !== 0 ? (nilai1 / nilai5) * 100 : 0;
     }
 
-    // Compute additional calculations
-    const N = nilai1 !== 0 ? (nilai5 / nilai1 * 100) : 0;
-    const O = (N * bobot).toFixed(2);
+    // Apply rounding to percentTarget and percentYear
+    percentTarget = Math.round(Math.min(percentTarget, 250));
+    percentYear = Math.round(Math.min(percentYear, 250));
 
-    let Q = N;
-    if (N > 120) {
-        Q = 120;
-    } else if (N < 0) {
-        Q = 0;
-    }
+    const N = percentYear;
+    const O = Math.round(N * bobot); // Rounded result
 
-    const adjRaw = (Q * bobot).toFixed(2);
-    const ttlRaw = O < 0 ? "0.00" : O;
+    let Q = Math.min(Math.max(N, 0), 120);
+    const adj = Math.round(Q * bobot) / 100;
+    const ttl = O < 0 ? 0 : Math.round(O) / 100;
 
-    const adj = (parseFloat(adjRaw) / 100).toFixed(2);
-    const ttl = (parseFloat(ttlRaw) / 100).toFixed(2);
-
-    // Update input fields with calculated values
-    document.querySelector('input[name="percent_target"]').value = percentTarget;
-    document.querySelector('input[name="percent_year"]').value = percentYear;
-    document.querySelector('input[name="ttl"]').value = ttl;
-    document.querySelector('input[name="adj"]').value = adj;
+    document.querySelector('input[name="percent_target"]').value = percentTarget + "%";
+    document.querySelector('input[name="percent_year"]').value = percentYear + "%";
+    document.querySelector('input[name="ttl"]').value = ttl.toFixed(2); // Ensure 2 decimal places
+    document.querySelector('input[name="adj"]').value = adj.toFixed(2); // Ensure 2 decimal places
 }
 
-// Attach event listener to inputs for real-time calculation
+// Attach event listeners
 document.querySelectorAll('input[name="realisasi_sdbulan_ini"], input[name="target_sdbulan_ini"], input[name="base"], input[name="bobot"], input[name="polaritas"]').forEach(input => {
     input.addEventListener('input', calculateResults);
 });

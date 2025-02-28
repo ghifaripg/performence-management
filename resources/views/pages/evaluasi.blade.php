@@ -3,7 +3,7 @@
     $name = Auth::user()->nama;
 ?>
 @extends('layouts.app')
-
+@include('partials.favicon')
 @section('title', 'Evaluasi IKU')
 
 <main class="content">
@@ -84,7 +84,7 @@
                         <td class="fw-normal text-center">{{ $eval->polaritas }}</td>
                         <td class="fw-normal text-center">{{ number_format($eval->bobot, 2) }}</td>
                         <td class="fw-normal text-center">{{ $eval->satuan }}</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->base, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format((float) $eval->base, 2) }}</td>
                         <td class="fw-normal text-center">{{ number_format($eval->target_bulan_ini, 2) }}</td>
                         <td class="fw-normal text-center">{{ number_format($eval->target_sdbulan_ini, 2) }}</td>
                         <td class="fw-normal text-center">{{ number_format($eval->realisasi_bulan_ini, 2) }}</td>

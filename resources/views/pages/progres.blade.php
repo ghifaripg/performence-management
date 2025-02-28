@@ -7,7 +7,7 @@
     }
     ?>
 @extends('layouts.app')
-
+@include('partials.favicon')
 @section('title', 'Progres')
     <main class="content">
             @section('content')

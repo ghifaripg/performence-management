@@ -13,6 +13,7 @@
     $departmentName = (string) $department->department_username;
     ?>
 @extends('layouts.app')
+@include('partials.favicon')
 
 @section('title', 'Form IKU')
 

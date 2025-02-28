@@ -35,22 +35,24 @@ class RegisterController extends Controller
 
     public function register(Request $request)
 {
+
     $validated = $request->validate([
         'username' => 'required|string|max:255|unique:users,username',
         'nama' => 'required|string|max:255|unique:users,nama',
         'password' => 'required|string|confirmed',
-        'department_id' => 'nullable|exists:departments,department_id', // Check if the department exists
+        'department_id' => 'nullable|exists:department,department_id',
     ]);
 
     User::create([
         'username' => $validated['username'],
         'nama' => $validated['nama'],
         'password' => Hash::make($validated['password']),
-        'department_id' => $validated['department_id'], // Add department_id here
+        'department_id' => $validated['department_id'] ?? null,
     ]);
 
     return redirect()->back()->with('success', 'Registration successful!');
 }
+
 
 
 public function registerDepartment(Request $request)

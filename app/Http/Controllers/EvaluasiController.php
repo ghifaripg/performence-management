@@ -11,82 +11,24 @@ use Illuminate\Support\Facades\Log;
 class EvaluasiController extends Controller
 {
     public function showEvaluasi(Request $request)
-    {
-        $user = Auth::user();
-
-        $departmentName = DB::table('department')
-            ->where('department_id', $user->department_id)
-            ->value('department_username');
-
-        // Get selected month and year from request (default: current month & year)
-        $monthYear = $request->query('month-year', date('Y-m')); // Example: "2025-02"
-
-        // Ensure it's properly formatted before processing
-        if (preg_match('/^\d{4}-\d{2}$/', $monthYear)) {
-            [$selectedYear, $selectedMonth] = explode('-', $monthYear);
-        } else {
-            $selectedYear = date('Y');
-            $selectedMonth = date('n'); // Get current month as integer
-        }
-
-        $months = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-        ];
-
-        $selectedMonth = (int) $selectedMonth; // Convert to integer for array indexing
-        $selectedMonthName = $months[$selectedMonth] ?? 'Unknown'; // Fallback in case of error
-
-        // Fetch IKU Evaluations for the selected month and year
-        $evaluations = DB::select("
-            SELECT
-                ie.id,
-                ie.iku_id,
-                ie.point_id,
-                ie.polaritas,
-                ie.bobot,
-                ie.satuan,
-                ie.base,
-                ie.target_bulan_ini,
-                ie.target_sdbulan_ini,
-                ie.realisasi_bulan_ini,
-                ie.realisasi_sdbulan_ini,
-                ie.percent_target,
-                ie.percent_year,
-                ie.ttl,
-                ie.adj,
-                ie.penyebab_tidak_tercapai,
-                ie.program_kerja,
-                isi.iku AS iku_name,
-                ip.point_name AS sub_point_name
-            FROM iku_evaluations ie
-            LEFT JOIN form_iku fi ON ie.iku_id = fi.id
-            LEFT JOIN isi_iku isi ON fi.isi_iku_id = isi.id
-            LEFT JOIN iku_point ip ON ie.point_id = ip.id
-            WHERE ie.year = ? AND ie.month = ?
-            ORDER BY fi.id, ie.id ASC
-        ", [$selectedYear, $selectedMonth]);
-
-        return view('pages.evaluasi', compact(
-            'departmentName',
-            'selectedYear',
-            'months',
-            'selectedMonth',
-            'selectedMonthName',
-            'evaluations'
-        ));
-    }
-
-
-
-public function index(Request $request)
 {
-    $nama = Auth::user()->nama;
-    $selectedMonth = $request->query('month', date('n'));
-    $selectedYear = $request->query('year', date('Y'));
-    $kontrak_id = 'KM_' . $selectedYear;
-    $department_id = Auth::user()->department_id;
+    $user = Auth::user();
+
+    // Get department name
+    $departmentName = DB::table('department')
+        ->where('department_id', $user->department_id)
+        ->value('department_username');
+
+    // Get selected month and year (default: current month & year)
+    $monthYear = $request->query('month-year', date('Y-m'));
+
+    // Validate format
+    if (preg_match('/^\d{4}-\d{2}$/', $monthYear)) {
+        [$selectedYear, $selectedMonth] = explode('-', $monthYear);
+    } else {
+        $selectedYear = date('Y');
+        $selectedMonth = date('n');
+    }
 
     $months = [
         1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
@@ -94,19 +36,116 @@ public function index(Request $request)
         9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
     ];
 
-    $selectedMonth = $request->query('month', date('n'));
-    $selectedMonthName = $months[$selectedMonth];
+    $selectedMonth = (int) $selectedMonth;
+    $selectedMonthName = $months[$selectedMonth] ?? 'Unknown';
 
-    $department = DB::table('department')
-        ->where('department_id', $department_id)
-        ->select('department_username')
-        ->first();
+    // Fetch IKU Evaluations for the selected department, month, and year
+    $evaluations = DB::select("
+        SELECT
+            ie.id,
+            ie.iku_id,
+            ie.point_id,
+            ie.polaritas,
+            ie.bobot,
+            ie.satuan,
+            ie.base,
+            ie.target_bulan_ini,
+            ie.target_sdbulan_ini,
+            ie.realisasi_bulan_ini,
+            ie.realisasi_sdbulan_ini,
+            ie.percent_target,
+            ie.percent_year,
+            ie.ttl,
+            ie.adj,
+            ie.penyebab_tidak_tercapai,
+            ie.program_kerja,
+            isi.iku AS iku_name,
+            ip.point_name AS sub_point_name
+        FROM iku_evaluations ie
+        LEFT JOIN users u ON ie.user_id = u.id
+        LEFT JOIN department d ON u.department_id = d.department_id
+        LEFT JOIN form_iku fi ON ie.iku_id = fi.id
+        LEFT JOIN isi_iku isi ON fi.isi_iku_id = isi.id
+        LEFT JOIN iku_point ip ON ie.point_id = ip.id
+        WHERE ie.year = ?
+          AND ie.month = ?
+          AND u.department_id = ?
+        ORDER BY fi.id, ie.id ASC
+    ", [$selectedYear, $selectedMonth, $user->department_id]);
 
-    if (!$department || !isset($department->department_username)) {
-        return back()->with('error', 'Department not found or missing department name');
-    }
+    return view('pages.evaluasi', compact(
+        'departmentName',
+        'selectedYear',
+        'months',
+        'selectedMonth',
+        'selectedMonthName',
+        'evaluations'
+    ));
+}
 
-    $departmentName = (string) $department->department_username;
+public function index(Request $request)
+{
+    $nama = Auth::user()->nama;
+    $department_id = Auth::user()->department_id;
+    $user = Auth::user();
+
+    // Get department name
+    $departmentName = DB::table('department')
+        ->where('department_id', $user->department_id)
+        ->value('department_username');
+
+    // Get selected month and year from the URL (default to current month & year)
+    $selectedYear = $request->query('year', date('Y'));
+    $selectedMonth = $request->query('month', date('n')); // 'n' for non-zero-padded month
+
+    // Ensure month is an integer (avoid issues with string values)
+    $selectedMonth = (int) $selectedMonth;
+    $selectedYear = (int) $selectedYear;
+
+    $kontrak_id = 'KM_' . $selectedYear;
+
+    $months = [
+        1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+        5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+        9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+    ];
+
+    $selectedMonthName = $months[$selectedMonth] ?? 'Unknown';
+
+    // Fetch IKU Evaluations for the selected department, month, and year
+    $evaluations = DB::select("
+        SELECT
+            ie.id,
+            ie.iku_id,
+            ie.point_id,
+            ie.polaritas,
+            ie.bobot,
+            ie.satuan,
+            ie.base,
+            ie.target_bulan_ini,
+            ie.target_sdbulan_ini,
+            ie.realisasi_bulan_ini,
+            ie.realisasi_sdbulan_ini,
+            ie.percent_target,
+            ie.percent_year,
+            ie.ttl,
+            ie.adj,
+            ie.penyebab_tidak_tercapai,
+            ie.program_kerja,
+            isi.iku AS iku_name,
+            ip.point_name AS sub_point_name
+        FROM iku_evaluations ie
+        LEFT JOIN users u ON ie.user_id = u.id
+        LEFT JOIN department d ON u.department_id = d.department_id
+        LEFT JOIN form_iku fi ON ie.iku_id = fi.id
+        LEFT JOIN isi_iku isi ON fi.isi_iku_id = isi.id
+        LEFT JOIN iku_point ip ON ie.point_id = ip.id
+        WHERE ie.year = ?
+          AND ie.month = ?
+          AND u.department_id = ?
+        ORDER BY fi.id, ie.id ASC
+    ", [$selectedYear, $selectedMonth, $user->department_id]);
+
     $iku_ikuIdentifier = 'IKU' . str_replace(' ', '_', $departmentName) . '_' .  $selectedYear;
 
     // Fetch all Sasaran Strategis
@@ -116,52 +155,63 @@ public function index(Request $request)
 
     // Fetch IKUs and their associated main information
     $ikus = DB::table('form_iku')
-    ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
-    ->where('form_iku.iku_id', $iku_ikuIdentifier)
-    ->select(
-        'form_iku.*',
-        'isi_iku.iku',
-        'isi_iku.proker',
-        'isi_iku.pj',
-        'form_iku.iku_atasan',
-        'form_iku.sasaran_id',
-        'form_iku.is_multi_point',
-        'form_iku.base',
-        'form_iku.stretch',
-        'form_iku.bobot',
-        'form_iku.satuan',
-        'form_iku.polaritas'
-    )
-    ->get();
+        ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+        ->where('form_iku.iku_id', $iku_ikuIdentifier)
+        ->select(
+            'form_iku.*',
+            'isi_iku.iku',
+            'isi_iku.proker',
+            'isi_iku.pj',
+            'form_iku.iku_atasan',
+            'form_iku.sasaran_id',
+            'form_iku.is_multi_point',
+            'form_iku.base',
+            'form_iku.stretch',
+            'form_iku.bobot',
+            'form_iku.satuan',
+            'form_iku.polaritas'
+        )
+        ->get();
 
+    // Fetch IKU Points
+    $ikuPoints = DB::table('iku_point')->get()->groupBy('form_iku_id');
 
-// Fetch IKU Points
-$ikuPoints = DB::table('iku_point')->get()->groupBy('form_iku_id');
+    // Group Sasaran Strategis
+    $sasaranGrouped = [];
+    $number = 1;
 
-// Group Sasaran Strategis
-$sasaranGrouped = [];
-$number = 1;
-
-foreach ($sasaranStrategis as $sasaran) {
-    $sasaranGrouped[$sasaran->id] = [
-        'number' => $number,
-        'perspektif' => $sasaran->name,
-        'ikus' => [],
-    ];
-    $number++;
-}
-
-// Attach IKUs and points
-foreach ($ikus as $iku) {
-    $iku->points = $ikuPoints->get($iku->id, collect());
-
-    if (isset($sasaranGrouped[$iku->sasaran_id])) {
-        $sasaranGrouped[$iku->sasaran_id]['ikus'][] = $iku;
+    foreach ($sasaranStrategis as $sasaran) {
+        $sasaranGrouped[$sasaran->id] = [
+            'number' => $number,
+            'perspektif' => $sasaran->name,
+            'ikus' => [],
+        ];
+        $number++;
     }
+
+    // Attach IKUs and points
+    foreach ($ikus as $iku) {
+        $iku->points = $ikuPoints->get($iku->id, collect());
+
+        if (isset($sasaranGrouped[$iku->sasaran_id])) {
+            $sasaranGrouped[$iku->sasaran_id]['ikus'][] = $iku;
+        }
+    }
+
+    return view('pages.form-evaluasi', compact(
+        'selectedYear',
+        'selectedMonth',
+        'sasaranGrouped',
+        'sasaranStrategis',
+        'ikus',
+        'ikuPoints',
+        'months',
+        'selectedMonth',
+        'selectedMonthName',
+        'evaluations'
+    ));
 }
 
-    return view('pages.form-evaluasi', compact('selectedYear', 'selectedMonth', 'sasaranGrouped', 'sasaranStrategis', 'ikus', 'ikuPoints', 'months', 'selectedMonth', 'selectedMonthName'));
-}
 
 public function store(Request $request)
     {
@@ -200,5 +250,47 @@ public function store(Request $request)
 
         return redirect()->back()->with('success', 'Evaluation saved successfully.');
     }
+
+    public function edit($id)
+    {
+        $eval = DB::table('evaluasi')->where('id', $id)->first();
+        return view('evaluasi.edit', compact('eval'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        DB::table('evaluasi')
+            ->where('id', $id)
+            ->update([
+                'iku_name' => $request->iku_name,
+                'polaritas' => $request->polaritas,
+                'bobot' => $request->bobot,
+                'satuan' => $request->satuan,
+                'base' => $request->base,
+                'target_bulan_ini' => $request->target_bulan_ini,
+                'target_sdbulan_ini' => $request->target_sdbulan_ini,
+                'realisasi_bulan_ini' => $request->realisasi_bulan_ini,
+                'realisasi_sdbulan_ini' => $request->realisasi_sdbulan_ini,
+                'percent_target' => $request->percent_target,
+                'percent_year' => $request->percent_year,
+                'ttl' => $request->ttl,
+                'adj' => $request->adj,
+                'penyebab_tidak_tercapai' => $request->penyebab_tidak_tercapai,
+                'program_kerja' => $request->program_kerja
+            ]);
+
+        return redirect()->route('evaluasi.index')->with('success', 'Data updated successfully.');
+    }
+
+    public function destroy($id, Request $request)
+    {
+        DB::table('iku_evaluations')->where('id', $id)->delete();
+
+        $redirectUrl = $request->input('redirect_url', route('form-evaluasi'));
+
+        return redirect($redirectUrl)->with('success', 'Data berhasil dihapus.');
+    }
+
+
 
 }

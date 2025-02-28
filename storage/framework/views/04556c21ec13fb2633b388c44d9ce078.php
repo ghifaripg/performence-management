@@ -14,6 +14,7 @@
     ?>
 
 
+<?php echo $__env->make('partials.favicon', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php $__env->startSection('title', 'Dashboard'); ?>
     <main class="content">
             <?php $__env->startSection('content'); ?>
@@ -48,66 +49,88 @@
                                     <form method="GET" class="mb-3">
                                         <label for="year" class="form-label">Pilih Tahun:</label>
                                         <select name="year" id="year" class="form-select w-auto d-inline">
-                                            <?php
-                                            $currentYear = date('Y');
-                                            for ($year = 2024; $year <= 2030; $year++): ?>
-                                                <option value="<?php echo $year; ?>" <?php if ($year == $selectedYear) echo 'selected'; ?>>
-                                                    <?php echo $year; ?>
+                                            <?php for ($year = 2024; $year <= 2030; $year++): ?>
+                                                <option value="<?= $year ?>" <?= $year == $selectedYear ? 'selected' : '' ?>>
+                                                    <?= $year ?>
                                                 </option>
                                             <?php endfor; ?>
                                         </select>
+
+                                        <?php if(auth()->user()->id == 1): ?>
+                                        <label for="department" class="form-label ms-3">Pilih Unit Kerja:</label>
+                                        <select name="department" id="department" class="form-select w-auto d-inline" required>
+                                            <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dept): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($dept->department_id); ?>" <?php echo e($dept->department_id == $selectedDepartment ? 'selected' : ''); ?>>
+                                                    <?php echo e($dept->department_name); ?>
+
+                                                </option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                    <?php endif; ?>
+
                                         <button type="submit" class="btn btn-secondary">Pilih</button>
                                     </form>
-                                    <div class="fs-5 fw-normal mb-2">Performance Management - Capaian IKU (Indikator Kinerja Utama) <?php echo $selectedYear ?></div>
-                                    <h2 class="fs-3 fw-extrabold">Unit Kerja: <?php echo $departmentName ?></h2>
+
+                                    <div class="fs-5 fw-normal mb-2">Performance Management - Capaian IKU <?php echo e($selectedYear); ?></div>
+                                    <?php if(auth()->user()->id == 1): ?>
+                                    <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dept): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php if($dept->department_id == $selectedDepartment): ?>
+                                            <h2 class="fs-3 fw-extrabold">Unit Kerja: <?php echo e($dept->department_name); ?></h2>
+                                        <?php endif; ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php else: ?>
+                                    <h2 class="fs-3 fw-extrabold">Unit Kerja: <?php echo e($departmentName); ?></h2>
+                                <?php endif; ?>
                                 </div>
+
                             </div>
                             <div class="card-body p-2">
                                 <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
                             </div>
                         </div>
                     </div>
-                <div class="col-12 col-xl-8">
-                    <div class="row">
-                        <div class="col-12 mb-4">
-                            <div class="card border-0 shadow">
-                                <div class="card-header">
-                                    <div class="row align-items-center">
-                                        <div class="col">
-                                            <h2 class="fs-5 fw-bold mb-0">Total Skor IKU Perspektif (Perbandingan Per Tahun)</h2>
-                                            <form method="GET" class="mb-3">
-                                                <label for="month-year" class="form-label">Pilih Periode:</label>
-                                                <input type="month" id="month-year" name="month-year" class="form-control w-auto d-inline"
-                                                    value="<?php echo e(date('Y-m', strtotime("$selectedYear-$selectedMonth-01"))); ?>">
-                                                <button type="submit" class="btn btn-primary">Pilih</button>
-                                            </form>
+                    <div class="col-12 col-xl-8">
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <div class="card border-0 shadow">
+                                    <div class="card-header">
+                                        <div class="row align-items-center">
+                                            <div class="col">
+                                                <h2 class="fs-5 fw-bold mb-0">Total Skor IKU Perspektif (Perbandingan Per Tahun)</h2>
+                                                <form method="GET" class="mb-3">
+                                                    <label for="month-year" class="form-label">Pilih Periode:</label>
+                                                    <input type="month" id="month-year" name="month" class="form-control w-auto d-inline"
+                                                        value="<?php echo e(sprintf('%04d-%02d', $selectedYear, $selectedMonth)); ?>">
+                                                    <button type="submit" class="btn btn-primary">Pilih</button>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    <div class="table-responsive" style="overflow-x: unset">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">No</th>
-                                                    <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">Perspektif</th>
-                                                    <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">Jumlah</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php $__currentLoopData = $totalAdjPerSasaran; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $sasaran): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <div class="table-responsive" style="overflow-x: unset">
+                                            <table class="table table-hover">
+                                                <thead>
                                                     <tr>
-                                                        <td class="fw-normal text-center"><?php echo e($index + 1); ?></td>
-                                                        <td class="fw-normal text-center"><?php echo e($sasaran->perspektif); ?></td>
-                                                        <td class="fw-normal text-center iku-cell"><?php echo e($sasaran->total); ?></td>
+                                                        <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">No</th>
+                                                        <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">Perspektif</th>
+                                                        <th class="border-0 text-center" style="background-color: #F3F2F2; color:black">Jumlah</th>
                                                     </tr>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <small class="text-tertiary mb-0">Total Skor = <span id="total-iku">
-                                        <?php echo e(array_sum(array_column($totalAdjPerSasaran, 'total'))); ?>
+                                                </thead>
+                                                <tbody>
+                                                    <?php $__currentLoopData = $totalAdjPerSasaran; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $sasaran): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <tr>
+                                                            <td class="fw-normal text-center"><?php echo e($index + 1); ?></td>
+                                                            <td class="fw-normal text-center"><?php echo e($sasaran->perspektif); ?></td>
+                                                            <td class="fw-normal text-center iku-cell"><?php echo e($sasaran->total); ?></td>
+                                                        </tr>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <small class="text-tertiary mb-0">Total Skor =
+                                            <span id="total-iku">
+                                                <?php echo e(collect($totalAdjPerSasaran)->sum('total')); ?>
 
-                                    </span></small>
+                                            </span>
+                                        </small>
                                 </div>
                             </div>
                         </div>
