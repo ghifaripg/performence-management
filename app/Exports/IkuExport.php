@@ -5,17 +5,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\FromArray;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class IkuExport implements WithTitle, FromArray
 {
     protected $selectedYear;
-    protected $name;
     protected $spreadsheet;
 
     public function __construct($year)
@@ -41,151 +40,153 @@ class IkuExport implements WithTitle, FromArray
     }
 
     public function populateData()
-    {
-        $nama = Auth::user()->nama;
-        $department_id = Auth::user()->department_id;
-        $department = DB::table('department')
-        ->where('department_id', $department_id)
+{
+    $user = Auth::user();
+    $kontrak_id = 'KM_' . $this->selectedYear;
+
+    $department = DB::table('department')
+        ->where('department_id', $user->department_id)
         ->select('department_username', 'department_name')
         ->first();
 
-        if (!$department || !isset($department->department_username)) {
-        return back()->with('error', 'Department not found or missing department name');
-        }
-
-        $departmentUsername = (string) $department->department_username;
-        $departmentName = (string) $department->department_name;
-        $sheet = $this->spreadsheet->getActiveSheet();
-        $kontrak_id = 'KM_' . $this->selectedYear;
-        $iku_id = 'IKU' . str_replace(' ', '_', $departmentUsername) . '_' .  $this->selectedYear;
-
-        $sasaranStrategis = DB::table('sasaran_strategis')
-            ->where('kontrak_id', $kontrak_id)
-            ->orderBy('id', 'asc')
-            ->get();
-
-        $ikuData = DB::table('form_iku')
-            ->join('sasaran_strategis', 'form_iku.sasaran_id', '=', 'sasaran_strategis.id')
-            ->where('sasaran_strategis.kontrak_id', $kontrak_id)
-            ->where('form_iku.iku_id', $iku_id)
-            ->select('form_iku.*', 'sasaran_strategis.name as sasaran_name')
-            ->get();
-
-        if ($sasaranStrategis->isEmpty() || $ikuData->isEmpty()) {
-            throw new \Exception("No data found for kontrak_id: " . $kontrak_id);
-        }
-
-        $sasaranGrouped = [];
-        $number = 1;
-        foreach ($sasaranStrategis as $sasaran) {
-            $sasaranGrouped[$sasaran->id] = [
-                'number' => $number,
-                'name' => $sasaran->name,
-                'ikus' => [],
-            ];
-            $number++;
-        }
-
-        foreach ($ikuData as $iku) {
-            $sasaranGrouped[$iku->sasaran_id]['ikus'][] = $iku;
-        }
-
-        // Enable Wrap Text for ALL Cells
-        $sheet->getStyle($sheet->calculateWorksheetDimension())->getAlignment()->setWrapText(true);
-
-        $row = 11;
-        foreach ($sasaranGrouped as $sasaran) {
-            $ikuCount = count($sasaran['ikus']);
-
-            foreach ($sasaran['ikus'] as $index => $iku) {
-                $mergeEndRow = $row + $ikuCount - 1;
-
-                if ($index == 0) {
-                    $sheet->mergeCells("B{$row}:B{$mergeEndRow}");
-                    $sheet->setCellValue("B{$row}", $sasaran['name']);
-
-                    $sheet->mergeCells("A{$row}:A{$mergeEndRow}");
-                    $sheet->setCellValue("A{$row}", $sasaran['number']);
-
-                    $sheet->getStyle("A{$row}:A{$mergeEndRow}")->applyFromArray([
-                        'font' => ['bold' => true],
-                        'alignment' => [
-                            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-                        ],
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                                'color' => ['rgb' => 'D0CECE']
-                            ]
-                        ]
-                    ]);
-
-                    $sheet->getStyle("B{$row}:B{$mergeEndRow}")->applyFromArray([
-                        'font' => ['bold' => true],
-                        'alignment' => [
-                            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-                        ],
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
-                                'color' => ['rgb' => 'D0CECE']
-                            ]
-                        ]
-                    ]);
-                }
-
-                // Alternating Row Colors
-                $backgroundColor = ($row % 2 == 0) ? 'DBE9F9' : 'EFF7FF';
-
-                $sheet->getStyle("C{$row}:L{$row}")->applyFromArray([
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                            'color' => ['rgb' => 'D0CECE']
-                        ]
-                    ]
-                ]);
-                $sheet->setCellValue("B3", "Indikator Kinerja Utama (IKU) Tahun {$this->selectedYear}");
-                $sheet->getStyle("B3")->getFont()->setBold(true)->setSize(22);
-                $sheet->setCellValue("B5", $departmentName);
-                $sheet->getStyle("B5")->getFont()->setBold(true)->setSize(22);
-
-                // iku Data
-                $sheet->setCellValue("C{$row}", $iku->iku_atasan);
-                $sheet->setCellValue("D{$row}", $iku->target);
-                $sheet->setCellValue("E{$row}", ($index + 1) . ". " .$iku->iku);
-                $sheet->setCellValue("F{$row}", $iku->base ?? '-');
-                $sheet->setCellValue("G{$row}", $iku->stretch);
-                $sheet->setCellValue("H{$row}", $iku->satuan);
-                $sheet->setCellValue("I{$row}", ucfirst($iku->polaritas));
-                $sheet->setCellValue("J{$row}", $iku->bobot);
-                $sheet->setCellValueExplicit("K{$row}", e($iku->proker), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-                $sheet->setCellValue("L{$row}", $iku->pj);
-
-                $row++;
-            }
-        }
+    if (!$department) {
+        throw new \Exception('Department not found.');
     }
+
+    $departmentName = (string) $department->department_name;
+
+    $ikuIdentifier = 'IKU' . str_replace(' ', '_', $department->department_username) . '_' . $this->selectedYear;
+
+    $sasaranStrategis = DB::table('sasaran_strategis')->where('kontrak_id', $kontrak_id)->get();
+    $ikus = DB::table('form_iku')
+        ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+        ->where('form_iku.iku_id', $ikuIdentifier)
+        ->select('form_iku.*', 'isi_iku.iku', 'isi_iku.proker', 'isi_iku.pj')
+        ->get();
+
+    $ikuPoints = DB::table('iku_point')->get()->groupBy('form_iku_id');
+
+    $sheet = $this->spreadsheet->getActiveSheet();
+    $startRow = 11;
+    $num = 1;
+
+    foreach ($sasaranStrategis as $sasaran) {
+        $sheet->setCellValue("B3", "Indikator Kinerja Utama (IKU) Tahun {$this->selectedYear}");
+        $sheet->getStyle("B3")->getFont()->setBold(true)->setSize(22);
+        $sheet->setCellValue("B5", $departmentName);
+        $sheet->getStyle("B5")->getFont()->setBold(true)->setSize(22);
+        $ikusUnderSasaran = $ikus->where('sasaran_id', $sasaran->id);
+        if ($ikusUnderSasaran->isEmpty()) continue;
+
+        // Calculate total row span needed for merging
+        $rowSpan = $ikusUnderSasaran->reduce(function ($carry, $iku) use ($ikuPoints) {
+            $pointsCount = $ikuPoints->get($iku->id, collect())->count();
+            return $carry + ($pointsCount > 0 ? $pointsCount + 1 : 1); // +1 for the main IKU row
+        }, 0);
+
+        $endRow = $startRow + $rowSpan - 1;
+
+        // Merge columns for Sasaran Strategis
+        if ($rowSpan > 1) {
+            $sheet->mergeCells("A{$startRow}:A{$endRow}");
+            $sheet->mergeCells("B{$startRow}:B{$endRow}");
+        }
+
+        $sheet->setCellValue("A{$startRow}", $num);
+        $sheet->setCellValue("B{$startRow}", $sasaran->name);
+
+        foreach ($ikusUnderSasaran as $iku) {
+            $points = $ikuPoints->get($iku->id, collect());
+            $ikuRowSpan = $points->count() > 0 ? $points->count() + 1 : 1; // +1 for the main IKU row
+            $ikuEndRow = $startRow + $ikuRowSpan - 1;
+
+            // Merge cells for the main IKU row and points
+            if ($ikuRowSpan > 1) {
+                $sheet->mergeCells("C{$startRow}:C{$ikuEndRow}");
+                $sheet->mergeCells("D{$startRow}:D{$ikuEndRow}");
+                $sheet->mergeCells("K{$startRow}:K{$ikuEndRow}");
+                $sheet->mergeCells("L{$startRow}:L{$ikuEndRow}");
+            }
+
+            // Set main IKU data
+            $sheet->setCellValue("C{$startRow}", $iku->iku_atasan);
+            $sheet->setCellValue("D{$startRow}", $iku->target);
+            $sheet->setCellValue("K{$startRow}", $iku->proker);
+            $sheet->setCellValue("L{$startRow}", $iku->pj);
+            $sheet->setCellValue("E{$startRow}", $iku->iku); // Main IKU
+
+            if ($points->isNotEmpty()) {
+                // Set IKU points in subsequent rows
+                $rowOffset = 1; // Start from the next row
+                foreach ($points as $point) {
+                    $currentRow = $startRow + $rowOffset;
+                    $sheet->setCellValue("E{$currentRow}", $point->point_name);
+                    $sheet->setCellValue("F{$currentRow}", $point->base);
+                    $sheet->setCellValue("G{$currentRow}", $point->stretch);
+                    $sheet->setCellValue("H{$currentRow}", $point->bobot);
+                    $sheet->setCellValue("I{$currentRow}", ucfirst($point->polaritas));
+                    $sheet->setCellValue("J{$currentRow}", $point->bobot);
+                    $rowOffset++;
+                }
+            } else {
+                // No IKU points, fill row with default values
+                $sheet->setCellValue("F{$startRow}", $iku->base);
+                $sheet->setCellValue("G{$startRow}", $iku->stretch);
+                $sheet->setCellValue("H{$startRow}", $iku->satuan);
+                $sheet->setCellValue("I{$startRow}", ucfirst($iku->polaritas));
+                $sheet->setCellValue("J{$startRow}", $iku->bobot);
+            }
+
+            $startRow += $ikuRowSpan; // Move to next available row
+        }
+
+        $num++;
+    }
+
+    $this->applyStyles($sheet, 11, $startRow);
+}
+
+
+private function applyStyles(Worksheet $sheet, int $startRow, int $endRow)
+{
+    $range = "A{$startRow}:L{$endRow}";
+    $styleArray = [
+        'alignment' => [
+            'horizontal' => Alignment::HORIZONTAL_CENTER,
+            'vertical' => Alignment::VERTICAL_CENTER,
+            'wrapText' => true,
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => Border::BORDER_THIN,
+                'color' => ['rgb' => 'D3D3D3'],
+            ],
+        ],
+    ];
+    $sheet->getStyle($range)->applyFromArray($styleArray);
+
+    // Auto-adjust row height
+    for ($row = $startRow; $row <= $endRow; $row++) {
+        $sheet->getRowDimension($row)->setRowHeight(-1);
+    }
+}
+
 
     public function export()
     {
         $this->populateData();
-        $nama = Auth::user()->nama;
-        $department_id = Auth::user()->department_id;
-        $department = DB::table('department')
-        ->where('department_id', $department_id)
-        ->select('department_username')
-        ->first();
 
-        if (!$department || !isset($department->department_username)) {
-        return back()->with('error', 'Department not found or missing department name');
+        $user = Auth::user();
+        $department = DB::table('department')
+            ->where('department_id', $user->department_id)
+            ->select('department_username')
+            ->first();
+
+        if (!$department) {
+            throw new \Exception('Department not found.');
         }
 
-        $departmentName = (string) $department->department_username;
-
-        $filePath = storage_path("app/Form_IKU_ {$departmentName}_{$this->selectedYear}.xlsx");
+        $filePath = storage_path("app/Form_IKU_{$department->department_username}_{$this->selectedYear}.xlsx");
         $writer = new Xlsx($this->spreadsheet);
         $writer->save($filePath);
 

@@ -35,12 +35,12 @@
         </div>
     </div>
 
-    <div class="card card-body border-0 shadow table-wrapper table-responsive">
+    <div class="card card-body border-0 shadow table-wrapper table-responsive" style="overflow-y: hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 12px; margin-top: 25px; margin-bottom: 25px;">
             <img src="{{ asset('assets/img/logo-ksp.jpg')}}" class="img-kiecs" alt="">
             <h5 style="text-transform: uppercase">EVALUASI PENCAPAIAN INDIKATOR KINERJA UTAMA (IKU) s/d BULAN <?php echo $selectedMonthName?></h5>
         </div>
-        <table class="table table-hover">
+        <table class="table table-hover" >
             <thead>
                 <tr>
                     <th class="border-0 text-center" rowspan="2">Indikator Kinerja Utama</th>
@@ -82,17 +82,17 @@
                             @endif
                         </td>
                         <td class="fw-normal text-center">{{ $eval->polaritas }}</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->bobot, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->bobot) }}</td>
                         <td class="fw-normal text-center">{{ $eval->satuan }}</td>
-                        <td class="fw-normal text-center">{{ number_format((float) $eval->base, 2) }}</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->target_bulan_ini, 2) }}</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->target_sdbulan_ini, 2) }}</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->realisasi_bulan_ini, 2) }}</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->realisasi_sdbulan_ini, 2) }}</td>
-                        <td class="fw-normal text-center">{{ number_format((float) $eval->percent_target, 2) }}%</td>
-                        <td class="fw-normal text-center">{{ number_format((float) $eval->percent_year, 2) }}%</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->ttl, 2) }}</td>
-                        <td class="fw-normal text-center">{{ number_format($eval->adj, 2) }}</td>
+                        <td class="fw-normal text-center">{{ number_format((float) $eval->base) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->target_bulan_ini) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->target_sdbulan_ini) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->realisasi_bulan_ini) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->realisasi_sdbulan_ini) }}</td>
+                        <td class="fw-normal text-center">{{ number_format((float) $eval->percent_target) }}%</td>
+                        <td class="fw-normal text-center">{{ number_format((float) $eval->percent_year) }}%</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->ttl) }}</td>
+                        <td class="fw-normal text-center">{{ number_format($eval->adj) }}</td>
                         <td class="fw-normal text-center">{{ $eval->penyebab_tidak_tercapai }}</td>
                         <td class="fw-normal text-center">{{ $eval->program_kerja }}</td>
                     </tr>

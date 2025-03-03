@@ -253,16 +253,24 @@ public function store(Request $request)
 
     public function edit($id)
     {
-        $eval = DB::table('evaluasi')->where('id', $id)->first();
-        return view('evaluasi.edit', compact('eval'));
+        $eval = DB::table('iku_evaluations')
+            ->join('form_iku', 'iku_evaluations.iku_id', '=', 'form_iku.id')
+            ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+            ->select(
+                'iku_evaluations.*',
+                'isi_iku.iku as iku_name' // Get the IKU name
+            )
+            ->where('iku_evaluations.id', $id)
+            ->first();
+
+        return view('pages.edit-evaluasi', compact('eval'));
     }
 
     public function update(Request $request, $id)
     {
-        DB::table('evaluasi')
+        DB::table('iku_evaluations')
             ->where('id', $id)
             ->update([
-                'iku_name' => $request->iku_name,
                 'polaritas' => $request->polaritas,
                 'bobot' => $request->bobot,
                 'satuan' => $request->satuan,
@@ -279,7 +287,7 @@ public function store(Request $request)
                 'program_kerja' => $request->program_kerja
             ]);
 
-        return redirect()->route('evaluasi.index')->with('success', 'Data updated successfully.');
+        return redirect()->route('form-evaluasi')->with('success', 'Data updated successfully.');
     }
 
     public function destroy($id, Request $request)

@@ -165,7 +165,7 @@
                 </form>
             </div>
             <div class="card card-body border-0 shadow table-wrapper table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" >
                     <thead>
                         <tr>
                             <th class="border-0 text-center" rowspan="2">#</th>
@@ -292,6 +292,7 @@
                                             <form id="delete-form-<?php echo e($iku->id); ?>" action="<?php echo e(route('delete-iku', $iku->id)); ?>" method="POST" style="margin: 0;">
                                                 <?php echo csrf_field(); ?>
                                                 <?php echo method_field('DELETE'); ?>
+                                                <input type="hidden" name="redirect_url" id="redirect-url-<?php echo e($iku->id); ?>">
                                                 <button type="button" class="trash-button" onclick="confirmDelete(<?php echo e($iku->id); ?>)" style="padding: 0; border: none; background: none;">
                                                     <img src="<?php echo e(asset('assets/img/trash.png')); ?>" alt="Delete" style="width: 50px; height: 50px; object-fit: contain;">
                                                 </button>
@@ -299,9 +300,11 @@
                                         </div>
                                     </td>
 
-                                    <!-- SweetAlert2 Delete Confirmation -->
                                     <script>
                                         function confirmDelete(id) {
+                                            let currentUrl = window.location.href;
+                                            document.getElementById(`redirect-url-${id}`).value = currentUrl;
+
                                             Swal.fire({
                                                 title: "Apakah Anda yakin?",
                                                 text: "Data ini akan dihapus secara permanen dan tidak dapat dikembalikan!",
@@ -309,7 +312,8 @@
                                                 showCancelButton: true,
                                                 confirmButtonColor: "#d33",
                                                 cancelButtonColor: "#3085d6",
-                                                confirmButtonText: "Iya, Hapus!"
+                                                confirmButtonText: "Iya, Hapus!",
+                                                cancelButtonText: "Batal"
                                             }).then((result) => {
                                                 if (result.isConfirmed) {
                                                     document.getElementById(`delete-form-${id}`).submit();

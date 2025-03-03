@@ -219,17 +219,17 @@
                             <?php endif; ?>
                         </td>
                         <td class="fw-normal text-center"><?php echo e($eval->polaritas); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->bobot, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->bobot)); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->satuan); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->base, 2)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->target_bulan_ini, 2)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->target_sdbulan_ini, 2)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_bulan_ini, 2)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_sdbulan_ini, 2)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_target, 2)); ?>%</td>
-                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_year, 2)); ?>%</td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->ttl, 2)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->adj, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->base)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->target_bulan_ini)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->target_sdbulan_ini)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_bulan_ini)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_sdbulan_ini)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_target)); ?>%</td>
+                        <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_year)); ?>%</td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->ttl)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->adj)); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->penyebab_tidak_tercapai); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->program_kerja); ?></td>
                         <td class="fw-normal text-center">
