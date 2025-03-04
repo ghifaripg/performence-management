@@ -6,6 +6,7 @@
         $selectedYear = htmlspecialchars($_GET['year']);
     }
     ?>
+
 @extends('layouts.app')
 
 @section('title', 'List of User')

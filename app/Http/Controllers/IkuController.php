@@ -288,62 +288,72 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
         return redirect()->route('form-iku')->with('success', 'KPI deleted successfully!');
     }
 
-    public function detail(Request $request, $id)
-{
-    $selectedYear = $request->query('year', date('Y'));
-    $kontrak_id = 'KM_' . $selectedYear;
+    public function showDetail($ikuId)
+    {
+        // Extract the year from iku_id (e.g., IKU_ITMS_2025)
+        preg_match('/\d{4}$/', $ikuId, $matches);
+        $selectedYear = $matches[0] ?? null;
 
-    $sasaranStrategis = DB::table('sasaran_strategis')
-        ->where('kontrak_id', $kontrak_id)
-        ->get();
-
-    $ikuData = DB::table('form_iku')
-        ->join('sasaran_strategis', 'form_iku.sasaran_id', '=', 'sasaran_strategis.id')
-        ->where('sasaran_strategis.kontrak_id', $kontrak_id)
-        ->where('form_iku.iku_id', $id)
-        ->select('form_iku.*', 'sasaran_strategis.name as sasaran_name')
-        ->get();
-
-
-    $sasaranGrouped = [];
-    $number = '1';
-    foreach ($sasaranStrategis as $sasaran) {
-        $sasaranGrouped[$sasaran->id] = [
-            'number' => $number,
-            'perspektif' => $sasaran->name,
-            'ikus' => [],
-        ];
-        $number++;
-    }
-
-    $progresData = DB::table('progres')
-    ->join('iku', 'progres.iku_id', '=', 'iku.iku_id')
-    ->where('progres.iku_id', $id)
-    ->select(
-        'progres.id',
-        'progres.iku_id',
-        'iku.department_name as Nama Department',
-        'iku.tahun as Tahun',
-        'progres.status',
-        'progres.need_discussion',
-        'progres.meeting_date',
-        'progres.notes'
-    )
-    ->get();
-
-
-    foreach ($ikuData as $iku) {
-        if (isset($sasaranGrouped[$iku->sasaran_id])) {
-            $sasaranGrouped[$iku->sasaran_id]['ikus'][] = $iku;
+        if (!$selectedYear) {
+            return back()->with('error', 'Invalid IKU ID format');
         }
+
+        // Fetch IKU Data
+        $ikuData = DB::table('form_iku')
+            ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+            ->join('sasaran_strategis', 'form_iku.sasaran_id', '=', 'sasaran_strategis.id')
+            ->leftJoin('iku_point', 'iku_point.form_iku_id', '=', 'form_iku.id')
+            ->where('form_iku.iku_id', $ikuId)
+            ->select(
+                'form_iku.*',
+                'isi_iku.iku',
+                'isi_iku.proker',
+                'isi_iku.pj',
+                'sasaran_strategis.name as perspektif',
+                'iku_point.point_name',
+                'iku_point.base as point_base',
+                'iku_point.stretch as point_stretch',
+                'iku_point.satuan as point_satuan',
+                'iku_point.polaritas as point_polaritas',
+                'iku_point.bobot as point_bobot'
+            )
+            ->get();
+
+        // Grouping Data into Structure Required for View
+        $sasaranGrouped = $ikuData->groupBy('perspektif')->map(function ($ikus, $perspektif) {
+            return [
+                'perspektif' => $perspektif,
+                'number' => '',
+                'ikus' => $ikus->groupBy('iku')->map(function ($ikuPoints, $iku) {
+                    return [
+                        'iku' => $iku,
+                        'iku_atasan' => $ikuPoints->first()->iku_atasan ?? '',
+                        'target' => $ikuPoints->first()->target ?? '',
+                        'base' => $ikuPoints->first()->point_base ?? '',
+                        'stretch' => $ikuPoints->first()->point_stretch ?? '',
+                        'satuan' => $ikuPoints->first()->point_satuan ?? '',
+                        'polaritas' => $ikuPoints->first()->point_polaritas ?? '',
+                        'bobot' => $ikuPoints->first()->point_bobot ?? '',
+                        'proker' => $ikuPoints->first()->proker ?? '',
+                        'pj' => $ikuPoints->first()->pj ?? '',
+                        'points' => $ikuPoints->map(fn ($point) => [
+                            'point_name' => $point->point_name,
+                            'base' => $point->point_base,
+                            'stretch' => $point->point_stretch,
+                            'satuan' => $point->point_satuan,
+                            'polaritas' => $point->point_polaritas,
+                            'bobot' => $point->point_bobot,
+                        ])->filter()
+                    ];
+                })->values(),
+            ];
+        })->values();
+
+        return view('pages.detail', compact('sasaranGrouped', 'selectedYear'));
     }
 
-    if ($ikuData->isEmpty()) {
-        return redirect()->route('progres.index')->with('error', 'IKU not found.');
-    }
 
-    return view('pages.detail', compact('sasaranStrategis', 'progresData', 'sasaranGrouped', 'ikuData', 'selectedYear'));
-}
+
 
 public function exportIku(Request $request)
     {

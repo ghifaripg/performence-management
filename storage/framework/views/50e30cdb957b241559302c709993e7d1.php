@@ -7,6 +7,7 @@
     }
     ?>
 
+<?php echo $__env->make('partials.favicon', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <?php $__env->startSection('title', 'Form Evaluasi IKU'); ?>
 

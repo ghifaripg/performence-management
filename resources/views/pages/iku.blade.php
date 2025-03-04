@@ -13,7 +13,6 @@
     $departmentName = (string) $department->department_username;
     ?>
 @extends('layouts.app')
-@include('partials.favicon')
 
 @section('title', 'Form IKU')
 
@@ -60,129 +59,129 @@
             <input type="text" id="searchInput" class="form-control" placeholder="Search...">
         </div>
 
-        <table class="table table-hover" id="ikuTable">
-            <thead>
-                <tr>
-                    <th class="border-0 text-center" rowspan="2">#</th>
-                    <th class="border-0 text-center" rowspan="2">Perspektif</th>
-                    <th class="border-0 text-center" colspan="2">Key Address</th>
-                    <th class="border-0 text-center" rowspan="2">Indikator Kerja Utama</th>
-                    <th class="border-0 text-center" colspan="2">Target</th>
-                    <th class="border-0 text-center" rowspan="2">Satuan</th>
-                    <th class="border-0 text-center" rowspan="2">Polaritas</th>
-                    <th class="border-0 text-center" rowspan="2">Bobot</th>
-                    <th class="border-0 text-center" rowspan="2">Program Kerja</th>
-                    <th class="border-0 text-center" rowspan="2">Penanggung Jawab</th>
-                </tr>
-                <tr>
-                    <th class="border-0 text-center">IKU Atasan</th>
-                    <th class="border-0 text-center">Target</th>
-                    <th class="border-0 text-center">Base</th>
-                    <th class="border-0 text-center">Stretch</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($sasaranGrouped as $sasaran)
-                    @php
-                        $ikuCount = count($sasaran['ikus']);
-                        $totalRows = 0;
-                        $ikuAtasanRowspan = [];
-                        $targetRowspan = [];
-
-                        // Pre-calculate row spans for merging IKU Atasan & Target
-                        foreach ($sasaran['ikus'] as $iku) {
-                            $ikuPointList = collect($iku->points ?? []);
-                            $maxRows = max(1, $ikuPointList->count());
-                            $totalRows += $maxRows;
-
-                            $ikuAtasanRowspan[$iku->iku_atasan] = ($ikuAtasanRowspan[$iku->iku_atasan] ?? 0) + $maxRows;
-                            $targetRowspan[$iku->target] = ($targetRowspan[$iku->target] ?? 0) + $maxRows;
-                        }
-                    @endphp
-
-                    @foreach ($sasaran['ikus'] as $index => $iku)
+            <table class="table table-hover" id="ikuTable">
+                <thead>
+                    <tr>
+                        <th class="border-0 text-center" rowspan="2">#</th>
+                        <th class="border-0 text-center" rowspan="2">Perspektif</th>
+                        <th class="border-0 text-center" colspan="2">Key Address</th>
+                        <th class="border-0 text-center" rowspan="2">Indikator Kerja Utama</th>
+                        <th class="border-0 text-center" colspan="2">Target</th>
+                        <th class="border-0 text-center" rowspan="2">Satuan</th>
+                        <th class="border-0 text-center" rowspan="2">Polaritas</th>
+                        <th class="border-0 text-center" rowspan="2">Bobot</th>
+                        <th class="border-0 text-center" rowspan="2">Program Kerja</th>
+                        <th class="border-0 text-center" rowspan="2">Penanggung Jawab</th>
+                    </tr>
+                    <tr>
+                        <th class="border-0 text-center">IKU Atasan</th>
+                        <th class="border-0 text-center">Target</th>
+                        <th class="border-0 text-center">Base</th>
+                        <th class="border-0 text-center">Stretch</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($sasaranGrouped as $sasaran)
                         @php
-                            $ikuPointList = collect($iku->points ?? []);
-                            $maxRows = max(1, $ikuPointList->count());
+                            $ikuCount = count($sasaran['ikus']);
+                            $totalRows = 0;
+                            $ikuAtasanRowspan = [];
+                            $targetRowspan = [];
+
+                            // Pre-calculate row spans for merging IKU Atasan & Target
+                            foreach ($sasaran['ikus'] as $iku) {
+                                $ikuPointList = collect($iku->points ?? []);
+                                $maxRows = max(1, $ikuPointList->count());
+                                $totalRows += $maxRows;
+
+                                $ikuAtasanRowspan[$iku->iku_atasan] = ($ikuAtasanRowspan[$iku->iku_atasan] ?? 0) + $maxRows;
+                                $targetRowspan[$iku->target] = ($targetRowspan[$iku->target] ?? 0) + $maxRows;
+                            }
                         @endphp
 
-                        <tr>
-                            @if ($index == 0)
-                                <td class="fw-bold align-middle text-center" rowspan="{{ $totalRows }}">
-                                    {{ $sasaran['number'] }}
-                                </td>
-                                <td class="fw-normal align-middle text-center" rowspan="{{ $totalRows }}">
-                                    {{ $sasaran['perspektif'] }}
-                                </td>
-                            @endif
-
-                            @if ($ikuAtasanRowspan[$iku->iku_atasan] > 0)
-                                <td class="fw-normal text-center" rowspan="{{ $ikuAtasanRowspan[$iku->iku_atasan] }}">
-                                    {{ $iku->iku_atasan }}
-                                </td>
-                                @php
-                                    $ikuAtasanRowspan[$iku->iku_atasan] = 0;
-                                @endphp
-                            @endif
-
-                            @if ($targetRowspan[$iku->target] > 0)
-                                <td class="fw-normal text-center" rowspan="{{ $targetRowspan[$iku->target] }}">
-                                    {{ $iku->target }}
-                                </td>
-                                @php
-                                    $targetRowspan[$iku->target] = 0;
-                                @endphp
-                            @endif
-
-                            <td class="fw-normal text-start" rowspan="{{ $maxRows }}">
-                                <strong class="fw-normal text-center">{{ $iku->iku }}</strong>
-                                @if($ikuPointList->isNotEmpty())
-                                    <ul class="m-0 p-0">
-                                        @foreach ($ikuPointList as $point)
-                                            <li style="font-size: 0.875rem;">{{ $point->point_name }}</li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </td>
-
+                        @foreach ($sasaran['ikus'] as $index => $iku)
                             @php
-                                $firstPoint = $ikuPointList->first() ?? null;
+                                $ikuPointList = collect($iku->points ?? []);
+                                $maxRows = max(1, $ikuPointList->count());
                             @endphp
-                            <td class="fw-normal text-center">
-                                {{ $firstPoint->base ?? $iku->base ?? '-' }}
-                            </td>
-                            <td class="fw-normal text-center">
-                                {{ $firstPoint->stretch ?? $iku->stretch ?? '-' }}
-                            </td>
-                            <td class="fw-normal text-center">
-                                {{ $firstPoint->satuan ?? $iku->satuan ?? '-' }}
-                            </td>
-                            <td class="fw-normal text-center">
-                                {{ ucfirst($firstPoint->polaritas ?? $iku->polaritas ?? '-') }}
-                            </td>
-                            <td class="fw-normal bobot-cell">
-                                {{ $firstPoint->bobot ?? $iku->bobot ?? '-' }}
-                            </td>
 
-                            <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{!! nl2br(e($iku->proker)) !!}</td>
-                            <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->pj }}</td>
-                        </tr>
+                            <tr>
+                                @if ($index == 0)
+                                    <td class="fw-bold align-middle text-center" rowspan="{{ $totalRows }}">
+                                        {{ $sasaran['number'] }}
+                                    </td>
+                                    <td class="fw-normal align-middle text-center" rowspan="{{ $totalRows }}">
+                                        {{ $sasaran['perspektif'] }}
+                                    </td>
+                                @endif
 
-                        @if ($ikuPointList->count() > 1)
-                            @foreach ($ikuPointList->slice(1) as $point)
-                                <tr>
-                                    <td class="fw-normal text-center">{{ $point->base ?? '-' }}</td>
-                                    <td class="fw-normal text-center">{{ $point->stretch ?? '-' }}</td>
-                                    <td class="fw-normal text-center">{{ $point->satuan ?? '-' }}</td>
-                                    <td class="fw-normal text-center">{{ ucfirst($point->polaritas ?? '-') }}</td>
-                                    <td class="fw-normal bobot-cell">{{ $point->bobot ?? '-' }}</td>
-                                </tr>
-                            @endforeach
-                        @endif
+                                @if ($ikuAtasanRowspan[$iku->iku_atasan] > 0)
+                                    <td class="fw-normal text-center" rowspan="{{ $ikuAtasanRowspan[$iku->iku_atasan] }}">
+                                        {{ $iku->iku_atasan }}
+                                    </td>
+                                    @php
+                                        $ikuAtasanRowspan[$iku->iku_atasan] = 0;
+                                    @endphp
+                                @endif
+
+                                @if ($targetRowspan[$iku->target] > 0)
+                                    <td class="fw-normal text-center" rowspan="{{ $targetRowspan[$iku->target] }}">
+                                        {{ $iku->target }}
+                                    </td>
+                                    @php
+                                        $targetRowspan[$iku->target] = 0;
+                                    @endphp
+                                @endif
+
+                                <td class="fw-normal text-start" rowspan="{{ $maxRows }}">
+                                    <strong class="fw-normal text-center">{{ $iku->iku }}</strong>
+                                    @if($ikuPointList->isNotEmpty())
+                                        <ul class="m-0 p-0">
+                                            @foreach ($ikuPointList as $point)
+                                                <li style="font-size: 0.875rem;">{{ $point->point_name }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                </td>
+
+                                @php
+                                    $firstPoint = $ikuPointList->first() ?? null;
+                                @endphp
+                                <td class="fw-normal text-center">
+                                    {{ $firstPoint->base ?? $iku->base ?? '-' }}
+                                </td>
+                                <td class="fw-normal text-center">
+                                    {{ $firstPoint->stretch ?? $iku->stretch ?? '-' }}
+                                </td>
+                                <td class="fw-normal text-center">
+                                    {{ $firstPoint->satuan ?? $iku->satuan ?? '-' }}
+                                </td>
+                                <td class="fw-normal text-center">
+                                    {{ ucfirst($firstPoint->polaritas ?? $iku->polaritas ?? '-') }}
+                                </td>
+                                <td class="fw-normal bobot-cell">
+                                    {{ $firstPoint->bobot ?? $iku->bobot ?? '-' }}
+                                </td>
+
+                                <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{!! nl2br(e($iku->proker)) !!}</td>
+                                <td class="fw-normal text-center" rowspan="{{ $maxRows }}">{{ $iku->pj }}</td>
+                            </tr>
+
+                            @if ($ikuPointList->count() > 1)
+                                @foreach ($ikuPointList->slice(1) as $point)
+                                    <tr>
+                                        <td class="fw-normal text-center">{{ $point->base ?? '-' }}</td>
+                                        <td class="fw-normal text-center">{{ $point->stretch ?? '-' }}</td>
+                                        <td class="fw-normal text-center">{{ $point->satuan ?? '-' }}</td>
+                                        <td class="fw-normal text-center">{{ ucfirst($point->polaritas ?? '-') }}</td>
+                                        <td class="fw-normal bobot-cell">{{ $point->bobot ?? '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        @endforeach
                     @endforeach
-                @endforeach
-            </tbody>
-        </table>
+                </tbody>
+            </table>
     </div>
 
     <script>

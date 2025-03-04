@@ -3,7 +3,6 @@
     $name = Auth::user()->nama;
 ?>
 @extends('layouts.app')
-@include('partials.favicon')
 @section('title', 'Evaluasi IKU')
 
 <main class="content">

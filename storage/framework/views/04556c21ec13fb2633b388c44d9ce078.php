@@ -14,7 +14,6 @@
     ?>
 
 
-<?php echo $__env->make('partials.favicon', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php $__env->startSection('title', 'Dashboard'); ?>
     <main class="content">
             <?php $__env->startSection('content'); ?>
@@ -99,8 +98,12 @@
                                                 <h2 class="fs-5 fw-bold mb-0">Total Skor IKU Perspektif (Perbandingan Per Tahun)</h2>
                                                 <form method="GET" class="mb-3">
                                                     <label for="month-year" class="form-label">Pilih Periode:</label>
-                                                    <input type="month" id="month-year" name="month" class="form-control w-auto d-inline"
-                                                        value="<?php echo e(sprintf('%04d-%02d', $selectedYear, $selectedMonth)); ?>">
+                                                    <input type="month" id="month-year" class="form-control w-auto d-inline"
+                                                    value="<?php echo e(sprintf('%04d-%02d', $selectedYear, $selectedMonth)); ?>"
+                                                    onchange="updateMonthYear(this.value)">
+                                                    <input type="hidden" name="month" id="month">
+                                                    <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>"> <!-- Ensure year is included -->
+                                                    <input type="hidden" name="department" value="<?php echo e($selectedDepartment); ?>"> <!-- Ensure department is included -->
                                                     <button type="submit" class="btn btn-primary">Pilih</button>
                                                 </form>
                                             </div>
@@ -217,6 +220,14 @@
                 </div>
             </div>
     </main>
+    <script>
+        function updateMonthYear(value) {
+            const parts = value.split("-");
+            if (parts.length === 2) {
+                document.getElementById("month").value = parts[1]; // Extract month only
+            }
+        }
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             if (document.querySelector('.ct-chart-sales-value')) {

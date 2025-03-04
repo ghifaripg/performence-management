@@ -7,7 +7,6 @@
     }
     ?>
 
-<?php echo $__env->make('partials.favicon', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php $__env->startSection('title', 'Progres'); ?>
     <main class="content">
             <?php $__env->startSection('content'); ?>
@@ -41,7 +40,8 @@
                             <th>Need Discussion</th>
                             <th>Meeting Date</th>
                             <th>Notes</th>
-                            <th>Action</th>
+                            <th>Save</th>
+                            <th>Detail Isi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,6 +73,8 @@
                                 </td>
                                 <td>
                                     <button type="submit" class="btn btn-primary">Save</button>
+                                </td>
+                                <td>
                                     <a href="<?php echo e(route('iku.detail', $progres->iku_id)); ?>" class="btn btn-info">Detail</a>
                                 </td>
                             </form>

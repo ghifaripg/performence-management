@@ -7,6 +7,7 @@
     }
     ?>
 @extends('layouts.app')
+@include('partials.favicon')
 
 @section('title', 'Form Evaluasi IKU')
 

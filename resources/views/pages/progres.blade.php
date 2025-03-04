@@ -7,7 +7,6 @@
     }
     ?>
 @extends('layouts.app')
-@include('partials.favicon')
 @section('title', 'Progres')
     <main class="content">
             @section('content')
@@ -41,7 +40,8 @@
                             <th>Need Discussion</th>
                             <th>Meeting Date</th>
                             <th>Notes</th>
-                            <th>Action</th>
+                            <th>Save</th>
+                            <th>Detail Isi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,6 +73,8 @@
                                 </td>
                                 <td>
                                     <button type="submit" class="btn btn-primary">Save</button>
+                                </td>
+                                <td>
                                     <a href="{{ route('iku.detail', $progres->iku_id) }}" class="btn btn-info">Detail</a>
                                 </td>
                             </form>

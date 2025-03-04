@@ -3,10 +3,8 @@
 
 <head>
 
-    <link rel="apple-touch-icon" sizes="120x120" href="<?php echo e(asset ('assets/img/favicon/apple-touch-icon.png')); ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('assets/img/favicon-32x32.png')); ?>">
-<link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('assets/img/favicon-16x16.png')); ?>">
-<link rel="shortcut icon" href="<?php echo e(asset('assets/img/favicon.ico')); ?>">
+<?php echo $__env->yieldContent('partials.favicon'); ?>
+
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- Primary Meta Tags -->
 <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?></title>

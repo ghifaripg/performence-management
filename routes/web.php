@@ -46,7 +46,7 @@ Route::post('/form-iku', [IkuController::class, 'storeIku'])->name('store-iku');
 Route::get('/edit-iku/{id}', [IkuController::class, 'editIku'])->name('edit-iku');
 Route::put('/update-iku/{id}', [IkuController::class, 'updateIku'])->name('update-iku');
 Route::delete('/delete-iku/{id}', [IkuController::class, 'deleteIku'])->name('delete-iku');
-Route::get('/iku/{id}/detail', [IkuController::class, 'detail'])->name('iku.detail');
+Route::get('/iku/{id}/detail', [IkuController::class, 'showDetail'])->name('iku.detail');
 Route::get('/export-iku', [IkuController::class, 'exportIku'])->name('export.iku');
 
 

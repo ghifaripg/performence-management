@@ -74,11 +74,11 @@
                                     <label>IKU Type:</label>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="iku_type" id="singlePoint" value="single" checked>
-                                        <label class="form-check-label" for="singlePoint">Single Point</label>
+                                        <label class="form-check-label" for="singlePoint">Satu Poin</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="iku_type" id="multiplePoints" value="multiple">
-                                        <label class="form-check-label" for="multiplePoints">Multiple Points</label>
+                                        <label class="form-check-label" for="multiplePoints">Beberapa Poin</label>
                                     </div>
                                 </div>
 
@@ -113,7 +113,7 @@
 
                                         <!-- Single Point Section -->
                                         <div id="single-point-section">
-                                            <h5>IKU Details</h5>
+                                            <h5>Detail Isi IKU</h5>
                                             <label>Base</label>
                                             <input type="text" class="form-control" name="single_base" id="single_base">
                                             <label>Stretch</label>
@@ -131,10 +131,10 @@
 
                                         <!-- IKU Points Section -->
                                         <div id="multiple-points-section" style="display: none;">
-                                            <h5>IKU Points</h5>
+                                            <h5>Poin IKU</h5>
                                             <div id="iku-points-container">
                                                 <div class="iku-point mb-3">
-                                                    <label>Point Name</label>
+                                                    <label>Poin IKU</label>
                                                     <input type="text" class="form-control" name="points[0][name]">
                                                     <label>Base</label>
                                                     <input type="text" class="form-control" name="points[0][base]">
@@ -149,10 +149,10 @@
                                                     </select>
                                                     <label>Bobot</label>
                                                     <input type="number" class="form-control point-bobot" name="points[0][bobot]" step="0.01">
-                                                    <button type="button" class="btn btn-danger btn-sm remove-point">Remove</button>
+                                                    <button type="button" class="btn btn-danger btn-sm remove-point">Hapus</button>
                                                 </div>
                                             </div>
-                                            <button type="button" class="btn btn-primary" id="add-iku-point">Add New Point</button>
+                                            <button type="button" class="btn btn-primary" id="add-iku-point">Tambah Poin Baru</button>
                                             <p id="total-bobot" class="mt-2"></p>
                                         </div>
                                     </div>
