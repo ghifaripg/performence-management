@@ -70,12 +70,12 @@ class DashboardController extends Controller
     ", $queryParamsSasaran);
 
     // Query for total ADJ per Month
-    $queryParamsMonth = [$selectedYear]; // Only includes year
+    $queryParamsMonth = [$selectedYear];
     $whereDepartment = "";
 
     if (!empty($selectedDepartment)) {
         $whereDepartment = "AND u.department_id = ?";
-        $queryParamsMonth[] = $selectedDepartment; // Add department condition
+        $queryParamsMonth[] = $selectedDepartment;
     }
 
     $totalAdjPerMonth = DB::select("

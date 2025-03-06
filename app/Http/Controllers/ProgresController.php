@@ -9,30 +9,43 @@ use Illuminate\Support\Facades\Auth;
 class ProgresController extends Controller
 {
     public function index()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $progresData = DB::table('progres')
-        ->join('iku', 'progres.iku_id', '=', 'iku.iku_id')
-        ->select(
-            'progres.id',
-            'progres.iku_id',
-            'iku.department_name as nama_department',
-            'iku.tahun as tahun',
-            'progres.status',
-            'progres.need_discussion',
-            'progres.meeting_date',
-            'progres.notes'
-        );
+        // Get department_username from department table
+        $department = DB::table('department')
+            ->where('department_id', $user->department_id)
+            ->first();
 
-    if ($user->id !== 1) {
-        $progresData->where('progres.user_id', $user->id);
+        if (!$department) {
+            return redirect('/dashboard')->with('error', 'Department not found.');
+        }
+
+        $departmentUsername = $department->department_username;
+
+        $progresData = DB::table('progres')
+            ->join('iku', 'progres.iku_id', '=', 'iku.iku_id')
+            ->select(
+                'progres.id',
+                'progres.iku_id',
+                'iku.department_name as nama_department',
+                'iku.tahun as tahun',
+                'progres.status',
+                'progres.need_discussion',
+                'progres.meeting_date',
+                'progres.notes'
+            );
+
+        if ($user->id !== 1) {
+            $progresData->where('iku.iku_id', 'LIKE', "%{$departmentUsername}%"); // Filter where IKU ID contains department username
+
+        }
+
+        $progresData = $progresData->paginate(5);
+
+        return view('pages.progres', compact('progresData'));
     }
 
-    $progresData = $progresData->paginate(5);
-
-    return view('pages.progres', compact('progresData'));
-}
 
     public function store(Request $request)
     {

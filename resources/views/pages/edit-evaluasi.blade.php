@@ -87,7 +87,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Update</button>
-        <a href="{{ route('form-evaluasi') }}" class="btn btn-secondary">Cancel</a>
+        <a href="/form-evaluasi?month=<?php echo $selectedMonth ?>&year=<?php echo $selectedYear ?>" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 @endsection

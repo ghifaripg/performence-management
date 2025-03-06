@@ -1,6 +1,7 @@
 <?php
 namespace App\Exports;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -182,14 +183,23 @@ class KontrakManajemenExport implements WithTitle, FromArray
     }
 }
 
-    public function export()
-    {
-        $this->populateData();
+public function export(Request $request)
+{
+    $this->populateData();
 
-        $filePath = storage_path("app/Kontrak_Manajemen_{$this->selectedYear}.xlsx");
-        $writer = new Xlsx($this->spreadsheet);
-        $writer->save($filePath);
+    $sheet = $this->spreadsheet->getActiveSheet();
 
-        return response()->download($filePath)->deleteFileAfterSend(true);
-    }
+    // Insert names into specified Excel cells
+    $sheet->setCellValue('B43', $request->input('direktur_utama', ''));
+    $sheet->setCellValue('D43', $request->input('plt_keuangan_sdm', ''));
+    $sheet->setCellValue('I43', $request->input('direktur_operasi', ''));
+    $sheet->setCellValue('D38', $request->input('tempat_tanggal', ''));
+
+    $filePath = storage_path("app/Kontrak_Manajemen_{$this->selectedYear}.xlsx");
+    $writer = new Xlsx($this->spreadsheet);
+    $writer->save($filePath);
+
+    return response()->download($filePath)->deleteFileAfterSend(true);
+}
+
 }

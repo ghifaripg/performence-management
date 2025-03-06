@@ -288,7 +288,7 @@
                                                 <img src="<?php echo e(asset('assets/img/edit.png')); ?>" alt="Edit" style="width: 50px; height: 50px; object-fit: contain;">
                                             </a>
 
-                                            <!-- Delete Button with SweetAlert -->
+                                            <!-- Delete Button -->
                                             <form id="delete-form-<?php echo e($iku->id); ?>" action="<?php echo e(route('delete-iku', $iku->id)); ?>" method="POST" style="margin: 0;">
                                                 <?php echo csrf_field(); ?>
                                                 <?php echo method_field('DELETE'); ?>

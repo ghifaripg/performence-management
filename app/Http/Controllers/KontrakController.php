@@ -224,7 +224,7 @@ class KontrakController extends Controller
         $year = $request->query('year', date('Y'));
         $export = new KontrakManajemenExport($year);
 
-        return $export->export();
+        return $export->export($request);
     }
 
 

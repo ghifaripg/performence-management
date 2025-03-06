@@ -6,6 +6,7 @@ body{
     overflow: hidden;
 }
 </style>
+@yield('partials.favicon')
 @extends('layouts.app')
 
 @section('title', 'User Profile')
@@ -75,9 +76,9 @@ body{
             <div class="row">
                 <div class="col-12 mb-4">
                     <div class="card shadow border-0 text-center p-0">
-                        <div class="profile-cover rounded-top" data-background="../assets/img/profile-cover.jpg"></div>
+                        <div class="profile-cover rounded-top" data-background="../assets/img/about1.png"></div>
                         <div class="card-body pb-5">
-                            <img src="../../assets/img/team/profile-picture-3.png" class="avatar-xl rounded-circle mx-auto mt-n7 mb-4" alt="Profile Picture">
+                            <img src="../../assets/img/team/profile-picture-4.png" class="avatar-xl rounded-circle mx-auto mt-n7 mb-4" alt="Profile Picture">
                             <h4 class="h3">{{ $name }}</h4>
                             <h5 class="fw-normal">{{ $username }}</h5>
                         <a class="btn btn-gray-800 mt-2 animate-up-2" href="/dashboard">Back to Dashboard</a>

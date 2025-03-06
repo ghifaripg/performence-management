@@ -278,7 +278,7 @@
                                                 <img src="{{ asset('assets/img/edit.png') }}" alt="Edit" style="width: 50px; height: 50px; object-fit: contain;">
                                             </a>
 
-                                            <!-- Delete Button with SweetAlert -->
+                                            <!-- Delete Button -->
                                             <form id="delete-form-{{ $iku->id }}" action="{{ route('delete-iku', $iku->id) }}" method="POST" style="margin: 0;">
                                                 @csrf
                                                 @method('DELETE')

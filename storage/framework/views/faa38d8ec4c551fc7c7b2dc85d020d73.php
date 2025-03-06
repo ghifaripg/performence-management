@@ -217,10 +217,10 @@
                                         </form>
 
                                         <!-- Delete Button -->
-                                        <form action="<?php echo e(route('delete-kpi', $kpi->id)); ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete this KPI?');" style="margin: 0;">
+                                        <form id="delete-form-<?php echo e($kpi->id); ?>" action="<?php echo e(route('delete-kpi', $kpi->id)); ?>" method="POST" style="margin: 0;">
                                             <?php echo csrf_field(); ?>
                                             <?php echo method_field('DELETE'); ?>
-                                            <button type="submit" class="btn btn-pill btn-outline-danger" style="padding: 0; border: none; background: none;">
+                                            <button type="button" class="btn btn-pill btn-outline-danger delete-btn" data-id="<?php echo e($kpi->id); ?>" style="padding: 0; border: none; background: none;">
                                                 <img src="<?php echo e(asset('assets/img/trash.png')); ?>" alt="Delete" style="width: 30px; height: 30px; object-fit: contain;">
                                             </button>
                                         </form>
@@ -235,6 +235,29 @@
             </div>
         </main>
 <?php $__env->stopSection(); ?>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const kpiId = this.getAttribute("data-id");
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This action cannot be undone!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${kpiId}`).submit();
+                }
+            });
+        });
+    });
+});
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     const sasaranRadios = document.querySelectorAll('.sasaran-checkbox');

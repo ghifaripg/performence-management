@@ -14,6 +14,11 @@
     ?>
 
 @extends('layouts.app')
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="120x120" href="{{ asset ('assets/img/favicon/apple-touch-icon.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/img/favicon-16x16.png') }}">
+<link rel="shortcut icon" href="{{ asset('assets/img/favicon.ico') }}">
 @section('title', 'Dashboard')
     <main class="content">
             @section('content')
@@ -229,36 +234,81 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             if (document.querySelector('.ct-chart-sales-value')) {
-        new Chartist.Line('.ct-chart-sales-value', {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
-            series: [ {!! $adjSeriesJson !!} ] // Inject PHP array into JS
-        }, {
-            low: 0,
-            showArea: true,
-            fullWidth: true,
-            plugins: [ Chartist.plugins.tooltip() ],
-            axisX: { position: 'end', showGrid: true },
-            axisY: { showGrid: false, showLabel: false } // Hide Y-axis labels
-        });
-    }
-            function updateTotalIku() {
-                let totalBobot = 0;
 
-                // Select all cells with class "iku-cell" and sum their values
-                document.querySelectorAll(".iku-cell").forEach(cell => {
-                    let bobotValue = parseFloat(cell.textContent.trim()) || 0;
-                    totalBobot += bobotValue;
+                // Initialize the chart with Chartist
+                var chart = new Chartist.Line('.ct-chart-sales-value', {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
+                    series: [ {!! $adjSeriesJson !!} ] // Inject PHP array into JS
+                }, {
+                    low: 0,
+                    showArea: true,
+                    fullWidth: true,
+                    plugins: [ Chartist.plugins.tooltip() ],
+                    axisX: { position: 'end', showGrid: true },
+                    axisY: { showGrid: false, showLabel: false } // Hide Y-axis labels
                 });
 
-                // Get the total display element
-                let totalBobotElement = document.getElementById("total-iku");
-                if (totalBobotElement) {
-                    totalBobotElement.textContent = totalBobot.toFixed(2);
-                }
-            }
+                // Animation for chart points and the line (path)
+                var seq = 0;
+                chart.on('created', function() {
+                    seq = 0;
+                });
 
-            // Call the function to update the total when the page loads
-            updateTotalIku();
+                // Animation logic for each drawn element
+                chart.on('draw', function(data) {
+                    if (data.type === 'point') {
+                        // Animate the points (opacity and position)
+                        data.element.animate({
+                            opacity: {
+                                begin: seq++ * 80,
+                                dur: 500,
+                                from: 0,
+                                to: 1
+                            },
+                            x1: {
+                                begin: seq++ * 80,
+                                dur: 500,
+                                from: data.x - 100,
+                                to: data.x,
+                                easing: Chartist.Svg.Easing.easeOutQuart
+                            }
+                        });
+                    }
+
+                    if (data.type === 'line') {
+                        // Animate the line path
+                        data.element.animate({
+                            d: {
+                                begin: seq++ * 80,
+                                dur: 1000,  // Duration for line animation
+                                from: data.path.clone().scale(0).translate(0, 0).stringify(),  // Start with no line
+                                to: data.path.clone().stringify(),  // Animate to full path
+                                easing: Chartist.Svg.Easing.easeOutQuart
+                            }
+                        });
+                    }
+                });
+
+                // Function to update the total "IKU" value (as per your original code)
+                function updateTotalIku() {
+                    let totalBobot = 0;
+
+                    // Select all cells with class "iku-cell" and sum their values
+                    document.querySelectorAll(".iku-cell").forEach(cell => {
+                        let bobotValue = parseFloat(cell.textContent.trim()) || 0;
+                        totalBobot += bobotValue;
+                    });
+
+                    // Get the total display element
+                    let totalBobotElement = document.getElementById("total-iku");
+                    if (totalBobotElement) {
+                        totalBobotElement.textContent = totalBobot.toFixed(2);
+                    }
+                }
+
+                // Call the function to update the total when the page loads
+                updateTotalIku();
+            }
         });
     </script>
 @endsection

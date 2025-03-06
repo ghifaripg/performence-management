@@ -298,60 +298,53 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
             return back()->with('error', 'Invalid IKU ID format');
         }
 
-        // Fetch IKU Data
-        $ikuData = DB::table('form_iku')
+        // Fetch the main IKU data
+        $ikus = DB::table('form_iku')
             ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
             ->join('sasaran_strategis', 'form_iku.sasaran_id', '=', 'sasaran_strategis.id')
-            ->leftJoin('iku_point', 'iku_point.form_iku_id', '=', 'form_iku.id')
             ->where('form_iku.iku_id', $ikuId)
             ->select(
+                'form_iku.id as form_iku_id',
                 'form_iku.*',
                 'isi_iku.iku',
                 'isi_iku.proker',
                 'isi_iku.pj',
-                'sasaran_strategis.name as perspektif',
-                'iku_point.point_name',
-                'iku_point.base as point_base',
-                'iku_point.stretch as point_stretch',
-                'iku_point.satuan as point_satuan',
-                'iku_point.polaritas as point_polaritas',
-                'iku_point.bobot as point_bobot'
+                'sasaran_strategis.id as sasaran_id',
+                'sasaran_strategis.name as perspektif'
             )
             ->get();
 
-        // Grouping Data into Structure Required for View
-        $sasaranGrouped = $ikuData->groupBy('perspektif')->map(function ($ikus, $perspektif) {
-            return [
-                'perspektif' => $perspektif,
-                'number' => '',
-                'ikus' => $ikus->groupBy('iku')->map(function ($ikuPoints, $iku) {
-                    return [
-                        'iku' => $iku,
-                        'iku_atasan' => $ikuPoints->first()->iku_atasan ?? '',
-                        'target' => $ikuPoints->first()->target ?? '',
-                        'base' => $ikuPoints->first()->point_base ?? '',
-                        'stretch' => $ikuPoints->first()->point_stretch ?? '',
-                        'satuan' => $ikuPoints->first()->point_satuan ?? '',
-                        'polaritas' => $ikuPoints->first()->point_polaritas ?? '',
-                        'bobot' => $ikuPoints->first()->point_bobot ?? '',
-                        'proker' => $ikuPoints->first()->proker ?? '',
-                        'pj' => $ikuPoints->first()->pj ?? '',
-                        'points' => $ikuPoints->map(fn ($point) => [
-                            'point_name' => $point->point_name,
-                            'base' => $point->point_base,
-                            'stretch' => $point->point_stretch,
-                            'satuan' => $point->point_satuan,
-                            'polaritas' => $point->point_polaritas,
-                            'bobot' => $point->point_bobot,
-                        ])->filter()
-                    ];
-                })->values(),
-            ];
-        })->values();
+        // Fetch all IKU points and group them by `form_iku_id`
+        $ikuPoints = DB::table('iku_point')
+            ->whereIn('form_iku_id', $ikus->pluck('form_iku_id'))
+            ->get()
+            ->groupBy('form_iku_id');
+
+        // Group data for the view
+        $sasaranGrouped = [];
+        $number = 1;
+
+        foreach ($ikus as $iku) {
+            $sasaranId = $iku->sasaran_id; // Use object property, not array
+
+            if (!isset($sasaranGrouped[$sasaranId])) {
+                $sasaranGrouped[$sasaranId] = (object) [
+                    'number' => $number,
+                    'perspektif' => $iku->perspektif,
+                    'ikus' => []
+                ];
+                $number++;
+            }
+
+            // Attach points to each IKU
+            $iku->points = $ikuPoints->get($iku->form_iku_id, collect());
+
+            // Store IKU inside its corresponding sasaran
+            $sasaranGrouped[$sasaranId]->ikus[] = $iku;
+        }
 
         return view('pages.detail', compact('sasaranGrouped', 'selectedYear'));
     }
-
 
 
 

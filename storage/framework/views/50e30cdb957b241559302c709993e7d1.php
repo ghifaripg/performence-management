@@ -229,14 +229,14 @@
                         <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_sdbulan_ini)); ?></td>
                         <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_target)); ?>%</td>
                         <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_year)); ?>%</td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->ttl)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->adj)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->ttl, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->adj, 2)); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->penyebab_tidak_tercapai); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->program_kerja); ?></td>
                         <td class="fw-normal text-center">
                             <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
                                 <!-- Edit Button -->
-                                <a href="<?php echo e(route('evaluasi.edit', $eval->id)); ?>" style="display: flex; justify-content: center; align-items: center;">
+                                <a href="<?php echo e(route('evaluasi.edit', ['id' => $eval->id, 'month' => request('month'), 'year' => request('year')])); ?>">
                                     <img src="<?php echo e(asset('assets/img/edit.png')); ?>" alt="Edit" style="width: 50px; height: 50px; object-fit: contain;">
                                 </a>
 

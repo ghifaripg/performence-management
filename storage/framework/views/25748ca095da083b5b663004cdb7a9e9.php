@@ -34,18 +34,41 @@
         </div>
     </div>
 
-    <div class="card card-body border-0 shadow table-wrapper table-responsive" style="overflow-y: hidden">
+    <div class="d-flex align-items-center mb-2">
+        <div>
+            <!-- Zoom Out Button -->
+            <button class="btn btn-outline-secondary zoom-btn me-2" data-zoom="out">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-zoom-out" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11M13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
+                    <path d="M10.344 11.742q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1 6.5 6.5 0 0 1-1.398 1.4z"/>
+                    <path fill-rule="evenodd" d="M3 6.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5"/>
+                </svg>
+            </button>
+
+            <!-- Zoom In Button -->
+            <button class="btn btn-outline-secondary zoom-btn" data-zoom="in">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-zoom-in" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11M13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0"/>
+                    <path d="M10.344 11.742q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1 6.5 6.5 0 0 1-1.398 1.4z"/>
+                    <path fill-rule="evenodd" d="M6.5 3a.5.5 0 0 1 .5.5V6h2.5a.5.5 0 0 1 0 1H7v2.5a.5.5 0 0 1-1 0V7H3.5a.5.5 0 0 1 0-1H6V3.5a.5.5 0 0 1 .5-.5"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="form-eval" style="overflow-y: hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 12px; margin-top: 25px; margin-bottom: 25px;">
             <img src="<?php echo e(asset('assets/img/logo-ksp.jpg')); ?>" class="img-kiecs" alt="">
             <h5 style="text-transform: uppercase">EVALUASI PENCAPAIAN INDIKATOR KINERJA UTAMA (IKU) s/d BULAN <?php echo $selectedMonthName?></h5>
         </div>
+        <div id="zoomContainer">
         <table class="table table-hover" >
             <thead>
                 <tr>
                     <th class="border-0 text-center" rowspan="2">Indikator Kinerja Utama</th>
                     <th class="border-0 text-center" rowspan="2">Polaritas</th>
                     <th class="border-0 text-center" rowspan="2">Bobot (A)</th>
-                    <th class="border-0 text-center" rowspan="2">Satuan</th>
+                    <th class="border-0 text-center" rowspan="2">Unit</th>
                     <th class="border-0 text-center" colspan="3">Target</th>
                     <th class="border-0 text-center" colspan="2">Realisasi</th>
                     <th class="border-0 text-center" colspan="2">Prosentase Pencapaian THD Target</th>
@@ -91,23 +114,46 @@
                         <td class="fw-normal text-center"><?php echo e(number_format($eval->realisasi_sdbulan_ini)); ?></td>
                         <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_target)); ?>%</td>
                         <td class="fw-normal text-center"><?php echo e(number_format((float) $eval->percent_year)); ?>%</td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->ttl)); ?></td>
-                        <td class="fw-normal text-center"><?php echo e(number_format($eval->adj)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->ttl, 2)); ?></td>
+                        <td class="fw-normal text-center"><?php echo e(number_format($eval->adj, 2)); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->penyebab_tidak_tercapai); ?></td>
                         <td class="fw-normal text-center"><?php echo e($eval->program_kerja); ?></td>
                     </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
         </table>
+        </div>
     </div>
 
-    <div class="mt-5">
+    <div class="mt-3">
         <a href="/form-evaluasi?month=<?php echo e($selectedMonth); ?>&year=<?php echo e($selectedYear); ?>" class="btn btn-primary">
             Tambah/Ubah Form Evaluasi
         </a>
     </div>
 
 </main>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let zoomLevel = 1; // Initial zoom level
+    const zoomContainer = document.getElementById("zoomContainer");
+
+    document.querySelectorAll(".zoom-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            const zoomType = this.getAttribute("data-zoom");
+
+            if (zoomType === "in" && zoomLevel < 1.5) {
+                zoomLevel += 0.1; // Increase zoom
+            } else if (zoomType === "out" && zoomLevel > 0.7) {
+                zoomLevel -= 0.1; // Decrease zoom
+            }
+
+            zoomContainer.style.transform = `scale(${zoomLevel})`;
+            zoomContainer.style.transformOrigin = "top center"; // Keeps the zoom centered
+        });
+    });
+});
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ghifa\Documents\admin-dashboard\resources\views/pages/evaluasi.blade.php ENDPATH**/ ?>

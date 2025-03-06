@@ -6,8 +6,9 @@
         $selectedYear = htmlspecialchars($_GET['year']);
     }
     ?>
-
+@yield('partials.favicon')
 @extends('layouts.app')
+
 
 @section('title', 'List of User')
 

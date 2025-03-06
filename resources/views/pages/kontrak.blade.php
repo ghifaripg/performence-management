@@ -46,6 +46,10 @@
                     </div>
                 </div>
             </div>
+            <form action="{{ route('export.kontrak') }}" method="GET">
+                <input type="hidden" name="year" value="{{ $selectedYear }}">
+                <button type="button" class="btn btn-success" onclick="getNamesAndExport()">Export Excel</button>
+            </form>
             <div class="card card-body border-0 shadow table-wrapper table-responsive">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 12px; margin-top: 25px; margin-bottom: 25px;">
                     <h3>KONTRAK MANAJEMEN TAHUN <?php echo $selectedYear ?></h3>
@@ -103,17 +107,46 @@ S (Support)         :   Pendukung
                 </p>
 
             </div><br>
-            <form action="{{ route('export.kontrak') }}" method="GET">
-                <input type="hidden" name="year" value="{{ $selectedYear }}">
-                <button type="submit" class="btn btn-pill btn-outline-success">Export to Excel</button>
-            </form>
+
         <?php if ($userId == 1): ?>
-        <div class="mt-5">
+        <div class="mt-0 mb-3">
             <a href="{{ route('check-kontrak', ['year' => $selectedYear]) }}" class="btn btn-primary">
                 Tambah/Ubah Kontrak Manajemen
             </a>
         </div>
         <?php endif; ?>
         </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    async function getNamesAndExport() {
+        const { value: formValues } = await Swal.fire({
+            title: "Masukkan Nama Pimpinan",
+            html: `
+                <label for="swal-input1">Direktur Utama</label>
+                <input id="swal-input1" class="swal2-input" placeholder="Nama Direktur Utama">
+                <label for="swal-input2">Plt. Direktur Keuangan & SDM</label>
+                <input id="swal-input2" class="swal2-input" placeholder="Nama Plt. Direktur Keuangan & SDM">
+                <label for="swal-input3">Direktur Operasi</label>
+                <input id="swal-input3" class="swal2-input" placeholder="Nama Direktur Operasi">
+                <label for="swal-input4">Tempat, Tanggal</label>
+                <input id="swal-input4" class="swal2-input" placeholder="Contoh: Jakarta, 10 Januari 2025">
+            `,
+            focusConfirm: false,
+            preConfirm: () => {
+                return {
+                    direktur_utama: document.getElementById("swal-input1").value,
+                    plt_keuangan_sdm: document.getElementById("swal-input2").value,
+                    direktur_operasi: document.getElementById("swal-input3").value,
+                };
+            }
+        });
+
+        if (formValues) {
+            const queryString = new URLSearchParams(formValues).toString();
+            window.location.href = "/export-kontrak-manajemen?" + queryString;
+        }
+    }
+</script>
 
 @endsection

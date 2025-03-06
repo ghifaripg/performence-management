@@ -5,7 +5,7 @@
     if (isset($_GET['year'])) {
         $selectedYear = htmlspecialchars($_GET['year']);
     }
-    ?>
+?>
 @extends('layouts.app')
 <link rel="apple-touch-icon" sizes="120x120" href="{{ asset ('assets/img/favicon/apple-touch-icon.png') }}">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/favicon-32x32.png') }}">
@@ -14,6 +14,11 @@
 @section('title', 'Detail')
 
 @section('content')
+<style>
+    body{
+        overflow-x: hidden;
+    }
+</style>
 <main class="content">
     <div class="py-4">
         <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
@@ -55,21 +60,21 @@
             </thead>
             <tbody>
                 @foreach ($sasaranGrouped as $sasaran)
+                    @php $ikuCount = count($sasaran->ikus) ?: 1; @endphp
                     <tr>
-                        <td rowspan="{{ count($sasaran['ikus']) }}">{{ $loop->iteration }}</td>
-                        <td rowspan="{{ count($sasaran['ikus']) }}">{{ $sasaran['perspektif'] }}</td>
-
-                        @foreach ($sasaran['ikus'] as $iku)
-                            <td>{{ $iku['iku_atasan'] }}</td>
-                            <td>{{ $iku['target'] }}</td>
-                            <td><strong>{{ $iku['iku'] }}</strong></td>
-                            <td>{{ $iku['base'] }}</td>
-                            <td>{{ $iku['stretch'] }}</td>
-                            <td>{{ $iku['satuan'] }}</td>
-                            <td>{{ ucfirst($iku['polaritas']) }}</td>
-                            <td>{{ $iku['bobot'] }}</td>
-                            <td>{!! nl2br(e($iku['proker'])) !!}</td>
-                            <td>{{ $iku['pj'] }}</td>
+                        <td rowspan="{{ $ikuCount }}">{{ $loop->iteration }}</td>
+                        <td rowspan="{{ $ikuCount }}">{{ $sasaran->perspektif }}</td>
+                        @foreach ($sasaran->ikus as $iku)
+                            <td>{{ $iku->iku_atasan }}</td>
+                            <td>{{ $iku->target }}</td>
+                            <td><strong>{{ $iku->iku }}</strong></td>
+                            <td>{{ $iku->base }}</td>
+                            <td>{{ $iku->stretch }}</td>
+                            <td>{{ $iku->satuan }}</td>
+                            <td>{{ ucfirst($iku->polaritas) }}</td>
+                            <td>{{ $iku->bobot }}</td>
+                            <td>{!! nl2br(e($iku->proker)) !!}</td>
+                            <td>{{ $iku->pj }}</td>
                         </tr>
                         @endforeach
                 @endforeach
@@ -77,8 +82,8 @@
         </table>
     </div>
 
-    <div class="mt-5">
-        <a href="/progres" class="btn btn-primary">Back</a>
+    <div class="mt-3 mb-3">
+        <a href="/progres" class="btn btn-secondary">Back</a>
     </div>
 </main>
 @endsection

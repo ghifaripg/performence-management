@@ -252,19 +252,23 @@ public function store(Request $request)
     }
 
     public function edit($id)
-    {
-        $eval = DB::table('iku_evaluations')
-            ->join('form_iku', 'iku_evaluations.iku_id', '=', 'form_iku.id')
-            ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
-            ->select(
-                'iku_evaluations.*',
-                'isi_iku.iku as iku_name' // Get the IKU name
-            )
-            ->where('iku_evaluations.id', $id)
-            ->first();
+{
+    $selectedYear = request()->query('year', date('Y')); // Get year from query or default to current year
+    $selectedMonth = request()->query('month', date('n')); // Get month from query or default to current month
 
-        return view('pages.edit-evaluasi', compact('eval'));
-    }
+    $eval = DB::table('iku_evaluations')
+        ->join('form_iku', 'iku_evaluations.iku_id', '=', 'form_iku.id')
+        ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
+        ->select(
+            'iku_evaluations.*',
+            'isi_iku.iku as iku_name' // Get the IKU name
+        )
+        ->where('iku_evaluations.id', $id)
+        ->first();
+
+    return view('pages.edit-evaluasi', compact('eval', 'selectedYear', 'selectedMonth'));
+}
+
 
     public function update(Request $request, $id)
     {
