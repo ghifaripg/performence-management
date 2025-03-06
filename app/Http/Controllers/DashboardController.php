@@ -28,7 +28,6 @@ class DashboardController extends Controller
 
     $selectedMonthName = $months[$selectedMonth] ?? 'Unknown'; // Prevent undefined index error
 
-
     // Get selected department from request (admin can select, others use their own)
     $selectedDepartment = $request->query('department', $user_id == 1 ? null : $department_id);
 
@@ -47,12 +46,12 @@ class DashboardController extends Controller
     $departments = DB::table('department')->select('department_id', 'department_name')->get();
 
     // Query for total ADJ per Sasaran Strategis
-    $queryParamsSasaran = [$selectedYear, $selectedMonth]; // Includes year and month
+    $queryParamsSasaran = [$selectedYear, $selectedMonth];
     $whereDepartment = "";
 
     if (!empty($selectedDepartment)) {
         $whereDepartment = "AND u.department_id = ?";
-        $queryParamsSasaran[] = $selectedDepartment; // Add department condition
+        $queryParamsSasaran[] = $selectedDepartment;
     }
 
     $totalAdjPerSasaran = DB::select("
@@ -92,11 +91,56 @@ class DashboardController extends Controller
     ", $queryParamsMonth);
 
     // Prepare adj series for chart
-    $adjSeries = array_fill(0, 12, 0); // Ensure months 1-12 exist
+    $adjSeries = array_fill(0, 12, 0);
     foreach ($totalAdjPerMonth as $data) {
         $adjSeries[(int)$data->month - 1] = (float)$data->total;
     }
     $adjSeriesJson = json_encode($adjSeries);
+
+    $department = DB::table('department')
+        ->where('department_id', $department_id)
+        ->select('department_username')
+        ->first();
+    $departmentName = (string) $department->department_username;
+
+    $totalIkus = DB::table('form_iku')
+    ->where('iku_id', 'LIKE', "IKU{$departmentName}_{$selectedYear}%")
+    ->count();
+
+    $totalIkuPoints = DB::table('form_iku')
+    ->join('iku_point', 'iku_point.form_iku_id', '=', 'form_iku.id')
+    ->where('form_iku.iku_id', 'LIKE', "IKU{$departmentName}_{$selectedYear}%")
+    ->where('form_iku.is_multi_point', 1)
+    ->count();
+
+    $totalIkuWithPoints = DB::table('form_iku')
+    ->where('iku_id', 'LIKE', "IKU{$departmentName}_{$selectedYear}%")
+    ->where('is_multi_point', 1)
+    ->count();
+
+    $totalIku = $totalIkus + $totalIkuPoints - $totalIkuWithPoints;
+
+    $evaluatedIkuPerMonth = DB::table('iku_evaluations')
+    ->join('form_iku', 'iku_evaluations.iku_id', '=', 'form_iku.id')
+    ->where('form_iku.iku_id', 'LIKE', "IKU{$departmentName}_{$selectedYear}%")
+    ->selectRaw('iku_evaluations.month as month, COUNT(*) as count')
+    ->groupBy('iku_evaluations.month')
+    ->pluck('count', 'month')
+    ->toArray();
+
+    $monthlyProgress = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $evaluatedCount = isset($evaluatedIkuPerMonth[$i]) ? $evaluatedIkuPerMonth[$i] : 0;
+        $progress = ($totalIku > 0) ? round(($evaluatedCount / $totalIku) * 100, 2) : 0;
+        $monthlyProgress[$i] = $progress;
+    }
+
+    $totalEvaluatedIku = array_sum($evaluatedIkuPerMonth);
+    $progressPercentage = ($totalIku > 0) ? round(($totalEvaluatedIku / $totalIku) * 100, 2) : 0;
+
+    $page = $request->query('page', 1);
+    $months = array_slice($monthlyProgress, ($page - 1) * 4, 4, true);
+    $totalPages = ceil(count($monthlyProgress) / 4);
 
     return view('pages.dashboard', compact(
         'departments',
@@ -106,7 +150,13 @@ class DashboardController extends Controller
         'selectedMonth',
         'selectedMonthName',
         'totalAdjPerSasaran',
-        'adjSeriesJson'
+        'adjSeriesJson',
+        'progressPercentage',
+        'months',
+        'page',
+        'totalPages',
+        'totalIku',
+        'totalEvaluatedIku'
     ));
 }
 }

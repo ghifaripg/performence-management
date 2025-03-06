@@ -117,7 +117,7 @@
                                 <td>{{ $progres->notes ?? '-' }}</td>
                                 <td>
                                     @if($progres->status === 'accept')
-                                    <a href="#" class="btn btn-success">Download</a>
+                                    <a href="/iku" class="btn btn-success">Download</a>
                                     @else
                                     -
                                     @endif

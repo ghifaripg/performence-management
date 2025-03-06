@@ -80,7 +80,7 @@ class IkuController extends Controller
             $sasaranGrouped[$iku->sasaran_id]['ikus'][] = $iku;
         }
     }
-            return view('pages.iku', compact('nama', 'sasaranStrategis', 'sasaranGrouped', 'ikuPoints', 'selectedYear'));
+            return view('pages.iku', compact('nama', 'sasaranStrategis', 'sasaranGrouped', 'ikuPoints', 'selectedYear','iku_ikuIdentifier'));
     }
 
     public function storeIku(Request $request)

@@ -117,7 +117,7 @@
                                 <td><?php echo e($progres->notes ?? '-'); ?></td>
                                 <td>
                                     <?php if($progres->status === 'accept'): ?>
-                                    <a href="#" class="btn btn-success">Download</a>
+                                    <a href="/iku" class="btn btn-success">Download</a>
                                     <?php else: ?>
                                     -
                                     <?php endif; ?>

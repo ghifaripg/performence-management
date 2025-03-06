@@ -24,16 +24,16 @@ class LoginController extends Controller
     $user = User::where('username', $credentials['username'])->first();
 
     if (!$user || !Hash::check($credentials['password'], $user->password)) {
-        return redirect()->back()->with('error', 'Invalid username or password.');
+        return redirect()->back()->with('error', 'Username atau password salah');
     }
 
     Auth::login($user);
-    return redirect('/dashboard')->with('success', 'Login successful!');
+    return redirect('/dashboard')->with('success', 'Login Berhasil!');
     }
 
     public function logout()
     {
         Auth::logout();
-        return redirect('/')->with('success', 'Logged out successfully.');
+        return redirect('/')->with('success', 'Log out Berhasil');
     }
 }

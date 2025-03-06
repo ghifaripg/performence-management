@@ -138,6 +138,7 @@ S (Support)         :   Pendukung
                     direktur_utama: document.getElementById("swal-input1").value,
                     plt_keuangan_sdm: document.getElementById("swal-input2").value,
                     direktur_operasi: document.getElementById("swal-input3").value,
+                    tempat_tanggal: document.getElementById("swal-input4").value,
                 };
             }
         });

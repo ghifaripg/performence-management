@@ -12,6 +12,12 @@
         ->first();
     $departmentName = (string) $department->department_username;
     ?>
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="120x120" href="<?php echo e(asset ('assets/img/favicon/apple-touch-icon.png')); ?>">
+<link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('assets/img/favicon-32x32.png')); ?>">
+<link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('assets/img/favicon-16x16.png')); ?>">
+<link rel="shortcut icon" href="<?php echo e(asset('assets/img/favicon.ico')); ?>">
+
 
 
 <?php $__env->startSection('title', 'Form IKU'); ?>
@@ -53,10 +59,27 @@
     </div>
 
     <div class="d-flex align-items-center mb-2">
+        <?php
+        $isAccepted = DB::table('progres')
+            ->where('iku_id', $iku_ikuIdentifier)
+            ->where('status', 'accept')
+            ->exists();
+    ?>
+
+    <?php if($isAccepted): ?>
         <form action="<?php echo e(route('export.iku')); ?>" method="GET" class="me-auto">
             <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">
-            <button type="submit" class="btn btn-pill btn-outline-success">Export to Excel</button>
+            <button type="submit" class="btn btn-outline-success d-inline-flex align-items-center">
+                Export to Excel
+                <svg class="icon icon-xxs ms-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 9.5A3.5 3.5 0 005.5 13H9v2.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 15.586V13h2.5a4.5 4.5 0 10-.616-8.958 4.002 4.002 0 10-7.753 1.977A3.5 3.5 0 002 9.5zm9 3.5H9V8a1 1 0 012 0v5z" clip-rule="evenodd" /></svg>
+            </button>
         </form>
+    <?php else: ?>
+    <form action="/progres" method="GET" class="me-auto">
+        <button type="submit" class="btn btn-pill btn-outline-info">Progres Form IKU</button>
+    </form>
+    <?php endif; ?>
+
 
         <!-- Zoom Buttons (aligned to the right) -->
         <div>

@@ -147,80 +147,64 @@
                     <div class="col-12 col-sm-6 col-xl-4 mb-4">
                         <div class="card border-0 shadow">
                             <div class="card-header border-bottom d-flex align-items-center justify-content-between">
-                                <h2 class="fs-5 fw-bold mb-0">Progres Form IKU</h2>
-                                 <a href="/iku" class="btn btn-sm btn-primary">Isi Form IKU</a>
-                             </div>
-                            <div class="card-body">
-                                <!-- Project 1 -->
-                                <div class="row mb-4">
-                                    <div class="col-auto">
-                                        <svg class="icon icon-sm text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
-                                    </div>
-                                    <div class="col">
-                                        <div class="progress-wrapper">
-                                            <div class="progress-info">
-                                                <div class="h6 mb-0">Januari</div>
-                                                <div class="small fw-bold text-gray-500"><span>100 %</span></div>
-                                            </div>
-                                            <div class="progress mb-0">
-                                                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Project 2 -->
-                                <div class="row align-items-center mb-4">
-                                    <div class="col-auto">
-                                        <svg class="icon icon-sm text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
-                                    </div>
-                                    <div class="col">
-                                        <div class="progress-wrapper">
-                                            <div class="progress-info">
-                                                <div class="h6 mb-0">Februari</div>
-                                                <div class="small fw-bold text-gray-500"><span>75 %</span></div>
-                                            </div>
-                                            <div class="progress mb-0">
-                                                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Project 3 -->
-                                <div class="row align-items-center mb-4">
-                                    <div class="col-auto">
-                                        <svg class="icon icon-sm text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
-                                    </div>
-                                    <div class="col">
-                                        <div class="progress-wrapper">
-                                            <div class="progress-info">
-                                                <div class="h6 mb-0">Maret</div>
-                                                <div class="small fw-bold text-gray-500"><span>45 %</span></div>
-                                            </div>
-                                            <div class="progress mb-0">
-                                                <div class="progress-bar bg-warning" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Project 4 -->
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-auto">
-                                        <svg class="icon icon-sm text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
-                                    </div>
-                                    <div class="col">
-                                        <div class="progress-wrapper">
-                                            <div class="progress-info">
-                                                <div class="h6 mb-0">April</div>
-                                                <div class="small fw-bold text-gray-500"><span>0 %</span></div>
-                                            </div>
-                                            <div class="progress mb-0">
-                                                <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <h2 class="fs-5 fw-bold mb-0">Progres Evaluasi</h2>
+                                <a href="/iku" class="btn btn-sm btn-primary">Isi Evaluasi</a>
                             </div>
-                        </div>
+                            <div class="card-body">
+                                <h5 class="mb-4">Progress Evaluasi Bulanan - <?php echo e(date('Y')); ?></h5>
+                                <!-- Monthly Progress -->
+                                <div class="mt-4">
+                                    <?php $__currentLoopData = $months; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month => $percentage): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <div class="row align-items-center mb-4">
+                                            <div class="col-auto">
+                                                <svg class="icon icon-sm text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="col">
+                                                <div class="progress-wrapper">
+                                                    <div class="progress-info">
+                                                        <div class="h6 mb-0"><?php echo e(DateTime::createFromFormat('!m', $month)->format('F')); ?></div>
+                                                        <div class="small fw-bold text-gray-500"><span><?php echo e($percentage); ?> %</span></div>
+                                                    </div>
+                                                    <div class="progress mb-0">
+                                                        <div class="progress-bar
+                                                            <?php if($percentage == 100): ?> bg-success
+                                                            <?php elseif($percentage >= 50): ?> bg-warning
+                                                            <?php else: ?> bg-danger
+                                                            <?php endif; ?>"
+                                                            role="progressbar"
+                                                            aria-valuenow="<?php echo e($percentage); ?>"
+                                                            aria-valuemin="0"
+                                                            aria-valuemax="100"
+                                                            style="width: <?php echo e($percentage); ?>%;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+
+<!-- Pagination -->
+<div class="d-flex justify-content-between mt-3">
+    <?php if($page > 1): ?>
+        <a href="<?php echo e(url()->current()); ?>?page=<?php echo e($page - 1); ?>" class="btn btn-outline-primary btn-sm">Previous</a>
+    <?php else: ?>
+        <span class="btn btn-outline-secondary btn-sm disabled">Previous</span>
+    <?php endif; ?>
+
+    <span>Page <?php echo e($page); ?> of <?php echo e($totalPages); ?></span>
+
+    <?php if($page < $totalPages): ?>
+        <a href="<?php echo e(url()->current()); ?>?page=<?php echo e($page + 1); ?>" class="btn btn-outline-primary btn-sm">Next</a>
+    <?php else: ?>
+        <span class="btn btn-outline-secondary btn-sm disabled">Next</span>
+    <?php endif; ?>
+</div>
+
+                            </div>
                     </div>
                 </div>
             </div>
@@ -229,37 +213,32 @@
         function updateMonthYear(value) {
             const parts = value.split("-");
             if (parts.length === 2) {
-                document.getElementById("month").value = parts[1]; // Extract month only
+                document.getElementById("month").value = parts[1];
             }
         }
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             if (document.querySelector('.ct-chart-sales-value')) {
-
-                // Initialize the chart with Chartist
                 var chart = new Chartist.Line('.ct-chart-sales-value', {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
-                    series: [ <?php echo $adjSeriesJson; ?> ] // Inject PHP array into JS
+                    series: [ <?php echo $adjSeriesJson; ?> ]
                 }, {
                     low: 0,
                     showArea: true,
                     fullWidth: true,
                     plugins: [ Chartist.plugins.tooltip() ],
                     axisX: { position: 'end', showGrid: true },
-                    axisY: { showGrid: false, showLabel: false } // Hide Y-axis labels
+                    axisY: { showGrid: false, showLabel: false }
                 });
 
-                // Animation for chart points and the line (path)
                 var seq = 0;
                 chart.on('created', function() {
                     seq = 0;
                 });
 
-                // Animation logic for each drawn element
                 chart.on('draw', function(data) {
                     if (data.type === 'point') {
-                        // Animate the points (opacity and position)
                         data.element.animate({
                             opacity: {
                                 begin: seq++ * 80,
@@ -278,37 +257,31 @@
                     }
 
                     if (data.type === 'line') {
-                        // Animate the line path
                         data.element.animate({
                             d: {
                                 begin: seq++ * 80,
-                                dur: 1000,  // Duration for line animation
-                                from: data.path.clone().scale(0).translate(0, 0).stringify(),  // Start with no line
-                                to: data.path.clone().stringify(),  // Animate to full path
+                                dur: 1000,
+                                from: data.path.clone().scale(0).translate(0, 0).stringify(),
+                                to: data.path.clone().stringify(),
                                 easing: Chartist.Svg.Easing.easeOutQuart
                             }
                         });
                     }
                 });
 
-                // Function to update the total "IKU" value (as per your original code)
                 function updateTotalIku() {
                     let totalBobot = 0;
 
-                    // Select all cells with class "iku-cell" and sum their values
                     document.querySelectorAll(".iku-cell").forEach(cell => {
                         let bobotValue = parseFloat(cell.textContent.trim()) || 0;
                         totalBobot += bobotValue;
                     });
 
-                    // Get the total display element
                     let totalBobotElement = document.getElementById("total-iku");
                     if (totalBobotElement) {
                         totalBobotElement.textContent = totalBobot.toFixed(2);
                     }
                 }
-
-                // Call the function to update the total when the page loads
                 updateTotalIku();
             }
         });
