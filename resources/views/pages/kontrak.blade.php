@@ -117,7 +117,6 @@ S (Support)         :   Pendukung
         <?php endif; ?>
         </main>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     async function getNamesAndExport() {
         const { value: formValues } = await Swal.fire({

@@ -21,6 +21,8 @@
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
+
+
 </head>
 
 <body>
@@ -72,6 +74,8 @@
 <!-- Volt JS -->
 <script src="{{ asset('assets/js/volt.js')}}"></script>
 
+<!-- Zoom In Out -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 
 </body>

@@ -69,7 +69,7 @@
     <?php if($isAccepted): ?>
         <form action="<?php echo e(route('export.iku')); ?>" method="GET" class="me-auto">
             <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">
-            <button type="submit" class="btn btn-outline-success d-inline-flex align-items-center">
+            <button type="button" class="btn btn-outline-success d-inline-flex align-items-center" onclick="getNamesAndExport()">
                 Export to Excel
                 <svg class="icon icon-xxs ms-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 9.5A3.5 3.5 0 005.5 13H9v2.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 15.586V13h2.5a4.5 4.5 0 10-.616-8.958 4.002 4.002 0 10-7.753 1.977A3.5 3.5 0 002 9.5zm9 3.5H9V8a1 1 0 012 0v5z" clip-rule="evenodd" /></svg>
             </button>
@@ -266,16 +266,15 @@
     </script>
     <br>
 
-    <div class="mt-5">
+    <div class="mt-1 mb-3">
         <a href="<?php echo e(route('check-iku', ['year' => $selectedYear])); ?>" class="btn btn-primary">
             Tambah/Ubah IKU
         </a>
     </div>
 </main>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    let zoomLevel = 1; // Initial zoom level
+    let zoomLevel = 1;
     const zoomContainer = document.getElementById("zoomContainer");
 
     document.querySelectorAll(".zoom-btn").forEach(button => {
@@ -283,18 +282,46 @@ document.addEventListener("DOMContentLoaded", function () {
             const zoomType = this.getAttribute("data-zoom");
 
             if (zoomType === "in" && zoomLevel < 1.5) {
-                zoomLevel += 0.1; // Increase zoom
+                zoomLevel += 0.1;
             } else if (zoomType === "out" && zoomLevel > 0.7) {
-                zoomLevel -= 0.1; // Decrease zoom
+                zoomLevel -= 0.1;
             }
 
             zoomContainer.style.transform = `scale(${zoomLevel})`;
-            zoomContainer.style.transformOrigin = "top center"; // Keeps the zoom centered
+            zoomContainer.style.transformOrigin = "top center";
         });
     });
 });
 </script>
+<script>
+async function getNamesAndExport() {
+    const { value: formValues } = await Swal.fire({
+        title: "Masukkan Nama Pimpinan",
+        html: `
+            <label for="swal-input1">HC & Finance Directorate</label>
+            <input id="swal-input1" class="swal2-input" placeholder="Nama HC & Finance Directorate">
+            <label for="swal-input2">Manager</label>
+            <input id="swal-input2" class="swal2-input" placeholder="Nama Manager">
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+            return {
+                hc_directorate: document.getElementById("swal-input1").value,
+                manager: document.getElementById("swal-input2").value,
+            };
+        }
+    });
 
+    if (formValues) {
+        const year = document.querySelector('input[name="year"]').value;
+        formValues.year = year;
+
+        const queryString = new URLSearchParams(formValues).toString();
+        window.location.href = "<?php echo e(route('export.iku')); ?>?" + queryString;
+    }
+}
+
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ghifa\Documents\admin-dashboard\resources\views/pages/iku.blade.php ENDPATH**/ ?>

@@ -115,7 +115,6 @@ S (Support)         :   Pendukung
         <?php endif; ?>
         </main>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     async function getNamesAndExport() {
         const { value: formValues } = await Swal.fire({
@@ -136,6 +135,7 @@ S (Support)         :   Pendukung
                     direktur_utama: document.getElementById("swal-input1").value,
                     plt_keuangan_sdm: document.getElementById("swal-input2").value,
                     direktur_operasi: document.getElementById("swal-input3").value,
+                    tempat_tanggal: document.getElementById("swal-input4").value,
                 };
             }
         });

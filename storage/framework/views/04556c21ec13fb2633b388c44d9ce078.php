@@ -44,6 +44,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Chart Evaluasi-->
             <div class="main-content">
                 <div class="row">
                     <div class="col-12 mb-4">
@@ -71,7 +73,6 @@
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     <?php endif; ?>
-
                                         <button type="submit" class="btn btn-secondary">Pilih</button>
                                     </form>
 
@@ -89,10 +90,12 @@
 
                             </div>
                             <div class="card-body p-2">
-                                <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
+                                <div class="ct-chart-sales-value ct-double-octave ct-series-g" style="transform: scale(0.98); transform-origin: 0 0;"></div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Table Total Skor -->
                     <div class="col-12 col-xl-8">
                         <div class="row">
                             <div class="col-12 mb-4">
@@ -107,8 +110,8 @@
                                                     value="<?php echo e(sprintf('%04d-%02d', $selectedYear, $selectedMonth)); ?>"
                                                     onchange="updateMonthYear(this.value)">
                                                     <input type="hidden" name="month" id="month">
-                                                    <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>"> <!-- Ensure year is included -->
-                                                    <input type="hidden" name="department" value="<?php echo e($selectedDepartment); ?>"> <!-- Ensure department is included -->
+                                                    <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">
+                                                    <input type="hidden" name="department" value="<?php echo e($selectedDepartment); ?>">
                                                     <button type="submit" class="btn btn-primary">Pilih</button>
                                                 </form>
                                             </div>
@@ -144,6 +147,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Progess Form Evaluasi -->
                     <div class="col-12 col-sm-6 col-xl-4 mb-4">
                         <div class="card border-0 shadow">
                             <div class="card-header border-bottom d-flex align-items-center justify-content-between">
@@ -151,8 +156,7 @@
                                 <a href="/iku" class="btn btn-sm btn-primary">Isi Evaluasi</a>
                             </div>
                             <div class="card-body">
-                                <h5 class="mb-4">Progress Evaluasi Bulanan - <?php echo e(date('Y')); ?></h5>
-                                <!-- Monthly Progress -->
+                                <h5 class="mb-4">Progress Evaluasi Bulanan - <?php echo $selectedYear ?></h5>
                                 <div class="mt-4">
                                     <?php $__currentLoopData = $months; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month => $percentage): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div class="row align-items-center mb-4">
@@ -186,24 +190,21 @@
                                         </div>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <?php if($page > 1): ?>
+                                        <a href="<?php echo e(url()->current()); ?>?page=<?php echo e($page - 1); ?>" class="btn btn-outline-primary btn-sm">Previous</a>
+                                    <?php else: ?>
+                                        <span class="btn btn-outline-secondary btn-sm disabled">Previous</span>
+                                    <?php endif; ?>
 
-<!-- Pagination -->
-<div class="d-flex justify-content-between mt-3">
-    <?php if($page > 1): ?>
-        <a href="<?php echo e(url()->current()); ?>?page=<?php echo e($page - 1); ?>" class="btn btn-outline-primary btn-sm">Previous</a>
-    <?php else: ?>
-        <span class="btn btn-outline-secondary btn-sm disabled">Previous</span>
-    <?php endif; ?>
+                                    <span>Page <?php echo e($page); ?> of <?php echo e($totalPages); ?></span>
 
-    <span>Page <?php echo e($page); ?> of <?php echo e($totalPages); ?></span>
-
-    <?php if($page < $totalPages): ?>
-        <a href="<?php echo e(url()->current()); ?>?page=<?php echo e($page + 1); ?>" class="btn btn-outline-primary btn-sm">Next</a>
-    <?php else: ?>
-        <span class="btn btn-outline-secondary btn-sm disabled">Next</span>
-    <?php endif; ?>
-</div>
-
+                                    <?php if($page < $totalPages): ?>
+                                        <a href="<?php echo e(url()->current()); ?>?page=<?php echo e($page + 1); ?>" class="btn btn-outline-primary btn-sm">Next</a>
+                                    <?php else: ?>
+                                        <span class="btn btn-outline-secondary btn-sm disabled">Next</span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                     </div>
                 </div>
@@ -217,75 +218,86 @@
             }
         }
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            if (document.querySelector('.ct-chart-sales-value')) {
-                var chart = new Chartist.Line('.ct-chart-sales-value', {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
-                    series: [ <?php echo $adjSeriesJson; ?> ]
-                }, {
-                    low: 0,
-                    showArea: true,
-                    fullWidth: true,
-                    plugins: [ Chartist.plugins.tooltip() ],
-                    axisX: { position: 'end', showGrid: true },
-                    axisY: { showGrid: false, showLabel: false }
-                });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (document.querySelector('.ct-chart-sales-value')) {
+            var chart = new Chartist.Line('.ct-chart-sales-value', {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
+                series: [ <?php echo $adjSeriesJson; ?> ]
+            }, {
+                low: 0,
+                showArea: true,
+                fullWidth: true,
+                plugins: [ Chartist.plugins.tooltip() ],
+                axisX: {
+                    position: 'end',
+                    showGrid: true,
+                    offset: 50,
+                    labelOffset: { x: -10 },
+                    scaleMinSpace: 40
+                },
+                axisY: {
+                    showGrid: false,
+                    showLabel: false
+                },
+                lineSmooth: false,
+                distributeSeries: true
+            });
 
-                var seq = 0;
-                chart.on('created', function() {
-                    seq = 0;
-                });
+            var seq = 0;
+            chart.on('created', function() {
+                seq = 0;
+            });
 
-                chart.on('draw', function(data) {
-                    if (data.type === 'point') {
-                        data.element.animate({
-                            opacity: {
-                                begin: seq++ * 80,
-                                dur: 500,
-                                from: 0,
-                                to: 1
-                            },
-                            x1: {
-                                begin: seq++ * 80,
-                                dur: 500,
-                                from: data.x - 100,
-                                to: data.x,
-                                easing: Chartist.Svg.Easing.easeOutQuart
-                            }
-                        });
-                    }
-
-                    if (data.type === 'line') {
-                        data.element.animate({
-                            d: {
-                                begin: seq++ * 80,
-                                dur: 1000,
-                                from: data.path.clone().scale(0).translate(0, 0).stringify(),
-                                to: data.path.clone().stringify(),
-                                easing: Chartist.Svg.Easing.easeOutQuart
-                            }
-                        });
-                    }
-                });
-
-                function updateTotalIku() {
-                    let totalBobot = 0;
-
-                    document.querySelectorAll(".iku-cell").forEach(cell => {
-                        let bobotValue = parseFloat(cell.textContent.trim()) || 0;
-                        totalBobot += bobotValue;
+            chart.on('draw', function(data) {
+                if (data.type === 'point') {
+                    data.element.animate({
+                        opacity: {
+                            begin: seq++ * 80,
+                            dur: 500,
+                            from: 0,
+                            to: 1
+                        },
+                        x1: {
+                            begin: seq++ * 80,
+                            dur: 500,
+                            from: data.x - 100,
+                            to: data.x,
+                            easing: Chartist.Svg.Easing.easeOutQuart
+                        }
                     });
-
-                    let totalBobotElement = document.getElementById("total-iku");
-                    if (totalBobotElement) {
-                        totalBobotElement.textContent = totalBobot.toFixed(2);
-                    }
                 }
-                updateTotalIku();
+
+                if (data.type === 'line') {
+                    data.element.animate({
+                        d: {
+                            begin: seq++ * 80,
+                            dur: 1000,
+                            from: data.path.clone().scale(0).translate(0, 0).stringify(),
+                            to: data.path.clone().stringify(),
+                            easing: Chartist.Svg.Easing.easeOutQuart
+                        }
+                    });
+                }
+            });
+
+            function updateTotalIku() {
+                let totalBobot = 0;
+
+                document.querySelectorAll(".iku-cell").forEach(cell => {
+                    let bobotValue = parseFloat(cell.textContent.trim()) || 0;
+                    totalBobot += bobotValue;
+                });
+
+                let totalBobotElement = document.getElementById("total-iku");
+                if (totalBobotElement) {
+                    totalBobotElement.textContent = totalBobot.toFixed(2);
+                }
             }
-        });
-    </script>
+            updateTotalIku();
+        }
+    });
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ghifa\Documents\admin-dashboard\resources\views/pages/dashboard.blade.php ENDPATH**/ ?>

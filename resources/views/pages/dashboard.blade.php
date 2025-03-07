@@ -44,6 +44,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Chart Evaluasi-->
             <div class="main-content">
                 <div class="row">
                     <div class="col-12 mb-4">
@@ -70,7 +72,6 @@
                                             @endforeach
                                         </select>
                                     @endif
-
                                         <button type="submit" class="btn btn-secondary">Pilih</button>
                                     </form>
 
@@ -88,10 +89,12 @@
 
                             </div>
                             <div class="card-body p-2">
-                                <div class="ct-chart-sales-value ct-double-octave ct-series-g"></div>
+                                <div class="ct-chart-sales-value ct-double-octave ct-series-g" style="transform: scale(0.98); transform-origin: 0 0;"></div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Table Total Skor -->
                     <div class="col-12 col-xl-8">
                         <div class="row">
                             <div class="col-12 mb-4">
@@ -151,7 +154,7 @@
                                 <a href="/iku" class="btn btn-sm btn-primary">Isi Evaluasi</a>
                             </div>
                             <div class="card-body">
-                                <h5 class="mb-4">Progress Evaluasi Bulanan - {{ date('Y') }}</h5>
+                                <h5 class="mb-4">Progress Evaluasi Bulanan - <?php echo $selectedYear ?></h5>
                                 <div class="mt-4">
                                     @foreach ($months as $month => $percentage)
                                         <div class="row align-items-center mb-4">
@@ -213,73 +216,84 @@
             }
         }
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            if (document.querySelector('.ct-chart-sales-value')) {
-                var chart = new Chartist.Line('.ct-chart-sales-value', {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
-                    series: [ {!! $adjSeriesJson !!} ]
-                }, {
-                    low: 0,
-                    showArea: true,
-                    fullWidth: true,
-                    plugins: [ Chartist.plugins.tooltip() ],
-                    axisX: { position: 'end', showGrid: true },
-                    axisY: { showGrid: false, showLabel: false }
-                });
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (document.querySelector('.ct-chart-sales-value')) {
+            var chart = new Chartist.Line('.ct-chart-sales-value', {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agust', 'Sept', 'Okt', 'Nov', 'Des'],
+                series: [ {!! $adjSeriesJson !!} ]
+            }, {
+                low: 0,
+                showArea: true,
+                fullWidth: true,
+                plugins: [ Chartist.plugins.tooltip() ],
+                axisX: {
+                    position: 'end',
+                    showGrid: true,
+                    offset: 50,
+                    labelOffset: { x: -10 },
+                    scaleMinSpace: 40
+                },
+                axisY: {
+                    showGrid: false,
+                    showLabel: false
+                },
+                lineSmooth: false,
+                distributeSeries: true
+            });
 
-                var seq = 0;
-                chart.on('created', function() {
-                    seq = 0;
-                });
+            var seq = 0;
+            chart.on('created', function() {
+                seq = 0;
+            });
 
-                chart.on('draw', function(data) {
-                    if (data.type === 'point') {
-                        data.element.animate({
-                            opacity: {
-                                begin: seq++ * 80,
-                                dur: 500,
-                                from: 0,
-                                to: 1
-                            },
-                            x1: {
-                                begin: seq++ * 80,
-                                dur: 500,
-                                from: data.x - 100,
-                                to: data.x,
-                                easing: Chartist.Svg.Easing.easeOutQuart
-                            }
-                        });
-                    }
-
-                    if (data.type === 'line') {
-                        data.element.animate({
-                            d: {
-                                begin: seq++ * 80,
-                                dur: 1000,
-                                from: data.path.clone().scale(0).translate(0, 0).stringify(),
-                                to: data.path.clone().stringify(),
-                                easing: Chartist.Svg.Easing.easeOutQuart
-                            }
-                        });
-                    }
-                });
-
-                function updateTotalIku() {
-                    let totalBobot = 0;
-
-                    document.querySelectorAll(".iku-cell").forEach(cell => {
-                        let bobotValue = parseFloat(cell.textContent.trim()) || 0;
-                        totalBobot += bobotValue;
+            chart.on('draw', function(data) {
+                if (data.type === 'point') {
+                    data.element.animate({
+                        opacity: {
+                            begin: seq++ * 80,
+                            dur: 500,
+                            from: 0,
+                            to: 1
+                        },
+                        x1: {
+                            begin: seq++ * 80,
+                            dur: 500,
+                            from: data.x - 100,
+                            to: data.x,
+                            easing: Chartist.Svg.Easing.easeOutQuart
+                        }
                     });
-
-                    let totalBobotElement = document.getElementById("total-iku");
-                    if (totalBobotElement) {
-                        totalBobotElement.textContent = totalBobot.toFixed(2);
-                    }
                 }
-                updateTotalIku();
+
+                if (data.type === 'line') {
+                    data.element.animate({
+                        d: {
+                            begin: seq++ * 80,
+                            dur: 1000,
+                            from: data.path.clone().scale(0).translate(0, 0).stringify(),
+                            to: data.path.clone().stringify(),
+                            easing: Chartist.Svg.Easing.easeOutQuart
+                        }
+                    });
+                }
+            });
+
+            function updateTotalIku() {
+                let totalBobot = 0;
+
+                document.querySelectorAll(".iku-cell").forEach(cell => {
+                    let bobotValue = parseFloat(cell.textContent.trim()) || 0;
+                    totalBobot += bobotValue;
+                });
+
+                let totalBobotElement = document.getElementById("total-iku");
+                if (totalBobotElement) {
+                    totalBobotElement.textContent = totalBobot.toFixed(2);
+                }
             }
-        });
-    </script>
+            updateTotalIku();
+        }
+    });
+</script>
 @endsection

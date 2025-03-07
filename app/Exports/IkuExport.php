@@ -1,6 +1,7 @@
 <?php
 namespace App\Exports;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -71,6 +72,8 @@ class IkuExport implements WithTitle, FromArray
     $num = 1;
 
     foreach ($sasaranStrategis as $sasaran) {
+        $sheet->setCellValue("J37", strtoupper($departmentName));
+        $sheet->getStyle('J37')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
         $sheet->setCellValue("B3", "Indikator Kinerja Utama (IKU) Tahun {$this->selectedYear}");
         $sheet->getStyle("B3")->getFont()->setBold(true)->setSize(22);
         $sheet->setCellValue("B5", $departmentName);
@@ -78,15 +81,13 @@ class IkuExport implements WithTitle, FromArray
         $ikusUnderSasaran = $ikus->where('sasaran_id', $sasaran->id);
         if ($ikusUnderSasaran->isEmpty()) continue;
 
-        // Calculate total row span needed for merging
         $rowSpan = $ikusUnderSasaran->reduce(function ($carry, $iku) use ($ikuPoints) {
             $pointsCount = $ikuPoints->get($iku->id, collect())->count();
-            return $carry + ($pointsCount > 0 ? $pointsCount + 1 : 1); // +1 for the main IKU row
+            return $carry + ($pointsCount > 0 ? $pointsCount + 1 : 1);
         }, 0);
 
         $endRow = $startRow + $rowSpan - 1;
 
-        // Merge columns for Sasaran Strategis
         if ($rowSpan > 1) {
             $sheet->mergeCells("A{$startRow}:A{$endRow}");
             $sheet->mergeCells("B{$startRow}:B{$endRow}");
@@ -97,10 +98,9 @@ class IkuExport implements WithTitle, FromArray
 
         foreach ($ikusUnderSasaran as $iku) {
             $points = $ikuPoints->get($iku->id, collect());
-            $ikuRowSpan = $points->count() > 0 ? $points->count() + 1 : 1; // +1 for the main IKU row
+            $ikuRowSpan = $points->count() > 0 ? $points->count() + 1 : 1;
             $ikuEndRow = $startRow + $ikuRowSpan - 1;
 
-            // Merge cells for the main IKU row and points
             if ($ikuRowSpan > 1) {
                 $sheet->mergeCells("C{$startRow}:C{$ikuEndRow}");
                 $sheet->mergeCells("D{$startRow}:D{$ikuEndRow}");
@@ -108,16 +108,14 @@ class IkuExport implements WithTitle, FromArray
                 $sheet->mergeCells("L{$startRow}:L{$ikuEndRow}");
             }
 
-            // Set main IKU data
             $sheet->setCellValue("C{$startRow}", $iku->iku_atasan);
             $sheet->setCellValue("D{$startRow}", $iku->target);
             $sheet->setCellValue("K{$startRow}", $iku->proker);
             $sheet->setCellValue("L{$startRow}", $iku->pj);
-            $sheet->setCellValue("E{$startRow}", $iku->iku); // Main IKU
+            $sheet->setCellValue("E{$startRow}", $iku->iku);
 
             if ($points->isNotEmpty()) {
-                // Set IKU points in subsequent rows
-                $rowOffset = 1; // Start from the next row
+                $rowOffset = 1;
                 foreach ($points as $point) {
                     $currentRow = $startRow + $rowOffset;
                     $sheet->setCellValue("E{$currentRow}", $point->point_name);
@@ -129,7 +127,6 @@ class IkuExport implements WithTitle, FromArray
                     $rowOffset++;
                 }
             } else {
-                // No IKU points, fill row with default values
                 $sheet->setCellValue("F{$startRow}", $iku->base);
                 $sheet->setCellValue("G{$startRow}", $iku->stretch);
                 $sheet->setCellValue("H{$startRow}", $iku->satuan);
@@ -137,7 +134,7 @@ class IkuExport implements WithTitle, FromArray
                 $sheet->setCellValue("J{$startRow}", $iku->bobot);
             }
 
-            $startRow += $ikuRowSpan; // Move to next available row
+            $startRow += $ikuRowSpan;
         }
 
         $num++;
@@ -159,22 +156,23 @@ private function applyStyles(Worksheet $sheet, int $startRow, int $endRow)
         'borders' => [
             'allBorders' => [
                 'borderStyle' => Border::BORDER_THIN,
-                'color' => ['rgb' => 'D3D3D3'],
+                'color' => ['rgb' => 'AEAAAA'],
             ],
         ],
     ];
     $sheet->getStyle($range)->applyFromArray($styleArray);
 
-    // Auto-adjust row height
     for ($row = $startRow; $row <= $endRow; $row++) {
         $sheet->getRowDimension($row)->setRowHeight(-1);
     }
 }
 
 
-    public function export()
+    public function export(Request $request)
     {
         $this->populateData();
+
+        $sheet = $this->spreadsheet->getActiveSheet();
 
         $user = Auth::user();
         $department = DB::table('department')
@@ -185,6 +183,9 @@ private function applyStyles(Worksheet $sheet, int $startRow, int $endRow)
         if (!$department) {
             throw new \Exception('Department not found.');
         }
+
+        $sheet->setCellValue('B44', $request->input('hc_directorate', ''));
+        $sheet->setCellValue('J45', $request->input('manager', ''));
 
         $filePath = storage_path("app/Form_IKU_{$department->department_username}_{$this->selectedYear}.xlsx");
         $writer = new Xlsx($this->spreadsheet);

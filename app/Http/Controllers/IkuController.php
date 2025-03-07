@@ -348,14 +348,16 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
 
 
 
-public function exportIku(Request $request)
+    public function exportIku(Request $request)
     {
         $name = Auth::user()->name;
         $year = $request->query('year', date('Y'));
-        $export = new IkuExport($year, $name);
 
-        return $export->export();
+        $export = new IkuExport($year, $name, $request->all());
+
+        return $export->export($request);
     }
+
 
     public function editIku($id)
     {
