@@ -14,15 +14,12 @@ class EvaluasiController extends Controller
 {
     $user = Auth::user();
 
-    // Get department name
     $departmentName = DB::table('department')
         ->where('department_id', $user->department_id)
         ->value('department_username');
 
-    // Get selected month and year (default: current month & year)
     $monthYear = $request->query('month-year', date('Y-m'));
 
-    // Validate format
     if (preg_match('/^\d{4}-\d{2}$/', $monthYear)) {
         [$selectedYear, $selectedMonth] = explode('-', $monthYear);
     } else {
@@ -39,7 +36,6 @@ class EvaluasiController extends Controller
     $selectedMonth = (int) $selectedMonth;
     $selectedMonthName = $months[$selectedMonth] ?? 'Unknown';
 
-    // Fetch IKU Evaluations for the selected department, month, and year
     $evaluations = DB::select("
         SELECT
             ie.id,
@@ -89,16 +85,13 @@ public function index(Request $request)
     $department_id = Auth::user()->department_id;
     $user = Auth::user();
 
-    // Get department name
     $departmentName = DB::table('department')
         ->where('department_id', $user->department_id)
         ->value('department_username');
 
-    // Get selected month and year from the URL (default to current month & year)
     $selectedYear = $request->query('year', date('Y'));
-    $selectedMonth = $request->query('month', date('n')); // 'n' for non-zero-padded month
+    $selectedMonth = $request->query('month', date('n'));
 
-    // Ensure month is an integer (avoid issues with string values)
     $selectedMonth = (int) $selectedMonth;
     $selectedYear = (int) $selectedYear;
 
@@ -112,7 +105,6 @@ public function index(Request $request)
 
     $selectedMonthName = $months[$selectedMonth] ?? 'Unknown';
 
-    // Fetch IKU Evaluations for the selected department, month, and year
     $evaluations = DB::select("
         SELECT
             ie.id,
@@ -148,12 +140,10 @@ public function index(Request $request)
 
     $iku_ikuIdentifier = 'IKU' . str_replace(' ', '_', $departmentName) . '_' .  $selectedYear;
 
-    // Fetch all Sasaran Strategis
     $sasaranStrategis = DB::table('sasaran_strategis')
         ->where('kontrak_id', $kontrak_id)
         ->get();
 
-    // Fetch IKUs and their associated main information
     $ikus = DB::table('form_iku')
         ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
         ->where('form_iku.iku_id', $iku_ikuIdentifier)
@@ -173,10 +163,8 @@ public function index(Request $request)
         )
         ->get();
 
-    // Fetch IKU Points
     $ikuPoints = DB::table('iku_point')->get()->groupBy('form_iku_id');
 
-    // Group Sasaran Strategis
     $sasaranGrouped = [];
     $number = 1;
 
@@ -189,7 +177,6 @@ public function index(Request $request)
         $number++;
     }
 
-    // Attach IKUs and points
     foreach ($ikus as $iku) {
         $iku->points = $ikuPoints->get($iku->id, collect());
 
@@ -253,15 +240,15 @@ public function store(Request $request)
 
     public function edit($id)
 {
-    $selectedYear = request()->query('year', date('Y')); // Get year from query or default to current year
-    $selectedMonth = request()->query('month', date('n')); // Get month from query or default to current month
+    $selectedYear = request()->query('year', date('Y'));
+    $selectedMonth = request()->query('month', date('n'));
 
     $eval = DB::table('iku_evaluations')
         ->join('form_iku', 'iku_evaluations.iku_id', '=', 'form_iku.id')
         ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
         ->select(
             'iku_evaluations.*',
-            'isi_iku.iku as iku_name' // Get the IKU name
+            'isi_iku.iku as iku_name'
         )
         ->where('iku_evaluations.id', $id)
         ->first();

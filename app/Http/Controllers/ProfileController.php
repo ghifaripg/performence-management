@@ -16,16 +16,15 @@ class ProfileController extends Controller
         return redirect()->route('login')->with('error', 'Please log in first.');
     }
 
-    // Fetch department name based on department_id
     $department = DB::table('department')
         ->where('department_id', $user->department_id)
-        ->value('department_name'); // Get only department_name
+        ->value('department_name');
 
     return view('pages.profile', [
         'name' => $user->nama,
         'username' => $user->username,
-        'created_at' => $user->created_at->format('Y-m-d H:i:s'), // Format Date
-        'department' => $department ?? 'No Department', // Handle NULL cases
+        'created_at' => $user->created_at->format('Y-m-d H:i:s'),
+        'department' => $department ?? 'No Department',
     ]);
 }
 
@@ -39,7 +38,7 @@ public function updateUsername(Request $request)
     $user->username = $request->username;
     $user->save();
 
-    return redirect()->route('profile')->with('success', 'Username updated successfully!');
+    return redirect()->route('profile')->with('success', 'Username berhasil diperbarui!');
 }
 
 

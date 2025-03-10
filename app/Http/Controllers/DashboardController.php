@@ -16,7 +16,6 @@ class DashboardController extends Controller
     $department_id = Auth::user()->department_id;
     $user_id = Auth::user()->id;
 
-    // Get selected year and month from request, fallback to current year/month
     $selectedYear = $request->query('year', date('Y'));
     $selectedMonth = (int) substr($request->query('month', date('m')), -2);
 
@@ -26,12 +25,10 @@ class DashboardController extends Controller
         9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
     ];
 
-    $selectedMonthName = $months[$selectedMonth] ?? 'Unknown'; // Prevent undefined index error
+    $selectedMonthName = $months[$selectedMonth] ?? 'Unknown';
 
-    // Get selected department from request (admin can select, others use their own)
     $selectedDepartment = $request->query('department', $user_id == 1 ? null : $department_id);
 
-    // Get department name or set default for "Semua"
     if ($selectedDepartment) {
         $department = DB::table('department')
             ->where('department_id', $selectedDepartment)
@@ -42,10 +39,8 @@ class DashboardController extends Controller
         $departmentName = 'Semua Unit Kerja';
     }
 
-    // Fetch all departments (for admin dropdown)
     $departments = DB::table('department')->select('department_id', 'department_name')->get();
 
-    // Query for total ADJ per Sasaran Strategis
     $queryParamsSasaran = [$selectedYear, $selectedMonth];
     $whereDepartment = "";
 
@@ -68,7 +63,6 @@ class DashboardController extends Controller
         ORDER BY ss.id ASC;
     ", $queryParamsSasaran);
 
-    // Query for total ADJ per Month
     $queryParamsMonth = [$selectedYear];
     $whereDepartment = "";
 
@@ -90,7 +84,6 @@ class DashboardController extends Controller
         ORDER BY ie.month ASC;
     ", $queryParamsMonth);
 
-    // Prepare adj series for chart
     $adjSeries = array_fill(0, 12, 0);
     foreach ($totalAdjPerMonth as $data) {
         $adjSeries[(int)$data->month - 1] = (float)$data->total;

@@ -13,8 +13,9 @@ class KontrakController extends Controller
     public function index(Request $request)
 {
     if (Auth::id() !== 1) {
-        return redirect('/dashboard')->with('error', 'Unauthorized access.');
+        return redirect('/kontrak')->with('error', 'Akses tidak diizinkan');
     }
+
     $selectedYear = $request->query('year', date('Y'));
     $kontrak_id = 'KM_' . $selectedYear;
 
@@ -47,6 +48,7 @@ class KontrakController extends Controller
 
     return view('pages.form-kontrak', compact('sasaranGrouped', 'sasaranStrategis', 'selectedYear'));
 }
+
 
     public function checkOrCreateKontrak(Request $request)
     {

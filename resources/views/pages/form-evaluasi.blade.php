@@ -255,7 +255,6 @@
 
         <script>
             function confirmDelete(id) {
-                // Get the current URL with query parameters
                 let currentUrl = window.location.href;
 
                 Swal.fire({
@@ -370,12 +369,11 @@
         percentYear = nilai5 !== 0 ? (nilai1 / nilai5) * 100 : 0;
     }
 
-    // Apply rounding to percentTarget and percentYear
     percentTarget = Math.round(Math.min(percentTarget, 250));
     percentYear = Math.round(Math.min(percentYear, 250));
 
     const N = percentYear;
-    const O = Math.round(N * bobot); // Rounded result
+    const O = Math.round(N * bobot);
 
     let Q = Math.min(Math.max(N, 0), 120);
     const adj = Math.round(Q * bobot) / 100;

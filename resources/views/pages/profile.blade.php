@@ -19,9 +19,6 @@ body{
                 <br>
                 <h2 class="h5 mb-4">General Information</h2>
                 @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
                 @endif
                 <form action="{{ route('profile.updateUsername') }}" method="POST">
                     @csrf
@@ -90,5 +87,23 @@ body{
         </div>
     </div>
 </main>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const notyf = new Notyf({
+            duration: 4000,
+            position: { x: 'left', y: 'bottom' },
+            dismissible: true
+        });
+
+        @if (session('success'))
+            notyf.success("{{ session('success') }}");
+        @endif
+
+        @if (session('error'))
+            notyf.error("{{ session('error') }}");
+        @endif
+    });
+</script>
+
 @endsection
 

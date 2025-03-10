@@ -14,7 +14,6 @@
 
             <?php $__env->startSection('content'); ?>
 
-
             <div class="py-4">
                 <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
                     <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
@@ -106,14 +105,19 @@ S (Support)         :   Pendukung
 
             </div><br>
 
-        <?php if ($userId == 1): ?>
+
         <div class="mt-0 mb-3">
-            <a href="<?php echo e(route('check-kontrak', ['year' => $selectedYear])); ?>" class="btn btn-primary">
-                Tambah/Ubah Kontrak Manajemen
+            <a href="<?php echo e(route('check-kontrak', ['year' => $selectedYear])); ?>" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
+                <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Tambah/Ubah
             </a>
         </div>
-        <?php endif; ?>
         </main>
+<!-- Notyf CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
+<!-- Notyf JS -->
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
 <script>
     async function getNamesAndExport() {
@@ -126,8 +130,6 @@ S (Support)         :   Pendukung
                 <input id="swal-input2" class="swal2-input" placeholder="Nama Plt. Direktur Keuangan & SDM">
                 <label for="swal-input3">Direktur Operasi</label>
                 <input id="swal-input3" class="swal2-input" placeholder="Nama Direktur Operasi">
-                <label for="swal-input4">Tempat, Tanggal</label>
-                <input id="swal-input4" class="swal2-input" placeholder="Contoh: Jakarta, 10 Januari 2025">
             `,
             focusConfirm: false,
             preConfirm: () => {
@@ -135,7 +137,6 @@ S (Support)         :   Pendukung
                     direktur_utama: document.getElementById("swal-input1").value,
                     plt_keuangan_sdm: document.getElementById("swal-input2").value,
                     direktur_operasi: document.getElementById("swal-input3").value,
-                    tempat_tanggal: document.getElementById("swal-input4").value,
                 };
             }
         });
@@ -145,6 +146,19 @@ S (Support)         :   Pendukung
             window.location.href = "/export-kontrak-manajemen?" + queryString;
         }
     }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const notyf = new Notyf({
+            duration: 4000,
+            position: { x: 'right', y: 'top' },
+            dismissible: true
+        });
+
+        <?php if(session('error')): ?>
+            notyf.error("<?php echo e(session('error')); ?>");
+        <?php endif; ?>
+    });
 </script>
 
 <?php $__env->stopSection(); ?>

@@ -19,10 +19,6 @@ body{
                 <br>
                 <h2 class="h5 mb-4">General Information</h2>
                 <?php if(session('success')): ?>
-                <div class="alert alert-success">
-                    <?php echo e(session('success')); ?>
-
-                </div>
                 <?php endif; ?>
                 <form action="<?php echo e(route('profile.updateUsername')); ?>" method="POST">
                     <?php echo csrf_field(); ?>
@@ -105,6 +101,24 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
 </main>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const notyf = new Notyf({
+            duration: 4000,
+            position: { x: 'left', y: 'bottom' },
+            dismissible: true
+        });
+
+        <?php if(session('success')): ?>
+            notyf.success("<?php echo e(session('success')); ?>");
+        <?php endif; ?>
+
+        <?php if(session('error')): ?>
+            notyf.error("<?php echo e(session('error')); ?>");
+        <?php endif; ?>
+    });
+</script>
+
 <?php $__env->stopSection(); ?>
 
 

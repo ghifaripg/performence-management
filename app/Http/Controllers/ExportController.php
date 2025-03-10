@@ -10,7 +10,7 @@ class ExportController extends Controller
 {
     public function exportKontrakManajemen(Request $request)
     {
-        $year = $request->query('year', date('Y')); // Default to current year if not provided
+        $year = $request->query('year', date('Y'));
         return Excel::download(new KontrakManajemenExport($year), "Kontrak_Manajemen_{$year}.xlsx");
     }
 }

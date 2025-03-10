@@ -193,7 +193,6 @@ public function export(Request $request)
     $sheet->setCellValue('B43', $request->input('direktur_utama', ''));
     $sheet->setCellValue('D43', $request->input('plt_keuangan_sdm', ''));
     $sheet->setCellValue('I43', $request->input('direktur_operasi', ''));
-    $sheet->setCellValue('D38', $request->input('tempat_tanggal', ''));
 
     $filePath = storage_path("app/Kontrak_Manajemen_{$this->selectedYear}.xlsx");
     $writer = new Xlsx($this->spreadsheet);

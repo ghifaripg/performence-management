@@ -126,8 +126,9 @@
     </div>
 
     <div class="mt-3">
-        <a href="/form-evaluasi?month=<?php echo e($selectedMonth); ?>&year=<?php echo e($selectedYear); ?>" class="btn btn-primary">
-            Tambah/Ubah Form Evaluasi
+        <a href="/form-evaluasi?month=<?php echo e($selectedMonth); ?>&year=<?php echo e($selectedYear); ?>" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
+            <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            Tambah/Ubah
         </a>
     </div>
 
@@ -135,7 +136,7 @@
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    let zoomLevel = 1; // Initial zoom level
+    let zoomLevel = 1;
     const zoomContainer = document.getElementById("zoomContainer");
 
     document.querySelectorAll(".zoom-btn").forEach(button => {
@@ -143,13 +144,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const zoomType = this.getAttribute("data-zoom");
 
             if (zoomType === "in" && zoomLevel < 1.5) {
-                zoomLevel += 0.1; // Increase zoom
+                zoomLevel += 0.1;
             } else if (zoomType === "out" && zoomLevel > 0.7) {
-                zoomLevel -= 0.1; // Decrease zoom
+                zoomLevel -= 0.1;
             }
 
             zoomContainer.style.transform = `scale(${zoomLevel})`;
-            zoomContainer.style.transformOrigin = "top center"; // Keeps the zoom centered
+            zoomContainer.style.transformOrigin = "top center";
         });
     });
 });

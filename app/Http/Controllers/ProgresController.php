@@ -12,7 +12,6 @@ class ProgresController extends Controller
     {
         $user = Auth::user();
 
-        // Get department_username from department table
         $department = DB::table('department')
             ->where('department_id', $user->department_id)
             ->first();
@@ -37,8 +36,7 @@ class ProgresController extends Controller
             );
 
         if ($user->id !== 1) {
-            $progresData->where('iku.iku_id', 'LIKE', "%{$departmentUsername}%"); // Filter where IKU ID contains department username
-
+            $progresData->where('iku.iku_id', 'LIKE', "%{$departmentUsername}%");
         }
 
         $progresData = $progresData->paginate(5);

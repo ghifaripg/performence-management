@@ -68,7 +68,7 @@
                     <div class="col-12 mb-4">
                         <div class="card border-0 shadow components-section">
                             <div class="card-body">
-                                <h5>Perspektif: <span id="selected-sasaran">None</span></h5>
+                                <h5>Perspektif: <span id="selected-sasaran">-</span></h5>
 
                                 <!-- IKU Type Selection -->
                                 <div class="mb-3">
@@ -195,7 +195,6 @@
                                 $ikuAtasanRowspan = [];
                                 $targetRowspan = [];
 
-                                // Pre-calculate row spans for merging IKU Atasan & Target
                                 foreach ($sasaran['ikus'] as $iku) {
                                     $ikuPointList = collect($iku->points ?? []);
                                     $maxRows = max(1, $ikuPointList->count());
@@ -346,54 +345,70 @@
 </main>
 <?php $__env->stopSection(); ?>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         let pointIndex = 0;
 
+        // DOM Elements
         const sasaranRadios = document.querySelectorAll('.sasaran-checkbox');
         const selectedSasaranInput = document.getElementById('selected-sasaran-id');
         const selectedSasaranText = document.getElementById('selected-sasaran');
-
-        // Toggle between Single and Multiple IKU points
         const singlePointRadio = document.getElementById("singlePoint");
         const multiplePointsRadio = document.getElementById("multiplePoints");
         const singlePointSection = document.getElementById("single-point-section");
         const multiplePointsSection = document.getElementById("multiple-points-section");
+        const totalBobotElement = document.getElementById("total-bobot");
+        const bobotValueElement = document.getElementById("bobot-value");
+        const ikuPointsContainer = document.getElementById('iku-points-container');
+        const addIkuPointButton = document.getElementById('add-iku-point');
 
-        singlePointRadio.addEventListener("change", function() {
-            if (this.checked) {
+        // Toggle sections based on selected radio button
+        function toggleSections() {
+            if (singlePointRadio.checked) {
                 singlePointSection.style.display = "block";
                 multiplePointsSection.style.display = "none";
-            }
-        });
-
-        multiplePointsRadio.addEventListener("change", function() {
-            if (this.checked) {
+            } else if (multiplePointsRadio.checked) {
                 singlePointSection.style.display = "none";
                 multiplePointsSection.style.display = "block";
             }
-        });
+        }
 
+        // Update the total bobot and its color
+        function updateTotalBobot() {
+            let totalBobot = 0;
+
+            document.querySelectorAll('.bobot-cell').forEach(cell => {
+                totalBobot += parseFloat(cell.textContent.trim()) || 0;
+            });
+
+            totalBobotElement.textContent = `Total Bobot = ${totalBobot.toFixed(2)}`;
+            totalBobotElement.style.color = totalBobot > 100 ? "red" : "green";
+            bobotValueElement.textContent = totalBobot.toFixed(2);
+        }
+
+        // Event listeners
         sasaranRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
+            radio.addEventListener('change', function () {
                 selectedSasaranInput.value = this.value;
                 selectedSasaranText.textContent = this.nextElementSibling.textContent;
             });
         });
 
+        singlePointRadio.addEventListener("change", toggleSections);
+        multiplePointsRadio.addEventListener("change", toggleSections);
 
-    let totalBobot = 0;
-    document.querySelectorAll('.bobot-cell').forEach(cell => {
-        let value = parseFloat(cell.textContent.trim()) || 0;
-        totalBobot += value;
-    });
-    document.getElementById("bobot-value").textContent = totalBobot;
+        // Initial total bobot update
+        updateTotalBobot();
 
-        document.getElementById('add-iku-point').addEventListener('click', function () {
+        // Recalculate total bobot when a bobot cell changes
+        document.querySelectorAll('.bobot-cell').forEach(cell => {
+            cell.addEventListener('DOMSubtreeModified', updateTotalBobot);
+        });
+
+        // Add a new IKU point
+        addIkuPointButton.addEventListener('click', function () {
             pointIndex++;
-            const container = document.getElementById('iku-points-container');
             const pointHtml = `
                 <div class="iku-point mb-3" data-index="${pointIndex}">
                     <label>Point Name</label>
@@ -411,18 +426,18 @@
                     </select>
                     <label>Bobot</label>
                     <input type="number" class="form-control point-bobot" name="points[${pointIndex}][bobot]" step="0.01">
-                    <button type="button" class="btn btn-danger btn-sm remove-point">Remove</button>
+                    <button type="button" class="btn btn-danger btn-sm remove-point">Hapus</button>
                 </div>`;
-            container.insertAdjacentHTML('beforeend', pointHtml);
+            ikuPointsContainer.insertAdjacentHTML('beforeend', pointHtml);
         });
 
-        // Remove IKU Point
-        document.getElementById('iku-points-container').addEventListener('click', function (e) {
+        // Remove an IKU point
+        ikuPointsContainer.addEventListener('click', function (e) {
             if (e.target.classList.contains('remove-point')) {
                 e.target.closest('.iku-point').remove();
             }
         });
     });
-    </script>
+</script>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ghifa\Documents\admin-dashboard\resources\views/pages/form-iku.blade.php ENDPATH**/ ?>

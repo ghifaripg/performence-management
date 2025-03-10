@@ -9,7 +9,7 @@ class IkuEvaluationExportController extends Controller
 {
     public function export(Request $request)
     {
-        $monthYear = $request->query('month-year'); // Get 'month-year' from URL
+        $monthYear = $request->query('month-year');
 
         $export = new IkuEvaluationsExport($monthYear);
         return $export->export();

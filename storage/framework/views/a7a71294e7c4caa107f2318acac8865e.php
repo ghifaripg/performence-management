@@ -80,8 +80,6 @@
     </form>
     <?php endif; ?>
 
-
-        <!-- Zoom Buttons (aligned to the right) -->
         <div>
             <!-- Zoom Out Button -->
             <button class="btn btn-outline-secondary zoom-btn me-2" data-zoom="out">
@@ -115,7 +113,7 @@
             <input type="text" id="searchInput" class="form-control" placeholder="Search...">
         </div>
 
-        <!-- Table Container (for zooming effect) -->
+        <!-- Table Container -->
         <div id="zoomContainer">
             <table class="table table-hover" id="ikuTable">
                 <thead>
@@ -146,7 +144,6 @@
                             $ikuAtasanRowspan = [];
                             $targetRowspan = [];
 
-                            // Pre-calculate row spans for merging IKU Atasan & Target
                             foreach ($sasaran['ikus'] as $iku) {
                                 $ikuPointList = collect($iku->points ?? []);
                                 $maxRows = max(1, $ikuPointList->count());
@@ -267,8 +264,9 @@
     <br>
 
     <div class="mt-1 mb-3">
-        <a href="<?php echo e(route('check-iku', ['year' => $selectedYear])); ?>" class="btn btn-primary">
-            Tambah/Ubah IKU
+        <a href="<?php echo e(route('check-iku', ['year' => $selectedYear])); ?>" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
+            <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            Tambah/Ubah
         </a>
     </div>
 </main>

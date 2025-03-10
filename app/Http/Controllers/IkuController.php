@@ -56,10 +56,8 @@ class IkuController extends Controller
         )
         ->get();
 
-    // Fetch IKU Points
     $ikuPoints = DB::table('iku_point')->get()->groupBy('form_iku_id');
 
-    // Group Sasaran Strategis
     $sasaranGrouped = [];
     $number = 1;
 
@@ -91,7 +89,6 @@ class IkuController extends Controller
             $userId = Auth::id();
             $departmentId = Auth::user()->department_id;
 
-            // Fetch department username
             $department = DB::table('department')
                 ->where('department_id', $departmentId)
                 ->select('department_username')
@@ -104,14 +101,12 @@ class IkuController extends Controller
             $departmentName = str_replace(' ', '_', $department->department_username);
             $ikuIdentifier = 'IKU' . $departmentName . '_' . $selectedYear;
 
-            // Insert into isi_iku table
             $ikuId = DB::table('isi_iku')->insertGetId([
                 'iku' => $request->input('iku'),
                 'proker' => $request->input('proker'),
                 'pj' => $request->input('pj'),
             ]);
 
-            // Insert into form_iku table
             $formIkuId = DB::table('form_iku')->insertGetId([
                 'iku_id' => $ikuIdentifier,
                 'sasaran_id' => $request->input('sasaran_id'),
@@ -125,7 +120,6 @@ class IkuController extends Controller
                 'bobot' => $request->input('single_bobot'),
             ]);
 
-            // If multiple points are selected, insert into iku_point table
             if ($request->input('iku_type') === 'multiple' && $request->has('points')) {
                 $ikuPoints = [];
                 foreach ($request->input('points') as $point) {
@@ -190,12 +184,10 @@ class IkuController extends Controller
     $departmentName = (string) $department->department_username;
     $iku_ikuIdentifier = 'IKU' . str_replace(' ', '_', $departmentName) . '_' .  $selectedYear;
 
-    // Fetch all Sasaran Strategis
     $sasaranStrategis = DB::table('sasaran_strategis')
         ->where('kontrak_id', $kontrak_id)
         ->get();
 
-    // Fetch IKUs and their associated main information
     $ikus = DB::table('form_iku')
     ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
     ->where('form_iku.iku_id', $iku_ikuIdentifier)
@@ -216,10 +208,8 @@ class IkuController extends Controller
     ->get();
 
 
-// Fetch IKU Points
 $ikuPoints = DB::table('iku_point')->get()->groupBy('form_iku_id');
 
-// Group Sasaran Strategis
 $sasaranGrouped = [];
 $number = 1;
 
@@ -232,7 +222,6 @@ foreach ($sasaranStrategis as $sasaran) {
     $number++;
 }
 
-// Attach IKUs and points
 foreach ($ikus as $iku) {
     $iku->points = $ikuPoints->get($iku->id, collect());
 
@@ -290,7 +279,6 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
 
     public function showDetail($ikuId)
     {
-        // Extract the year from iku_id (e.g., IKU_ITMS_2025)
         preg_match('/\d{4}$/', $ikuId, $matches);
         $selectedYear = $matches[0] ?? null;
 
@@ -298,7 +286,6 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
             return back()->with('error', 'Invalid IKU ID format');
         }
 
-        // Fetch the main IKU data
         $ikus = DB::table('form_iku')
             ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
             ->join('sasaran_strategis', 'form_iku.sasaran_id', '=', 'sasaran_strategis.id')
@@ -314,18 +301,16 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
             )
             ->get();
 
-        // Fetch all IKU points and group them by `form_iku_id`
         $ikuPoints = DB::table('iku_point')
             ->whereIn('form_iku_id', $ikus->pluck('form_iku_id'))
             ->get()
             ->groupBy('form_iku_id');
 
-        // Group data for the view
         $sasaranGrouped = [];
         $number = 1;
 
         foreach ($ikus as $iku) {
-            $sasaranId = $iku->sasaran_id; // Use object property, not array
+            $sasaranId = $iku->sasaran_id;
 
             if (!isset($sasaranGrouped[$sasaranId])) {
                 $sasaranGrouped[$sasaranId] = (object) [
@@ -336,10 +321,8 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
                 $number++;
             }
 
-            // Attach points to each IKU
             $iku->points = $ikuPoints->get($iku->form_iku_id, collect());
 
-            // Store IKU inside its corresponding sasaran
             $sasaranGrouped[$sasaranId]->ikus[] = $iku;
         }
 
@@ -361,7 +344,6 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
 
     public function editIku($id)
     {
-        // Fetch the main IKU data from form_iku
         $iku = DB::table('form_iku')
             ->join('isi_iku', 'form_iku.isi_iku_id', '=', 'isi_iku.id')
             ->select(
@@ -377,7 +359,6 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
             abort(404, 'IKU not found');
         }
 
-        // Fetch related IKU Points using form_iku_id
         $ikuPoints = DB::table('iku_point')
             ->where('form_iku_id', $iku->id)
             ->get();
@@ -402,7 +383,6 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
             'pj' => 'required|string|max:500',
         ]);
 
-        // Update the main IKU entry in form_iku
         DB::table('form_iku')
             ->where('id', $id)
             ->update([
@@ -416,7 +396,6 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
                 'bobot' => $request->bobot,
             ]);
 
-        // Update IKU details in isi_iku
         DB::table('isi_iku')
             ->where('id', function ($query) use ($id) {
                 $query->select('isi_iku_id')
@@ -429,7 +408,6 @@ return redirect()->route('form-iku', ['year' => $selectedYear]);
                 'pj' => $request->pj,
             ]);
 
-        // Update IKU points if provided
         if ($request->has('points')) {
             foreach ($request->points as $pointId => $pointData) {
                 DB::table('iku_point')

@@ -15,7 +15,6 @@ class UserController extends Controller
             return redirect('/dashboard')->with('error', 'Unauthorized access.');
         }
 
-        // Fetch all users with their department names using JOIN
         $users = DB::table('users')
             ->leftJoin('department', 'users.department_id', '=', 'department.department_id')
             ->select('users.id', 'users.nama', 'users.username', 'department.department_name')

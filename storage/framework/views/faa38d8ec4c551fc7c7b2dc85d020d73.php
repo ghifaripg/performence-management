@@ -241,13 +241,13 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener("click", function () {
             const kpiId = this.getAttribute("data-id");
             Swal.fire({
-                title: "Are you sure?",
-                text: "This action cannot be undone!",
+                title: "Apakah Anda yakin?",
+                text: "Data ini akan dihapus secara permanen dan tidak dapat dikembalikan!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#d33",
                 cancelButtonColor: "#3085d6",
-                confirmButtonText: "Yes, delete it!"
+                confirmButtonText: "Ya, Hapus!"
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(`delete-form-${kpiId}`).submit();
@@ -276,7 +276,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateTotalBobot() {
         let totalBobot = 0;
 
-        // Select Bobot column by a specific class instead of nth-child
         document.querySelectorAll(".bobot-cell").forEach(cell => {
             let bobotValue = parseFloat(cell.textContent.trim()) || 0;
             totalBobot += bobotValue;
@@ -292,7 +291,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Call function with a delay to ensure table is fully rendered
     setTimeout(updateTotalBobot, 500);
 });
 </script>
