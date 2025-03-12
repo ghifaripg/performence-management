@@ -45,7 +45,10 @@
             </div>
             <form action="<?php echo e(route('export.kontrak')); ?>" method="GET">
                 <input type="hidden" name="year" value="<?php echo e($selectedYear); ?>">
-                <button type="button" class="btn btn-success" onclick="getNamesAndExport()">Export Excel</button>
+                <button type="button" class="btn btn-outline-success d-inline-flex align-items-center" onclick="getNamesAndExport()">
+                    Export to Excel
+                    <svg class="icon icon-xxs ms-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 9.5A3.5 3.5 0 005.5 13H9v2.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 15.586V13h2.5a4.5 4.5 0 10-.616-8.958 4.002 4.002 0 10-7.753 1.977A3.5 3.5 0 002 9.5zm9 3.5H9V8a1 1 0 012 0v5z" clip-rule="evenodd" /></svg>
+                </button>
             </form>
             <div class="card card-body border-0 shadow table-wrapper table-responsive">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-left: 12px; margin-top: 25px; margin-bottom: 25px;">

@@ -80,7 +80,6 @@
             </div>
         </div>
 
-        <!-- Full-width textarea -->
         <div class="mb-3">
             <label for="program_kerja" class="form-label">Program Kerja</label>
             <textarea class="form-control" id="program_kerja" name="program_kerja">{{ $eval->program_kerja }}</textarea>

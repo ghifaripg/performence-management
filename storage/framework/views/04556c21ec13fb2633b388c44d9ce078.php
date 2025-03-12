@@ -207,7 +207,7 @@
                     <div class="card border-0 shadow">
                         <div class="card-header border-bottom d-flex align-items-center justify-content-between">
                             <h2 class="fs-5 fw-bold mb-0">Progres Evaluasi</h2>
-                            <a href="/iku" class="btn btn-sm btn-primary">Isi Evaluasi</a>
+                            <a href="/evaluasi" class="btn btn-sm btn-primary">Isi Evaluasi</a>
                         </div>
                         <div class="card-body">
                             <h5 class="mb-4">Evaluasi Bulanan - <?php echo $selectedYear ?></h5>
