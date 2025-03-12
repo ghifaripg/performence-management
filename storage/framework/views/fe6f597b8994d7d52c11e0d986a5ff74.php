@@ -154,7 +154,6 @@
                                                 </div>
                                             </div>
                                             <button type="button" class="btn btn-primary" id="add-iku-point">Tambah Poin Baru</button>
-                                            <p id="total-bobot" class="mt-2"></p>
                                         </div>
                                     </div>
                                 </div>

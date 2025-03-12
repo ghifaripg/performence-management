@@ -272,23 +272,22 @@
     }
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+    function updateTotalIku() {
+        let totalBobot = 0;
 
-            function updateTotalIku() {
-                let totalBobot = 0;
+        document.querySelectorAll(".iku-cell").forEach(cell => {
+            let bobotValue = parseFloat(cell.textContent.trim()) || 0;
+            totalBobot += bobotValue;
+        });
 
-                document.querySelectorAll(".iku-cell").forEach(cell => {
-                    let bobotValue = parseFloat(cell.textContent.trim()) || 0;
-                    totalBobot += bobotValue;
-                });
-
-                let totalBobotElement = document.getElementById("total-iku");
-                if (totalBobotElement) {
-                    totalBobotElement.textContent = totalBobot.toFixed(2);
-                }
-            }
-            updateTotalIku();
+        let totalBobotElement = document.getElementById("total-iku");
+        if (totalBobotElement) {
+            totalBobotElement.textContent = totalBobot.toFixed(2);
         }
-    )
+    }
+    updateTotalIku();
+    }
+)
 </script>
 @endsection

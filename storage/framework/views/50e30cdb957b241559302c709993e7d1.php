@@ -383,8 +383,8 @@
 
     document.querySelector('input[name="percent_target"]').value = percentTarget + "%";
     document.querySelector('input[name="percent_year"]').value = percentYear + "%";
-    document.querySelector('input[name="ttl"]').value = ttl.toFixed(2); // Ensure 2 decimal places
-    document.querySelector('input[name="adj"]').value = adj.toFixed(2); // Ensure 2 decimal places
+    document.querySelector('input[name="ttl"]').value = ttl.toFixed(2);
+    document.querySelector('input[name="adj"]').value = adj.toFixed(2);
 }
 
 // Attach event listeners
